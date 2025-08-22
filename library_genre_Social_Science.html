@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Science - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Social Science</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 16 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="“Allison Yarrow takes you back to the era of Anita Hill and Monica Lewinsky and Tonya Harding and examines how the media fueled America’s sexism.”—Bustle To understand how we got here, we have to rewind the VHS tape. 90s Bitch tells the real story of women and girls in the 1990s, exploring how they were maligned by the media, vilified by popular culture, and objectified in the marketplace. Trailblazing women like Hillary Clinton, Anita Hill, Madeleine Albright, Janet Reno, and Marcia Clark were undermined. Newsmakers like Britney Spears, Monica Lewinsky, Tonya Harding and Lorena Bobbitt were shamed and misunderstood. The advent of the twenty-four-hour news cycle reinforced society&#39;s deeply entrenched misogyny. Meanwhile, marketers hijacked feminism, sold “Girl Power,” and poisoned a generation. Today echoes of 90s “bitchification” still exist everywhere. To understand why, we must revisit and interrogate the 1990s—a decade in which empowerment was twisted into objectification, exploitation, and subjugation. Award–winning journalist Allison Yarrow’s timely examination is a must-read for anyone trying to understand twenty-first century sexism and end it for the next generation. “Yarrow’s biting autopsy of the decade scrutinizes the way society reduced—or “bitchified”—women . . . Direct quotes from politicians, journalists and comedians about the women provide the most jarring, oh-my-god-that-really-happened portions of Yarrow’s decade excavation.” —Pittsburg Post-Gazette “Allison Yarrow is a feminist and a muckraker in the tradition of Betty Friedan, Naomi Klein, and bell hooks.” —Steve Almond, author of Bad Stories: What the Hell Just Happened to Our Country “Yarrow is a skillful scene setter.” —The Los Angeles Review of Books “‘Essential reading for every feminist.” Anne Helen Petersen, author of Too Fat, Too Slutty, Too Loud">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=JhJVDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">90s Bitch</div>
+                        <div class="book-author">by Allison Yarrow</div>
+                        <div class="book-meta">📅 2018 • 🏢 HarperCollins • 📄 382 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">“Allison Yarrow takes you back to the era of Anita Hill and Monica Lewinsky and Tonya Harding and examines how the media fueled America’s sexism.”—Bustle To understand how we got here, we have to rewind the VHS tape. 90s Bitch tells the real story of women and girls in the 1990s, exploring how they ...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Women, united states, social conditions</span><span class="category-tag">History</span><span class="category-tag">Women in popular culture</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="PULITZER PRIZE WINNER • Drawing on the diaries of one woman in eighteenth-century Maine, &quot;A truly talented historian unravels the fascinating life of a community that is so foreign, and yet so similar to our own&quot; (The New York Times Book Review). Between 1785 and 1812 a midwife and healer named Martha Ballard kept a diary that recorded her arduous work (in 27 years she attended 816 births) as well as her domestic life in Hallowell, Maine. On the basis of that diary, Laurel Thatcher Ulrich gives us an intimate and densely imagined portrait, not only of the industrious and reticent Martha Ballard but of her society. At once lively and impeccably scholarly, A Midwife&#39;s Tale is a triumph of history on a human scale.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Qa_MpVB06YUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">A Midwife's Tale</div>
+                        <div class="book-author">by Laurel Thatcher Ulrich</div>
+                        <div class="book-meta">📅 2010 • 🏢 Vintage • 📄 459 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">PULITZER PRIZE WINNER • Drawing on the diaries of one woman in eighteenth-century Maine, "A truly talented historian unravels the fascinating life of a community that is so foreign, and yet so similar to our own" (The New York Times Book Review). Between 1785 and 1812 a midwife and healer named Mart...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;Utterly gripping&#39; - The Guardian &#39;Fascinating&#39; - The Sunday Times &#39;Moving&#39; - Scotsman &#39;Engrossing&#39; - Financial Times Sue Black confronts death every day. As a Professor of Anatomy and Forensic Anthropology, she focuses on mortal remains in her lab, at burial sites, at scenes of violence, murder and criminal dismemberment, and when investigating mass fatalities due to war, accident or natural disaster. In All That Remains she reveals the many faces of death she has come to know, using key cases to explore how forensic science has developed, and examining what her life and work has taught her. Do we expect a book about death to be sad? Macabre? Sue&#39;s book is neither. There is tragedy, but there is also humour in stories as gripping as the best crime novel. Part memoir, part science, part meditation on death, her book is compassionate, surprisingly funny, and it will make you think about death in a new light. ________ SUE BLACK&#39;S NEW BOOK, WRITTEN IN BONE, IS OUT NOW _________ &#39;One might expect [this book] to be a grim read but it absolutely isn&#39;t. I found it invigorating!&#39; (Andrew Marr, BBC Radio 4 &#39;Start the Week&#39;) &#39;Black&#39;s utterly gripping account of her life and career as a professor of anatomy and forensic anthropology manages to be surprisingly life-affirming. As she herself says, it is &quot;as much about life as about death&quot;&#39; (PD Smith Guardian) &#39;An engrossing memoir . . . an affecting mix of personal and professional&#39; (Erica Wagner, Financial Times) &#39;A model of how to write about the effect of human evil without losing either objectivity or sensitivity . . . Heartening and anything but morbid . . . Leaves you thinking about what kind of human qualities you value, what kinds of people you actually want to be with&#39; (Rowan Williams, New Statesman) &#39;For someone whose job is identifying corpses, Sue Black is a cheerful soul . . . All That Remains feels like every episode of &#39;Silent Witness&#39;, pre-fictionalised. Except, you know, really good&#39; (Helen Rumbelow, The Times)">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=_okkDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">All That Remains</div>
+                        <div class="book-author">by Sue Black</div>
+                        <div class="book-meta">📅 2018 • 🏢 Random House • 📄 326 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">'Utterly gripping' - The Guardian 'Fascinating' - The Sunday Times 'Moving' - Scotsman 'Engrossing' - Financial Times Sue Black confronts death every day. As a Professor of Anatomy and Forensic Anthropology, she focuses on mortal remains in her lab, at burial sites, at scenes of violence, murder and...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Death</span><span class="category-tag">Biology</span><span class="category-tag">Murder</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="What happens when media and politics become forms of entertainment? As our world begins to look more and more like Orwell&#39;s 1984, Neil&#39;s Postman&#39;s essential guide to the modern media is more relevant than ever. &quot;It&#39;s unlikely that Trump has ever read Amusing Ourselves to Death, but his ascent would not have surprised Postman.” -CNN Originally published in 1985, Neil Postman’s groundbreaking polemic about the corrosive effects of television on our politics and public discourse has been hailed as a twenty-first-century book published in the twentieth century. Now, with television joined by more sophisticated electronic media—from the Internet to cell phones to DVDs—it has taken on even greater significance. Amusing Ourselves to Death is a prophetic look at what happens when politics, journalism, education, and even religion become subject to the demands of entertainment. It is also a blueprint for regaining control of our media, so that they can serve our highest goals. “A brilliant, powerful, and important book. This is an indictment that Postman has laid down and, so far as I can see, an irrefutable one.” –Jonathan Yardley, The Washington Post Book World">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=oup6iagfox8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Amusing Ourselves to Death</div>
+                        <div class="book-author">by Neil Postman</div>
+                        <div class="book-meta">📅 2005 • 🏢 Penguin • 📄 210 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">What happens when media and politics become forms of entertainment? As our world begins to look more and more like Orwell's 1984, Neil's Postman's essential guide to the modern media is more relevant than ever. "It's unlikely that Trump has ever read Amusing Ourselves to Death, but his ascent would ...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Television broadcasting</span><span class="category-tag">Influence</span><span class="category-tag">Mass media</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER • WINNER OF THE PULITZER PRIZE • ONE OF TIME’S TEN BEST NONFICTION BOOKS OF THE DECADE • ONE OF THE NEW YORK TIMES’S 100 BEST BOOKS OF THE 21ST CENTURY One of the most acclaimed books of our time, this modern classic “has set a new standard for reporting on poverty” (Barbara Ehrenreich, The New York Times Book Review). In Evicted, Princeton sociologist and MacArthur “Genius” Matthew Desmond follows eight families in Milwaukee as they each struggle to keep a roof over their heads. Hailed as “wrenching and revelatory” (The Nation), “vivid and unsettling” (New York Review of Books), Evicted transforms our understanding of poverty and economic exploitation while providing fresh ideas for solving one of twenty-first-century America’s most devastating problems. Its unforgettable scenes of hope and loss remind us of the centrality of home, without which nothing else is possible. A BEST BOOK OF THE YEAR: President Barack Obama, The New York Times Book Review, The Boston Globe, The Washington Post, NPR, Entertainment Weekly, The New Yorker, Bloomberg, Esquire, BuzzFeed, Fortune, San Francisco Chronicle, Milwaukee Journal Sentinel, St. Louis Post-Dispatch, Politico, The Week, Chicago Public Library, BookPage, Kirkus Reviews, Library Journal, Publishers Weekly, Booklist, Shelf Awareness WINNER OF: The National Book Critics Circle Award for Nonfiction • The PEN/John Kenneth Galbraith Award for Nonfiction • The Andrew Carnegie Medal for Excellence in Nonfiction • The Hillman Prize for Book Journalism • The PEN/New England Award • The Chicago Tribune Heartland Prize FINALIST FOR THE LOS ANGELES TIMES BOOK PRIZE AND THE KIRKUS PRIZE “Evicted stands among the very best of the social justice books.”—Ann Patchett, author of Bel Canto and Commonwealth “Gripping and moving—tragic, too.”—Jesmyn Ward, author of Salvage the Bones “Evicted is that rare work that has something genuinely new to say about poverty.”—San Francisco Chronicle">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/12915110-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Evicted</div>
+                        <div class="book-author">by Matthew Desmond & Enrique Maldonado Roldn</div>
+                        <div class="book-meta">📅 2016 • 🏢 Broadway </div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER • WINNER OF THE PULITZER PRIZE • ONE OF TIME’S TEN BEST NONFICTION BOOKS OF THE DECADE • ONE OF THE NEW YORK TIMES’S 100 BEST BOOKS OF THE 21ST CENTURY One of the most acclaimed books of our time, this modern classic “has set a new standard for reporting on poverty” (Barbar...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Domestic Politics</span><span class="category-tag">low-income housing</span><span class="category-tag">2008 financial crisis</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;It is absolutely brilliant, I think every woman should read it&#39; PANDORA SYKES, THE HIGH LOW &#39;My wish is that every white woman who calls herself a feminist will read this book in a state of hushed and humble respect ... Essential reading&#39; ELIZABETH GILBERT All too often the focus of mainstream feminism is not on basic survival for the many, but on increasing privilege for the few. Meeting basic needs is a feminist issue. Food insecurity, the living wage and access to education are feminist issues. The fight against racism, ableism and transmisogyny are all feminist issues. White feminists often fail to see how race, class, sexual orientation and disability intersect with gender. How can feminists stand in solidarity as a movement when there is a distinct likelihood that some women are oppressing others? Insightful, incendiary and ultimately hopeful, Hood Feminism is both an irrefutable indictment of a movement in flux and also clear-eyed assessment of how to save it.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=TTwoEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Hood Feminism</div>
+                        <div class="book-author">by Mikki Kendall</div>
+                        <div class="book-meta">📅 2021 • 🏢 Bloomsbury • 📄 290 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">'It is absolutely brilliant, I think every woman should read it' PANDORA SYKES, THE HIGH LOW 'My wish is that every white woman who calls herself a feminist will read this book in a state of hushed and humble respect ... Essential reading' ELIZABETH GILBERT All too often the focus of mainstream femi...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">United states, race relations</span><span class="category-tag">Women, united states, social conditions</span><span class="category-tag">United states, history</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="*THE SUNDAY TIMES NUMBER ONE BESTSELLER* *OVER A MILLION COPIES SOLD* Discover the shocking gender bias that affects our everyday lives in this groundbreaking gift of a book. &#39;Nothing delights me more than a well-written and well-researched book that teaches you and never bores you&#39; Chimamanda Ngozi Adichie &#39;HELL YES. This is one of those books that has the potential to change things - a monumental piece of research&#39; Caitlin Moran Imagine a world where... · Your phone is too big for your hand · Your doctor prescribes a drug that is wrong for your body · In a car accident you are 47% more likely to be injured. If any of that sounds familiar, chances are you&#39;re a woman. From government policy and medical research, to technology, workplaces, and the media. Invisible Women reveals how in a world built for and by men we are systematically ignoring half of the population, often with disastrous consequences. Caroline Criado Perez brings together for the first time an impressive range of case studies, stories and new research from across the world that illustrate the hidden ways in which women are forgotten, and the profound impact this has on us all. Find out more in Caroline&#39;s new podcast, Visible Women. &#39;A book that changes the way you see the world&#39; Sunday Times &#39;Revelatory, frightening, hopeful&#39; Jeanette Winterson">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=MKZYDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Invisible Women</div>
+                        <div class="book-author">by Caroline Criado Perez</div>
+                        <div class="book-meta">📅 2019 • 🏢 Random House • 📄 259 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">*THE SUNDAY TIMES NUMBER ONE BESTSELLER* *OVER A MILLION COPIES SOLD* Discover the shocking gender bias that affects our everyday lives in this groundbreaking gift of a book. 'Nothing delights me more than a well-written and well-researched book that teaches you and never bores you' Chimamanda Ngozi...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Male domination (Social structure)</span><span class="category-tag">Sex discrimination</span><span class="category-tag">Social sciences, research</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In Microtrends: The Small Forces Behind Today’s Big Changes, Mark Penn shows that 75 of the most important trends in the world today are the smallest ones. Exploring everything from politics to religion, food to entertainment, Penn follows the numbers to uncover what&#39;s really popular, not what we think is popular. Because while these trends are shaping the world, they’re relatively unseen – they’re under-the-radar forces that can involve as little as 1 percent of the population. People have never been more sophisticated, more individualistic, or more knowledgeable about the choices they make in their daily lives. Yet it takes intensive, scientific study to find the logical patterns that underlie those choices. While helping you to refine your own trend-spotting skills, Penn pierces remarkably stubborn conventional thinking to find the counterintuitive trends that represent a portrait of society in the 21st century. A groundbreaking book about the way people think and how they act, Microtrends explores the practical implications of these 75 trends for politics, business, and society itself.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/1235183-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Microtrends</div>
+                        <div class="book-author">by Mark J. Penn & Mark Penn & E. Kinney Zalesne</div>
+                        <div class="book-meta">📅 2007 • 🏢 Penguin Books, Limited </div>
+                    </div>
+                </div>
+                <div class="book-description">In Microtrends: The Small Forces Behind Today’s Big Changes, Mark Penn shows that 75 of the most important trends in the world today are the smallest ones. Exploring everything from politics to religion, food to entertainment, Penn follows the numbers to uncover what's really popular, not what we th...</div>
+                <div class="book-categories"><span class="category-tag">Social aspects</span><span class="category-tag">Social Science</span><span class="category-tag">Social change</span><span class="category-tag">Modern Civilization</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="From bestselling author Jon Krakauer, a stark, powerful, meticulously reported narrative about a series of sexual assaults at the University of Montana ­— stories that illuminate the human drama behind the national plague of campus rape Missoula, Montana, is a typical college town, with a highly regarded state university, bucolic surroundings, a lively social scene, and an excellent football team — the Grizzlies — with a rabid fan base. The Department of Justice investigated 350 sexual assaults reported to the Missoula police between January 2008 and May 2012. Few of these assaults were properly handled by either the university or local authorities. In this, Missoula is also typical. A DOJ report released in December of 2014 estimates 110,000 women between the ages of eighteen and twenty-four are raped each year. Krakauer’s devastating narrative of what happened in Missoula makes clear why rape is so prevalent on American campuses, and why rape victims are so reluctant to report assault. Acquaintance rape is a crime like no other. Unlike burglary or embezzlement or any other felony, the victim often comes under more suspicion than the alleged perpetrator. This is especially true if the victim is sexually active; if she had been drinking prior to the assault — and if the man she accuses plays on a popular sports team. The vanishingly small but highly publicized incidents of false accusations are often used to dismiss her claims in the press. If the case goes to trial, the woman’s entire personal life becomes fair game for defense attorneys. This brutal reality goes a long way towards explaining why acquaintance rape is the most underreported crime in America. In addition to physical trauma, its victims often suffer devastating psychological damage that leads to feelings of shame, emotional paralysis and stigmatization. PTSD rates for rape victims are estimated to be 50%, higher than soldiers returning from war. In Missoula, Krakauer chronicles the searing experiences of several women in Missoula — the nights when they were raped; their fear and self-doubt in the aftermath; the way they were treated by the police, prosecutors, defense attorneys; the public vilification and private anguish; their bravery in pushing forward and what it cost them. Some of them went to the police. Some declined to go to the police, or to press charges, but sought redress from the university, which has its own, non-criminal judicial process when a student is accused of rape. In two cases the police agreed to press charges and the district attorney agreed to prosecute. One case led to a conviction; one to an acquittal. Those women courageous enough to press charges or to speak publicly about their experiences were attacked in the media, on Grizzly football fan sites, and/or to their faces. The university expelled three of the accused rapists, but one was reinstated by state officials in a secret proceeding. One district attorney testified for an alleged rapist at his university hearing. She later left the prosecutor’s office and successfully defended the Grizzlies’ star quarterback in his rape trial. The horror of being raped, in each woman’s case, was magnified by the mechanics of the justice system and the reaction of the community. Krakauer’s dispassionate, carefully documented account of what these women endured cuts through the abstract ideological debate about campus rape. College-age women are not raped because they are promiscuous, or drunk, or send mixed signals, or feel guilty about casual sex, or seek attention. They are the victims of a terrible crime and deserving of compassion from society and fairness from a justice system that is clearly broken.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Q1WWBgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Missoula</div>
+                        <div class="book-author">by Jon Krakauer</div>
+                        <div class="book-meta">📅 2015 • 🏢 Anchor • 📄 406 pages <span class="rating">⭐⭐⭐ 3.5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">From bestselling author Jon Krakauer, a stark, powerful, meticulously reported narrative about a series of sexual assaults at the University of Montana ­— stories that illuminate the human drama behind the national plague of campus rape Missoula, Montana, is a typical college town, with a highly reg...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Montana, history, local</span><span class="category-tag">Rape</span><span class="category-tag">Rape victims</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The New York Times bestselling work of undercover reportage from our sharpest and most original social critic, with a new foreword by Matthew Desmond, author of Evicted Millions of Americans work full time, year round, for poverty-level wages. In 1998, Barbara Ehrenreich decided to join them. She was inspired in part by the rhetoric surrounding welfare reform, which promised that a job—any job—can be the ticket to a better life. But how does anyone survive, let alone prosper, on $6 an hour? To find out, Ehrenreich left her home, took the cheapest lodgings she could find, and accepted whatever jobs she was offered. Moving from Florida to Maine to Minnesota, she worked as a waitress, a hotel maid, a cleaning woman, a nursing-home aide, and a Wal-Mart sales clerk. She lived in trailer parks and crumbling residential motels. Very quickly, she discovered that no job is truly &quot;unskilled,&quot; that even the lowliest occupations require exhausting mental and muscular effort. She also learned that one job is not enough; you need at least two if you int to live indoors. Nickel and Dimed reveals low-rent America in all its tenacity, anxiety, and surprising generosity—a land of Big Boxes, fast food, and a thousand desperate stratagems for survival. Read it for the smoldering clarity of Ehrenreich&#39;s perspective and for a rare view of how &quot;prosperity&quot; looks from the bottom. And now, in a new foreword, Matthew Desmond, author of Evicted: Poverty and Profit in the American City, explains why, twenty years on in America, Nickel and Dimed is more relevant than ever.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/12646596-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Nickel and Dimed</div>
+                        <div class="book-author">by Barbara Ehrenreich</div>
+                        <div class="book-meta">📅 2001 • 🏢 Picador </div>
+                    </div>
+                </div>
+                <div class="book-description">The New York Times bestselling work of undercover reportage from our sharpest and most original social critic, with a new foreword by Matthew Desmond, author of Evicted Millions of Americans work full time, year round, for poverty-level wages. In 1998, Barbara Ehrenreich decided to join them. She wa...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Poverty</span><span class="category-tag">Working poor</span><span class="category-tag">Poor</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="THE NEW YORK TIMES BESTSELLER ONE OF BARACK OBAMA&#39;S FAVOURITE BOOKS OF 2023 A searing study of American poverty from the Pulitzer Prize-winning author of Evicted The United States is the richest country on earth, yet has more poverty than any other advanced democracy. One in seven Americans live below the poverty line, a line which hasn&#39;t shifted over the last fifty years, despite the efforts of successive governments. Why is there so much scarcity in this land of dollars? In Poverty, by America, acclaimed sociologist Matthew Desmond examines American poverty today and the stories we tell ourselves about it. Spanning social isolation, mass incarceration, the housing crisis, domestic violence, crack and opioid epidemics, welfare cuts and more, Desmond argues that poverty does not result from a lack of resources or good policy ideas. We already know how to eliminate it. The hard part is getting more of us to care. To do so, we need a new story. As things stand, liberals explain poverty through insurmountable structural issues, whereas conservatives highlight personal failings and poor life choices. Both abdicate responsibility, and ignore the reality that the advantages of the rich only come at the expense of the poor. It is time better-paid citizens put themselves back in the narrative, recognizing that the depth and expanse of poverty in any nation reflects our failure to look out for one another. Poverty must ultimately be met by community: all this suffering and want is our doing, and we can undo it.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=gYN2EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Poverty, by America</div>
+                        <div class="book-author">by Matthew Desmond</div>
+                        <div class="book-meta">📅 2023 • 🏢 Random House • 📄 263 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">THE NEW YORK TIMES BESTSELLER ONE OF BARACK OBAMA'S FAVOURITE BOOKS OF 2023 A searing study of American poverty from the Pulitzer Prize-winning author of Evicted The United States is the richest country on earth, yet has more poverty than any other advanced democracy. One in seven Americans live bel...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2023-04-09</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="This groundbreaking book proposes that the rise of alphabetic literacy reconfigured the human brain and brought about profound changes in history, religion, and gender relations. Making remarkable connections across brain function, myth, and anthropology, Dr. Shlain shows why pre-literate cultures were principally informed by holistic, right-brain modes that venerated the Goddess, images, and feminine values. Writing drove cultures toward linear left-brain thinking and this shift upset the balance between men and women, initiating the decline of the feminine and ushering in patriarchal rule. Examining the cultures of the Israelites, Greeks, Christians, and Muslims, Shlain reinterprets ancient myths and parables in light of his theory. Provocative and inspiring, this book is a paradigm-shattering work that will transform your view of history and the mind.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=7Qsnr7cN5MsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Alphabet Versus the Goddess</div>
+                        <div class="book-author">by Leonard Shlain</div>
+                        <div class="book-meta">📅 1999 • 🏢 Penguin • 📄 496 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">This groundbreaking book proposes that the rise of alphabetic literacy reconfigured the human brain and brought about profound changes in history, religion, and gender relations. Making remarkable connections across brain function, myth, and anthropology, Dr. Shlain shows why pre-literate cultures w...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Literacy</span><span class="category-tag">Misogyny</span><span class="category-tag">Language and culture</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;We need this message more than ever&#39; – Malala Yousafzai The Sunday Times bestseller. Hard-hitting and uplifting true stories of the women around the world facing extreme gender inequality who, when the wider community supports them to challenge the status quo, improve life for the whole of society. The Moment of Lift is a timely and necessary call to action for women&#39;s empowerment. The right to: Spend your own money. Go to school. Earn an income. Access contraceptives. Work outside the home. Walk outside the home. Choose whom to marry. Get a loan. Start a business. Own property. Divorce a husband. See a doctor. Drive a car. All of these rights are denied to women in some parts of the world. &#39;How can we summon a moment of lift for human beings – and especially for women? Because when you lift up women, you lift up humanity.&#39; In this moving and compelling book, Melinda shares the stories of the inspiring people she’s met during her work and travels around the world and the lessons she’s learned from them. As she writes in the introduction, “That is why I had to write this book – to share the stories of people who have given focus and urgency to my life. I want all of us to see ways we can lift women up where we live.” Melinda’s unforgettable narrative is backed by startling data as she presents the issues that most need our attention – from child marriage to lack of access to contraceptives to gender inequity in the workplace. And, for the first time, she writes about her personal life and the road to equality in her own marriage. Throughout, she shows how there has never been more opportunity to change the world – and ourselves. When we lift others up, they lift us up, too.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8574094-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Moment of Lift: How Empowering Women Changes the World</div>
+                        <div class="book-author">by Melinda Gates & Ana Guelbenzu de San Eustaquio</div>
+                        <div class="book-meta">📅 2019 • 🏢 Pan Macmillan Australia Pty, Limited </div>
+                    </div>
+                </div>
+                <div class="book-description">'We need this message more than ever' – Malala Yousafzai The Sunday Times bestseller. Hard-hitting and uplifting true stories of the women around the world facing extreme gender inequality who, when the wider community supports them to challenge the status quo, improve life for the whole of society....</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Equality</span><span class="category-tag">Feminism</span><span class="category-tag">Women, economic conditions</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NATIONAL BESTSELLER • An extraordinary book that reveals how the themes and symbols of ancient narratives continue to bring meaning to birth, death, love, and war. The Power of Myth launched an extraordinary resurgence of interest in Joseph Campbell and his work. A preeminent scholar, writer, and teacher, he has had a profound influence on millions of people—including Star Wars creator George Lucas. To Campbell, mythology was the “song of the universe, the music of the spheres.” With Bill Moyers, one of America’s most prominent journalists, as his thoughtful and engaging interviewer, The Power of Myth touches on subjects from modern marriage to virgin births, from Jesus to John Lennon, offering a brilliant combination of intelligence and wit. From stories of the gods and goddesses of ancient Greece and Rome to traditions of Buddhism, Hinduism and Christianity, a broad array of themes are considered that together identify the universality of human experience across time and culture. An impeccable match of interviewer and subject, a timeless distillation of Campbell’s work, The Power of Myth continues to exert a profound influence on our culture.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=2GOIGuh5GJ4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Power of Myth</div>
+                        <div class="book-author">by Joseph Campbell with Bill Moyers</div>
+                        <div class="book-meta">📅 2001 • 🏢 Broadway </div>
+                    </div>
+                </div>
+                <div class="book-description">NATIONAL BESTSELLER • An extraordinary book that reveals how the themes and symbols of ancient narratives continue to bring meaning to birth, death, love, and war. The Power of Myth launched an extraordinary resurgence of interest in Joseph Campbell and his work. A preeminent scholar, writer, and te...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Vintage Feminism: classic feminist texts in short form WITH AN INTRODUCTION BY NATALIE HAYNES When this book was first published in 1949 it was to outrage and scandal. Never before had the case for female liberty been so forcefully and successfully argued. De Beauvoir’s belief that ‘One is not born, but rather becomes, woman’ switched on light bulbs in the heads of a generation of women and began a fight for greater equality and economic independence. These pages contain the key passages of the book that changed perceptions of women forever. TRANSLATED BY CONSTANCE BORDE AND SHEILA MALOVANY-CHEVALLIER ANNOTATED AND INTRODUCED BY MARTINE REID">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=KuMtBQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Second Sex (Vintage Feminism Short Edition)</div>
+                        <div class="book-author">by Simone de Beauvoir</div>
+                        <div class="book-meta">📅 2015 • 🏢 Random House • 📄 123 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Vintage Feminism: classic feminist texts in short form WITH AN INTRODUCTION BY NATALIE HAYNES When this book was first published in 1949 it was to outrage and scandal. Never before had the case for female liberty been so forcefully and successfully argued. De Beauvoir’s belief that ‘One is not born,...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Sexual Behavior</span><span class="category-tag">Feminism</span><span class="category-tag">Non-Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="An updated edition of the Sunday Times Bestseller Britain&#39;s best-known classicist Mary Beard, is also a committed and vocal feminist. With wry wit, she revisits the gender agenda and shows how history has treated powerful women. Her examples range from the classical world to the modern day, from Medusa and Athena to Theresa May and Hillary Clinton. Beard explores the cultural underpinnings of misogyny, considering the public voice of women, our cultural assumptions about women&#39;s relationship with power, and how powerful women resist being packaged into a male template. A year on since the advent of #metoo, Beard looks at how the discussions have moved on during this time, and how that intersects with issues of rape and consent, and the stories men tell themselves to support their actions. In trademark Beardian style, using examples ancient and modern, Beard argues, &#39;it&#39;s time for change - and now!&#39; From the author of international bestseller SPQR: A History of Ancient Rome.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=6dU2DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Women & Power</div>
+                        <div class="book-author">by Mary Beard</div>
+                        <div class="book-meta">📅 2017 • 🏢 Profile • 📄 87 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">An updated edition of the Sunday Times Bestseller Britain's best-known classicist Mary Beard, is also a committed and vocal feminist. With wry wit, she revisits the gender agenda and shows how history has treated powerful women. Her examples range from the classical world to the modern day, from Med...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Power (Social sciences)</span><span class="category-tag">Sexism</span><span class="category-tag">Feminism</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 16:00:35 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

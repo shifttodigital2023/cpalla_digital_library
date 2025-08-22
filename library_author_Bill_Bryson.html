@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Bryson - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Bill Bryson</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 3 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="A classic from the New York Times bestselling author of A Walk in the Woods and The Body. After living in Britain for two decades, Bill Bryson recently moved back to the United States with his English wife and four children (he had read somewhere that nearly 3 million Americans believed they had been abducted by aliens—as he later put it, &quot;it was clear my people needed me&quot;). They were greeted by a new and improved America that boasts microwave pancakes, twenty-four-hour dental-floss hotlines, and the staunch conviction that ice is not a luxury item. Delivering the brilliant comic musings that are a Bryson hallmark, I&#39;m a Stranger Here Myself recounts his sometimes disconcerting reunion with the land of his birth. The result is a book filled with hysterical scenes of one man&#39;s attempt to reacquaint himself with his own country, but it is also an extended if at times bemused love letter to the homeland he has returned to after twenty years away.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=xb4wSmJLnhAC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">I'm a Stranger Here Myself</div>
+                        <div class="book-author">by Bill Bryson</div>
+                        <div class="book-meta">📅 1999 • 🏢 Crown • 📄 308 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A classic from the New York Times bestselling author of A Walk in the Woods and The Body. After living in Britain for two decades, Bill Bryson recently moved back to the United States with his English wife and four children (he had read somewhere that nearly 3 million Americans believed they had bee...</div>
+                <div class="book-categories"><span class="category-tag">Large type books</span><span class="category-tag">Social life and customs</span><span class="category-tag">New York Times reviewed</span><span class="category-tag">Anecdotes</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="‘I come from Des Moines. Somebody had to’ And, as soon as Bill Bryson was old enough, he left. Des Moines couldn’t hold him, but it did lure him back. After ten years in England, he returned to the land of his youth, and drove almost 14,000 miles in search of a mythical small town called Amalgam, the kind of trim and sunny place where the films of his youth were set. Instead, his search led him to Anywhere, USA; a lookalike strip of gas stations, motels and hamburger outlets populated by lookalike people with a penchant for synthetic fibres. He discovered a continent that was doubly lost; lost to itself because blighted by greed, pollution, mobile homes and television; lost to him because he had become a stranger in his own land. Bryson’s acclaimed first success, The Lost Continent is a classic of travel literature – hilariously, stomach-achingly, funny, yet tinged with heartache – and the book that first staked Bill Bryson’s claim as the most beloved writer of his generation.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=5DNF7gngKT0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Lost Continent</div>
+                        <div class="book-author">by Bill Bryson</div>
+                        <div class="book-meta">📅 2010 • 🏢 Random House • 📄 388 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">‘I come from Des Moines. Somebody had to’ And, as soon as Bill Bryson was old enough, he left. Des Moines couldn’t hold him, but it did lure him back. After ten years in England, he returned to the land of his youth, and drove almost 14,000 miles in search of a mythical small town called Amalgam, th...</div>
+                <div class="book-categories"><span class="category-tag">Social life and customs</span><span class="category-tag">Journeys</span><span class="category-tag">Cities and towns</span><span class="category-tag">Travel</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="No description available.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/12857063-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Mother Tongue</div>
+                        <div class="book-author">by Bill Bryson</div>
+                        <div class="book-meta">🏢 Tandem Library </div>
+                    </div>
+                </div>
+                <div class="book-description">No description available.</div>
+                <div class="book-categories"><span class="category-tag">English language</span><span class="category-tag">History</span><span class="category-tag">English language, history</span><span class="category-tag">New York Times reviewed</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 15:58:02 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

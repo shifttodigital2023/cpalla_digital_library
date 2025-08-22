@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Digital Library</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .library-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .books-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .book-card {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .book-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .book-author {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        .book-details {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .book-synopsis {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        .book-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .tag {
+            background-color: #e0f7fa;
+            color: #00838f;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .category {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .book-categories {
+            margin-top: 10px;
+        }
+        .confidence-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+        .confidence-high {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .confidence-medium {
+            background-color: #fff9c4;
+            color: #f57f17;
+        }
+        .book-image {
+            max-width: 150px !important;
+            max-height: 150px !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        img {
+            max-width: 150px !important;
+            max-height: 150px !important;
+        }
+        .book-links {
+            margin-top: 8px;
+        }
+        .book-link {
+            color: #2196F3;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .book-link:hover {
+            text-decoration: underline;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #search-input {
+            padding: 8px 15px;
+            width: 300px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+        #search-button {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Digital Library</h1>
+    
+    <div class="library-info">
+        <p>Total Books: 41</p>
+        <p>Generated on: 2025-03-06 21:55:02</p>
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by title, author or tag...">
+        <button id="search-button">Search</button>
+    </div>
+    
+    <div class="books-container" id="books-container">
+        
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=iJPhEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Yellowface" class="book-image">
+            <div class="book-title">Yellowface <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by R. F. Kuang</div>
+            <div class="book-details">
+                <div>Pages: 246</div>
+                <div>Size: 2.40 MB</div>
+                
+                
+                <div>ISBN: 9780008532772</div>
+                <div>Filename: 9780008532772.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">June Hayward dan Athena Liu sama-sama penulis. Athena, keturunan Asia, ternyata lebih ngetop. Sementara June berpendapat tak ada yang akan tertarik pada karyanya, gadis kulit putih biasa. Ketika Athena mendadak meninggal, June mencuri manuskrip Athena lalu menyerahkannya sebagai karyanya. Penerbit membuatkan citra baru bagi June, lengkap dengan foto yang ambigu mengenai etnik dirinya. Di luar dugaan, buku itu sukses besar. Namun, June tidak bisa lolos dari bayangan Athena, dan bukti-bukti bermunculan, mengancam kesuksesan June. Saat berpacu untuk menutupi rahasianya, June jadi tahu seberapa jauh ia berani bertindak untuk mempertahankan apa yang menurutnya layak ia dapatkan.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Young Adult Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=4x1_EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of La casa en el mar más azul (Edición mexicana)" class="book-image">
+            <div class="book-title">La casa en el mar más azul (Edición mexicana) <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by TJ Klune</div>
+            <div class="book-details">
+                <div>Pages: 489</div>
+                <div>Size: 2.22 MB</div>
+                <div>Published: 2022-09-16</div>
+                <div>Publisher: Crossbooks México</div>
+                <div>ISBN: 9786070791734</div>
+                <div>Filename: casa en el mar más azul, La - Tj Klune.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Trabajo, trabajo y más trabajo. Linus Baker podría ser una persona cualquiera, en un lugar cualquiera, viviendo una vida cualquiera. Él estaba convencido de esto y, si tú lo hubieras conocido, tampoco habrías dudado en asegurar que pertenecía al montón, ni más, ni menos. Y así era, hasta el día en que la Altísima Dirección llama a este funcionario del Departamento Encargado de los Jóvenes Mágicos para supervisar un orfanato del que apenas hay registros. Con esta nueva tarea entre manos, Linus viajará a la isla de Marsyas, donde deberá supervisar a seis huérfanos catalogados como peligrosos (hablamos del futuro Anticristo, entre otros) y a su enigmático tutor. Ahí, deberá dejar de lado sus miedos y prejuicios, que no son pocos, para darse cuenta de que lo que realmente tiene que hacer no es aquello a lo que fue enviado. Porque en Marsyas, Linus descubrirá que el camino a la felicidad es distinto para cada uno de nosotros, y que si te atreves a recorrerlo, llegarás al lugar donde te encontrarás a ti mismo. Un libro que llenará tu corazón.</div>
+            <div class="book-tags">
+                <span class="tag">casa</span><span class="tag">Klune</span><span class="tag">azul</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=D_-ADwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Todo lo que nunca fuimos" class="book-image">
+            <div class="book-title">Todo lo que nunca fuimos <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Alice Kellen</div>
+            <div class="book-details">
+                <div>Pages: 416</div>
+                <div>Size: 2.09 MB</div>
+                <div>Published: 2019-02-05</div>
+                <div>Publisher: Editorial Planeta</div>
+                <div>ISBN: 9788408205760</div>
+                <div>Filename: Todo lo que nunca fuimos - Alice Kellen.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Primera parte de la bilogía "Deja que ocurra" de Alice Kellen: Leah está rota. Leah ya no pinta. Leah es un espejismo desde el accidente que se llevó a sus padres. Axel es el mejor amigo de su hermano mayor y, cuando accede a acogerla en su casa durante unos meses, quiere ayudarla a encontrar y unir los pedazos de la chica llena de color que un día fue. Pero no sabe que ella siempre ha estado enamorada de él, a pesar de que sean casi familia, ni de que toda su vida está a punto de cambiar. Porque ella está prohibida, pero le despierta la piel. Porque es el mar, noches estrelladas y vinilos de los Beatles. Porque a veces basta un «deja que ocurra» para tenerlo todo. La segunda parte de "Deja que ocurra", Todo lo que somos juntos, se publicará el 30 de abril de 2019.</div>
+            <div class="book-tags">
+                <span class="tag">Kellen</span><span class="tag">Alice</span><span class="tag">Todo</span><span class="tag">fuimos</span><span class="tag">nunca</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=5glrzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of The Other Family" class="book-image">
+            <div class="book-title">The Other Family <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Wendy Corsi Staub</div>
+            <div class="book-details">
+                <div>Pages: 480</div>
+                <div>Size: 1.97 MB</div>
+                <div>Published: 2022-01-18</div>
+                <div>Publisher: HarperLuxe</div>
+                <div>ISBN: 9780063211476</div>
+                <div>Filename: 9780063084605.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">"Great psychological suspense with a wallop of a twist." --Harlan Coben, #1 New York Times bestselling author New York Times bestselling author Wendy Corsi Staub makes her trade paperback debut with a fast-paced thriller in the vein of Lisa Jewell's The Family Upstairs and Megan Collins' The Winter Sister. Here, a family making a fresh start moves into a house which was the site of an unsolved triple homicide--and are watched by an unknown person... The watcher sees who you are...and knows what you did. It's the perfect home for the perfect family: pretty Nora Howell, her handsome husband, their two teenage daughters, and lovable dog. As California transplants making a fresh start in Brooklyn, they expected to live in a shoebox, but the brownstone has a huge kitchen, lots of light, and a backyard. The catch: its previous residents were victims of a grisly triple homicide that remains unsolved. Soon, peculiar things begin happening. The pug is nosing around like a bloodhound. Nora unearths a long-hidden rusty box in the flowerbed. Oldest daughter Stacey, obsessed with the family murdered in their house, pokes into the bloody past and becomes convinced that a stranger is watching the house. Watching them. She's right. But one of the Howells will recognize his face. Because one of them has a secret that will blindside the others with a truth that lies shockingly close to home--and to this one's terrifying history.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=b6C8DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Christmas Belle" class="book-image">
+            <div class="book-title">Christmas Belle <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Mary Balogh</div>
+            <div class="book-details">
+                <div>Pages: 296</div>
+                <div>Size: 1.46 MB</div>
+                <div>Published: 2019-12-03</div>
+                <div>Publisher: Class Ebook Editions Ltd</div>
+                <div>ISBN: 9781944654306</div>
+                <div>Filename: Christmas Belle - Mary Balogh.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Jack Frazer is resigned to spending Christmas in the country with his family, even knowing that his grandmother has invited a young lady and her family with the specific intention of matchmaking for him. His grandmother has also invited the newly widowed Isabella, Comtesse de Vacheron, an acclaimed actress, and her two children. The whole family is delighted to have the comtesse among them to enliven their traditional family theatricals. All except Jack, that is. He once lived with Isabella for a whole year and has been unable to forget her in the nine years since.</div>
+            <div class="book-tags">
+                <span class="tag">Belle</span><span class="tag">Balogh</span><span class="tag">Mary</span><span class="tag">Christmas</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=syY3EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Girls of Flight City" class="book-image">
+            <div class="book-title">Girls of Flight City <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Lorraine Heath</div>
+            <div class="book-details">
+                <div>Pages: 395</div>
+                <div>Size: 9.15 MB</div>
+                <div>Published: 2022-04-05</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780063078574</div>
+                <div>Filename: 9780063078536.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Inspired by true events, a breathtaking WWII historical novel about the brave American women who trained the British Royal Air Force, by New York Times bestselling author Lorraine Heath. 1941. A talented flier, Jessie Lovelace yearns for a career in aviation. When the civilian flight school in her small Texas town begins to clandestinely train British pilots for the RAF, she fights to become an instructor. But the task isn’t without its perils of near-misses and death. Faced with the weight of her responsibilities, she finds solace with a British officer who knows firsthand the heavy price paid in war . . . until he returns to the battles he never truly left behind. Rhonda Monroe might not be skilled in the air but can give a trainee a wild ride in a flight simulator. Fearing little, she dares to jeopardize everything for a forbidden relationship with a charismatic airman… Innocent and fun-loving Kitty Lovelace, Jessie's younger sister, adores dancing with these charming newcomers, realizing too late the risks they pose to her heart. As the war intensifies and America becomes involved, the Girls of Flight City do their part to bring a victorious end to the conflict, pouring all their energy into preparing the young cadets to take to the skies and defeat the dangers that await. And lives from both sides of the Atlantic will be forever changed by love and loss…</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=oQI4EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Mayfair Bookshop" class="book-image">
+            <div class="book-title">The Mayfair Bookshop <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Eliza Knight</div>
+            <div class="book-details">
+                <div>Pages: 408</div>
+                <div>Size: 4.75 MB</div>
+                <div>Published: 2022-04-12</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780063070592</div>
+                <div>Filename: 9780063070585.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">One of Hasty Booklist's Most Anticipated Historical Fiction Novels! USA Today bestselling author Eliza Knight brings together a brilliant dual-narrative story about Nancy Mitford—one of 1930s London’s hottest socialites, authors, and a member of the scandalous Mitford Sisters—and a modern American desperate for change, connected through time by a little London bookshop. “An absolute must-read!”—Madeline Martin, New York Times bestselling author The Last Bookshop in London 1938: She was one of the six sparkling Mitford sisters, known for her stinging quips, stylish dress, and bright green eyes. But Nancy Mitford’s seemingly dazzling life was really one of turmoil: with a perpetually unfaithful and broke husband, two Nazi sympathizer sisters, and her hopes of motherhood dashed forever. With war imminent, Nancy finds respite by taking a job at the Heywood Hill Bookshop in Mayfair, hoping to make ends meet, and discovers a new life. Present Day: When book curator Lucy St. Clair lands a gig working at Heywood Hill she can’t get on the plane fast enough. Not only can she start the healing process from the loss of her mother, it’s a dream come true to set foot in the legendary store. Doubly exciting: she brings with her a first edition of Nancy’s work, one with a somewhat mysterious inscription from the author. Soon, she discovers her life and Nancy’s are intertwined, and it all comes back to the little London bookshop—a place that changes the lives of two women from different eras in the most surprising ways.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=3Ha9EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Solitaire" class="book-image">
+            <div class="book-title">Solitaire <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Alice Oseman</div>
+            <div class="book-details">
+                <div>Pages: 245</div>
+                <div>Size: 1.53 MB</div>
+                
+                
+                <div>ISBN: 9780007559220</div>
+                <div>Filename: 9780007559220.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">La novela que dio origen a Heartstopper Me llamo Victoria Spring. Me gusta dormir y escribir en mi blog. El pasado año, antes de que sucediera todo lo de Charlie y las solicitudes de acceso a la universidad entraran a formar parte de mi vida, tenía amigos. Pero las cosas han cambiado. Y mucho. Ahora solo tengo a Michael Hoden y la web de Solitario. Pero no tengo ni idea de lo que intentan desde esa web y Michael no me importa lo más mínimo. Para nada. De verdad. De la pluma de Alice Oseman nace Solitario , la novela que dio origen al fenómeno de Heartstopper, la serie de Netflix que ha robado el corazón a millones de personas. « El guardián entre el centeno de la era digital.» — The Times «Una voz auténtica y honesta que te habla de la vida adolescentes. Una ficción contemporánea excepcional que llamará la atención de los fans de John Green.» — The Bookseller</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Juvenile Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=TGUlEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Stranger in the Lifeboat" class="book-image">
+            <div class="book-title">The Stranger in the Lifeboat <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Mitch Albom</div>
+            <div class="book-details">
+                <div>Pages: 217</div>
+                <div>Size: 2.08 MB</div>
+                <div>Published: 2021-11-02</div>
+                <div>Publisher: Hachette UK</div>
+                <div>ISBN: 9780751584547</div>
+                <div>Filename: 9780062888341.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Don't miss Mitch Albom's heartbreaking, uplifting new novel, THE LITTLE LIAR, available now! THE INSTANT NO.1 NEW YORK TIMES BESTSELLER 'Mitch Albom sees the magical in the ordinary' Cecelia Ahern ____________ Adrift in a raft after a terrible shipwreck, ten strangers try to survive while they wait for rescue. After three days, short on water, food and hope, they spot a man floating in the waves. They pull him on board - and the survivor claims he can save them. But should they put their trust in him? Will any of them see home again? And why did the ship really sink? The Stranger in the Lifeboat is not only a deeply moving novel about the power of love and hope in the face of danger, but also a mystery that will keep you guessing to the very end.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=GJprDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Huntress" class="book-image">
+            <div class="book-title">The Huntress <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Kate Quinn</div>
+            <div class="book-details">
+                <div>Pages: 527</div>
+                <div>Size: 3.30 MB</div>
+                <div>Published: 2019-02-26</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780008326180</div>
+                <div>Filename: 9780062884343.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">‘If you enjoyed The Tattooist of Auschwitz, read The Huntress by Kate Quinn’ The Washington Post‘Fascinating, brilliantly written, enthralling – just phenomenal’ Jill Mansell *From the bestselling author of The Alice Network*</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=0mhCpXdzLt4C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The God of Small Things" class="book-image">
+            <div class="book-title">The God of Small Things <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Arundhati Roy</div>
+            <div class="book-details">
+                <div>Pages: 360</div>
+                <div>Size: 0.65 MB</div>
+                <div>Published: 2002</div>
+                <div>Publisher: Penguin Books India</div>
+                <div>ISBN: 9780143028574</div>
+                <div>Filename: God of small things, The - Arundhati Roy.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">International No 1 Bestseller. Winner Of The 1997 Booker Prize &Nbsp;</div>
+            <div class="book-tags">
+                <span class="tag">small</span><span class="tag">things</span><span class="tag">Arundhati</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=MGl1EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Twisted 1. Twisted love" class="book-image">
+            <div class="book-title">Twisted 1. Twisted love <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Ana Huang</div>
+            <div class="book-details">
+                <div>Pages: 339</div>
+                <div>Size: 1.92 MB</div>
+                <div>Published: 2022-09-28</div>
+                <div>Publisher: Crossbooks</div>
+                <div>ISBN: 9788408263142</div>
+                <div>Filename: Twisted Love - Ana Huang.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Él tiene el corazón de hielo. Pero por ella, quemaría el mundo. Aunque Ava Chen y Alex Volkov se conocen desde hace años, él siempre se ha mostrado distante y frío. Pero ahora que el hermano de Ava se ha ido y lo ha dejado encargado de la protección de ella, Alex parece algo menos indiferente.... Y su relación, poco a poco, se va haciendo más estrecha, hasta que llegan a confiarse sus secretos y traumas más profundos... A ella, su madre intentó ahogarla en un arrebato de locura; mientras que Alex presenció el brutal asesinato de toda su familia. Tras compartir sus más íntimos pensamientos, su relación dará un giro. No pueden negar que existe una fuerte atracción entre ellos, pero ninguno de los dos se atreve a dar un paso adelante. Finalmente, Ava admite la pasión que está surgiendo, y, aunque Alex intenta resistirse tanto como puede, las chispas acaban saltando... y prenden un fuego ardiente. Sin embargo, cuando todo empezaba a funcionar entre ellos, unas sorprendentes revelaciones sobre la verdad de su pasado dinamitarán su relación y pondrán en riesgo sus propias vidas. «Una de mis mejores lecturas del año. La química entre los protagonistas es brutal, muy adictiva y explícita. ¡Tenéis que conocer a Alex Volkov y su corazón de hielo!» kay_entreletras «Una historia que nos llena de aprendizaje y nos muestra la oscuridad y la luz de la vida. Para mí un 10/10.» jud_books</div>
+            <div class="book-tags">
+                <span class="tag">Twisted</span><span class="tag">Love</span><span class="tag">Huang</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Juvenile Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=rOyiEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Family Lore" class="book-image">
+            <div class="book-title">Family Lore <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Elizabeth Acevedo</div>
+            <div class="book-details">
+                <div>Pages: 379</div>
+                <div>Size: 5.09 MB</div>
+                <div>Published: 2023-08-10</div>
+                <div>Publisher: Canongate Books</div>
+                <div>ISBN: 9781805300502</div>
+                <div>Filename: 9780063207264.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">'Beautiful prose, even-handed magic and all the pains and triumphs of intergenerational bonds' KILEY REID, author of Such A Fun Age and Come and Get It 'Undeniably beautiful' Sunday Times Flor has a gift: she can predict, to the day, when someone will die. So when she decides to throw her own living wake, her sisters are concerned. What has she foreseen? Planning the celebration brings further complications for the Marte family, because Flor isn’t the only person with secrets: her sisters are hiding things, too. And the next generation, cousins Ona and Yadi, face tumult of their own. Family Lore traces the intertwining stories of five women: sisters and cousins, mothers and daughters, aunts and nieces, to ask the ultimate question – what does it take to live a good life, for yourself and those you love?</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=RAI3EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Attic Child" class="book-image">
+            <div class="book-title">The Attic Child <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Lola Jaye</div>
+            <div class="book-details">
+                <div>Pages: 438</div>
+                <div>Size: 2.36 MB</div>
+                <div>Published: 2022-04-28</div>
+                <div>Publisher: Pan Macmillan</div>
+                <div>ISBN: 9781529064599</div>
+                <div>Filename: 9780063260375.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Longlisted for the Jhalak Prize 2023. ‘An incredibly important book . . . a beautifully crafted, compelling story . . . which will undoubtedly break your heart but also make it sing’ - Mike Gayle Two children trapped in the same attic, almost a century apart, bound by a secret. 1907: Twelve-year-old Celestine spends most of his time locked in an attic room of a large house by the sea. Taken from his homeland and treated as an unpaid servant, he dreams of his family in Africa even if, as the years pass, he struggles to remember his mother’s face, and sometimes his real name . . . Decades later, Lowra, a young orphan girl born into wealth and privilege, will find herself banished to the same attic. Lying under the floorboards of the room is an old porcelain doll, an unusual beaded claw necklace and, most curiously, a sentence etched on the wall behind an old cupboard, written in an unidentifiable language. Artefacts that will offer her a strange kind of comfort, and lead her to believe that she was not the first child to be imprisoned there . . . Lola Jaye has created a hauntingly powerful, emotionally charged and unique dual-narrative novel about family secrets, love and loss, identity and belonging, seen through the lens of Black British History in The Attic Child. ‘This is important storytelling about issues of race and privilege . . . that will stay with me for a long time’ - Tracy Chevalier ‘Just brilliant’ - Dorothy Koomson ‘Powerful and emotional’ - Lisa Jewell</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=B1H1DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Good Company" class="book-image">
+            <div class="book-title">Good Company <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Cynthia D'Aprix Sweeney</div>
+            <div class="book-details">
+                <div>Pages: 291</div>
+                <div>Size: 2.20 MB</div>
+                <div>Published: 2021-04-06</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780062876027</div>
+                <div>Filename: 9780062876003.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">AN INSTANT NEW YORK TIMES BESTSELLER A Read with Jenna Today Show Book Club Pick! "Plumbs the depths of marriage, motherhood and friendship with warmth and wit. I devoured it in one gulp!” —Maria Semple A warm, incisive new novel about the enduring bonds of marriage and friendship from Cynthia D’Aprix Sweeney, author of the instant New York Times bestseller The Nest Flora Mancini has been happily married for more than twenty years. But everything she thought she knew about herself, her marriage, and her relationship with her best friend, Margot, is upended when she stumbles upon an envelope containing her husband’s wedding ring—the one he claimed he lost one summer when their daughter, Ruby, was five. Flora and Julian struggled for years, scraping together just enough acting work to raise Ruby in Manhattan and keep Julian’s small theater company—Good Company—afloat. A move to Los Angeles brought their first real career successes, a chance to breathe easier, and a reunion with Margot, now a bona fide television star. But has their new life been built on lies? What happened that summer all those years ago? And what happens now? With Cynthia D’Aprix Sweeney’s signature tenderness, humor, and insight, Good Company tells a bighearted story of the lifelong relationships that both wound and heal us. A Most Anticipated Book From: OprahMag.com * Refinery29 * Houston Chronicle * The Millions * Elle * Buzzfeed</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=LKXWDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Christmas on the Island" class="book-image">
+            <div class="book-title">Christmas on the Island <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Jenny Colgan</div>
+            <div class="book-details">
+                <div>Pages: 249</div>
+                <div>Size: 2.47 MB</div>
+                
+                
+                <div>ISBN: 9780062867483</div>
+                <div>Filename: 9780062867483.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Escape with Jenny Colgan this Christmas . . . 'Nobody does cosy, get-away-from-it-all romance like Jenny Colgan' Sunday Express 'An evocative, sweet treat' Jojo Moyes 'This sweet romance will lift your spirits' Sunday Mirror 'Gorgeous, glorious, uplifting' Marian Keyes 'Irresistible' Jill Mansell 'Just lovely' Katie Fforde 'Naturally funny, warm-hearted' Lisa Jewell 'A gobble-it-all-up-in-one-sitting kind of book' Mike Gayle 'A sheer delight from start to finish' Sophie Kinsella ___________________________________ On the tiny Scottish island of Mure, Christmas preparations are even more hectic than usual . . . Flora MacKenzie is worried about her brother. Fintan hasn't got over the death of his partner, Colton, and Flora thinks he needs a project. The Rock - the rambling, disused hotel on the tip of the island - was Colton's passion project before he died. With Flora's help, Fintan is going to get the hotel up and running in time for Christmas, transforming it into a festive haven of crackling log fires and delicious food. But running a hotel, they are about to discover, is not that easy. Especially when their motley staff includes a temperamental French chef, a spoilt Norwegian kitchen boy who can't peel a potato without mutilating his own hand and a painfully shy kitchen assistant who blushes when anyone speaks to her. Can they pull it together in time for the big opening? And can Flora help her family find happiness this Christmas? ____________________ Why readers ADORE Jenny Colgan 'Jenny Colgan has a way of writing that makes me melt inside' 'Her books are so good I want to start over as soon as I have finished' 'There's something so engaging about her characters and plots' 'Her books are like a big, warm blanket' 'Her stories are just so fabulous' 'She brings her settings and characters so vividly to life' 'The woman is just magic'</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=_3ZWEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Una historia ridícula" class="book-image">
+            <div class="book-title">Una historia ridícula <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Luis Landero</div>
+            <div class="book-details">
+                <div>Pages: 203</div>
+                <div>Size: 1.57 MB</div>
+                <div>Published: 2022-02-02</div>
+                <div>Publisher: Tusquets Editores S.A.</div>
+                <div>ISBN: 9788411070805</div>
+                <div>Filename: historia ridícula, Una - Luis Landero.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Una historia de amor repleta de humor e ironía. «Una obra maestra... hija de un prestidigitador, un mago de la palabra. Una fiesta de la inteligencia, y de la sabiduría. Hasta dónde puede llegar Landero si sigue así.» José M. Pozuelo Yvancos, Abc Cultural «El autor de Lluvia fina o El huerto de Emerson asciende en su maestría.» Juan Cruz, El Periódico «Landero está en estado de gracia. Lo ratifica con una de sus novelas mayores.» Antón Castro, Heraldo de Aragón «El gran escritor extremeño regresa con una de sus mejores criaturas, y una prosa vivaz, armónica y rítmica. Un título imprescindible.» Concha D'Olhaberriague, El Imparcial «Qué bien sabe Landero cerrar una novela cuyo inolvidable clímax apoteósico ha conducido al lector magistralmente. Extraordinaria. Otra vez.» Ricardo Baixeras, El Periódico «Landero vuelve a demostrar su gran talento para bordar una historia entrañable y lúcida escrita con una prosa envidiable... Destila irónica ternura y un tono entre desinhibido y resignado. Landero ha acertado una vez más.» Jesús Ferrer, La Razón «Landero regresa a la ficción más voluptuosa y total... El Landero más poderoso en su figura más secretamente vulnerable, el Landero más firme en su personaje más descreído.» Juan Marqués, La Lectura (El Mundo) Marcial es un hombre exigente, con don de palabra, y orgulloso de su formación autodidacta. Un día se encuentra con una mujer que no solo le fascina, sino que reúne todo aquello que le gustaría tener en la vida: buen gusto, alta posición, relaciones con gente interesante. Él, que tiene un alto concepto de sí mismo, es de hecho encargado en una empresa cárnica. Ella, que se ha presentado como Pepita, es estudiosa del arte y pertenece a una familia adinerada. Marcial necesita contarnos su historia de amor, el despliegue de sus talentos para conquistarla, su estrategia para desbancar a los otros pretendientes y sobre todo qué ocurrió cuando fue invitado a una fiesta en casa de su amada.</div>
+            <div class="book-tags">
+                <span class="tag">historia</span><span class="tag">Landero</span><span class="tag">cula</span><span class="tag">ridi</span><span class="tag">Luis</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=wb12HgQkMuUC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of Tangled" class="book-image">
+            <div class="book-title">Tangled <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Mary Balogh</div>
+            <div class="book-details">
+                <div>Pages: 390</div>
+                <div>Size: 0.24 MB</div>
+                <div>Published: 1994</div>
+                <div>Publisher: Topaz</div>
+                <div>ISBN: 9780451404527</div>
+                <div>Filename: Tangled - Mary Balogh - Mary Balogh.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">A historical romance set in Victorian England, by the award-winning author of A Counterfeit Betrothal. Soon after Rebecca marries Julian, he is killed in the Crimea under mysterious circumstances. Forced to live on charity, Rebecca must marry a rake. Against all odds, she falls in love--right before Julian miraculously returns.</div>
+            <div class="book-tags">
+                <span class="tag">Balogh</span><span class="tag">Tangled</span><span class="tag">Mary</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=YAENEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Los hermanos Karamazov-Dostoyevski Fiodor" class="book-image">
+            <div class="book-title">Los hermanos Karamazov-Dostoyevski Fiodor <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Dostoyevski Fiodor</div>
+            <div class="book-details">
+                <div>Pages: 635</div>
+                <div>Size: 10.27 MB</div>
+                
+                
+                <div>ISBN: 9788832959970</div>
+                <div>Filename: Los hermanos Karamazov-Dostoyevski Fiodor - Dostoyevski Fiodor.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">«Los hermanos Karamazov» es una novela filosófica apasionada ambientada en la Rusia del siglo XIX, que entra profundamente en los debates éticos de Dios, el libre albedrío y la moral. Es un drama espiritual y teológico de luchas morales relacionadas con la fe, la duda, el juicio y la razón, frente a una Rusia modernizadora, con una trama que gira en torno al tema del patricidio. Dostoievski compuso gran parte de la novela en Staraya Russa, que inspiró el escenario principal.</div>
+            <div class="book-tags">
+                <span class="tag">Karamazov</span><span class="tag">Fiodor</span><span class="tag">hermanos</span><span class="tag">Dostoyevski</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=UqG_xgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of Barracoon" class="book-image">
+            <div class="book-title">Barracoon <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Zora Neale Hurston</div>
+            <div class="book-details">
+                <div>Pages: 208</div>
+                <div>Size: 1.92 MB</div>
+                <div>Published: 2020-01-09</div>
+                <div>Publisher: HarperCollins publishers</div>
+                <div>ISBN: 9780008368036</div>
+                <div>Filename: 9780060921705.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Abducted from Africa, sold in America. "A deeply affecting record of an extraordinary life"- Daily Telegraph A major literary event: a newly published work from the author of the American classic Their Eyes Were Watching God, with a foreword from Pulitzer Prize-winning author Alice Walker.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=a-djEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of Twisted Games" class="book-image">
+            <div class="book-title">Twisted Games <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Ana Huang</div>
+            <div class="book-details">
+                <div>Pages: 440</div>
+                <div>Size: 2.36 MB</div>
+                <div>Published: 2022-04-14</div>
+                <div>Publisher: Hachette UK</div>
+                <div>ISBN: 9780349434308</div>
+                <div>Filename: Twisted Games_ A Forbidden Royal Bodyguard Romance - Ana Huang.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Discover the addictive world of the Twisted series from Sunday Times bestselling author and TikTok sensation, Ana Huang! Read Twisted Games now for a steamy, angsty forbidden romance. She can never be his . . . but he's taking her anyway. Stoic, broody and arrogant, elite bodyguard Rhys Larsen has two rules: protect his clients at all costs and do not become emotionally involved. Ever. He has never once been tempted to break those rules . . . until her. Bridget von Ascheberg. A princess with a stubborn streak that matches his own and a hidden fire that reduces his rules to ash. She's nothing he expected and everything he never knew he needed. Day by day, inch by inch, she breaks down his defences until he's faced with a truth he can no longer deny: he swore an oath to protect her, but all he wants is to ruin her. Take her. Because she's his. His princess. His forbidden fruit. His every depraved fantasy. *** Regal, strong-willed and bound by the chains of duty, Princess Bridget dreams of the freedom to live and love as she chooses. But when her brother abdicates, she's suddenly faced with the prospect of a loveless, politically expedient marriage and a throne she never wanted. And as she navigates the intricacies - and treacheries - of her new role, she must also hide her desire for a man she can't have. Her bodyguard. Her protector. Her ultimate ruin. Unexpected and forbidden, theirs is a love that could destroy a kingdom . . . and doom them both. Twisted Games is a contemporary royal bodyguard romance. It's book two of the Twisted series but can be read as a standalone. Warning: This book contains a possessive alpha hero, explicit sexual content and profanity. *** Why fans love Ana Huang ⭐ ⭐ ⭐! 'King of Greed? More like King of my Heart (Ana Huang's Version)' Lauren Asher 'WE HAVE NO NOTES JUST LOTS OF HORNY FEELINGS' Ali Hazelwood 'Ana did not come to play . . . it was giving everything I asked for. It exceeded my expectations astronomically. I'm now severely depressed it's finished' @Aymanreads 'Ana Huang has done it ONCE again. But are we really surprised? No. Ana Huang truly is the queen of billionaire romances' Goodreads Review 'This book broke me into pieces and then pieced them back together' Goodreads Review 'Ana really said whether morally grey is your favourite OR NOT, let me give you someone to swoon over' Goodreads Review 'Ana Huang never disappoints. This was my most anticipated read of the month and it was EVERYTHING!!' Goodreads Review</div>
+            <div class="book-tags">
+                <span class="tag">Twisted</span><span class="tag">Bodyguard</span><span class="tag">Forbidden</span><span class="tag">Huang</span><span class="tag">Games</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=x0I7EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Dressmakers of Prospect Heights" class="book-image">
+            <div class="book-title">The Dressmakers of Prospect Heights <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Kitty Zeldis</div>
+            <div class="book-details">
+                <div>Pages: 338</div>
+                <div>Size: 4.42 MB</div>
+                <div>Published: 2022-12-06</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780063026360</div>
+                <div>Filename: 9780063026346.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">“A haunting meditation on the bonds between mothers and daughters. Zeldis offers a fascinating look into historic New York City and New Orleans, and her skill as a storyteller is matched by her compassion for her characters. What a beautiful read.”—Fiona Davis, New York Times bestselling author of The Magnolia Palace “By turns heartbreaking and heartwarming, Kitty Zeldis’s The Dressmakers of Prospect Heights, set against the backdrop of the not-always-so-roaring Twenties, is an only-in-America story of reinvention, rising above tragedy, and finding family.”—Lauren Willig, New York Times bestselling author of Band of Sisters For fans of Fiona Davis, Beatriz Williams, and Joanna Goodman, a mesmerizing historical novel from Kitty Zeldis, the author of Not Our Kind, about three women in 1920s New York City and the secrets they hold. Brooklyn, 1924. As New York City enters the jazz age, the lives of three very different women are about to converge in unexpected ways. Recently arrived from New Orleans, Beatrice is working to establish a chic new dress shop with help from Alice, the orphaned teenage ward she brought north with her. Down the block, newlywed Catherine is restless in her elegant brownstone, longing for a baby she cannot conceive. When Bea befriends Catherine and the two start to become close, Alice feels abandoned and envious, and runs away to Manhattan. Her departure sets into motion a series of events that will force each woman to confront the painful secrets of her past in order to move into the happier future she seeks. Moving from the bustling streets of early twentieth century New York City to late nineteenth-century Russia and the lively quarters of New Orleans in the 1910s, The Dressmakers of Prospect Heights is a story of the families we are born into and the families we choose, and of the unbreakable bonds between women.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=5kDXCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Crimen y Castigo" class="book-image">
+            <div class="book-title">Crimen y Castigo <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Fedor Mikhaïlovitch Dostoïevski</div>
+            <div class="book-details">
+                <div>Pages: 496</div>
+                <div>Size: 2.00 MB</div>
+                
+                
+                
+                <div>Filename: Crimen y Castigo - Fedor Mikhaïlovitch Dostoïevski.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Estamos especializados en publicar textos en español. Para encontrar mas títulos busque “NoBooks Editorial” o visite nuestra web http://www.nobooksed.com Contamos con mas volúmenes en español que cualquier otra editorial en formato electrónico y continuamos creciendo. La historia narra la vida de Rodión Raskólnikov, un estudiante en la capital de la Rusia Imperial, San Petersburgo. Este joven ve truncados sus sueños por la miseria en la cual se ven envueltos él y su familia (su madre y hermana), miseria que le obliga a congelar sus estudios por falta de dinero. En búsqueda de dinero llega a conocer a una anciana prestamista vil y egoísta, en cuya casa empeña algunos objetos de valor.</div>
+            <div class="book-tags">
+                <span class="tag">Dostoi</span><span class="tag">evski</span><span class="tag">lovitch</span><span class="tag">Castigo</span><span class="tag">Fedor</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Literary Collections</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">9780060577483 </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 398</div>
+                <div>Size: 13.61 MB</div>
+                
+                
+                <div>ISBN: 9780060577483</div>
+                <div>Filename: 9780060577483.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">No description available</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=WrnpEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of How to Read Literature Like a Professor Revised" class="book-image">
+            <div class="book-title">How to Read Literature Like a Professor Revised <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Thomas C. Foster</div>
+            <div class="book-details">
+                <div>Pages: 161</div>
+                <div>Size: 1.72 MB</div>
+                
+                
+                <div>ISBN: 9780060009427</div>
+                <div>Filename: 9780060009427.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Thoroughly revised and expanded for a new generation of readers, this classic guide to enjoying literature to its fullest—a lively, enlightening, and entertaining introduction to a diverse range of writing and literary devices that enrich these works, including symbols, themes, and contexts—teaches you how to make your everyday reading experience richer and more rewarding. While books can be enjoyed for their basic stories, there are often deeper literary meanings beneath the surface. How to Read Literature Like a Professor helps us to discover those hidden truths by looking at literature with the practiced analytical eye—and the literary codes—of a college professor. What does it mean when a protagonist is traveling along a dusty road? When he hands a drink to his companion? When he’s drenched in a sudden rain shower? Thomas C. Foster provides answers to these questions as he explores every aspect of fiction, from major themes to literary models, narrative devices, and form. Offering a broad overview of literature—a world where a road leads to a quest, a shared meal may signify a communion, and rain, whether cleansing or destructive, is never just a shower—he shows us how to make our reading experience more intellectually satisfying and fun. The world, and curricula, have changed. This third edition has been thoroughly revised to reflect those changes, and features new chapters, a new preface and epilogue, as well as fresh teaching points Foster has developed over the past decade. Foster updates the books he discusses to include more diverse, inclusive, and modern works, such as Angie Thomas’s The Hate U Give; Emily St. John Mandel’s Station Eleven; Neil Gaiman’s Neverwhere; Elizabeth Acevedo’s The Poet X; Helen Oyeyemi's Mr. Fox and Boy, Snow, Bird; Sandra Cisneros’s The House on Mango Street; Zora Neale Hurston’s Their Eyes Were Watching God; Maggie O’Farrell’s Hamnet; Madeline Miller’s Circe; Pat Barker’s The Silence of the Girls; and Tahereh Mafi’s A Very Large Expanse of Sea.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Literary Criticism</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=biBVEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Instrumental" class="book-image">
+            <div class="book-title">Instrumental <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by James Rhodes</div>
+            <div class="book-details">
+                <div>Pages: 262</div>
+                <div>Size: 2.23 MB</div>
+                <div>Published: 2021-12-15</div>
+                <div>Publisher: Blackie Books</div>
+                <div>ISBN: 9788419172006</div>
+                <div>Filename: Instrumental - James Rhodes.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">La música fue su salvación. James Rhodes fue víctima de abusos durante su infancia y su vida ha estado marcada por esa tragedia. Escuchar a Rajmáninov en bucle durante su adolescencia y descubrir el Adagio de Bach en un ala psiquiátrica le ayudó a combatir sus demonios y a transformar su vida. James Rhodes es uno de los más eminentes concertistas de piano de la actualidad y un gran renovador de la música clásica. Ha protagonizado documentales para la BBC y Channel 4, escribe en The Guardian y ofrece recitales en todo el mundo. «Instrumental» son sus memorias, que vieron la luz en Reino Unido después de que el Tribunal Supremo levantara el veto que pesaba sobre la obra. Todo un tributo apasionado al poder terapéutico de la música y que aborda cuestiones fascinantes sobre cómo funciona la música clásica y sobre cómo y por qué puede cambiar nuestras vidas.</div>
+            <div class="book-tags">
+                <span class="tag">James</span><span class="tag">Rhodes</span><span class="tag">Instrumental</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Biography & Autobiography</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=X8fXSsuPM0gC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Book Thief" class="book-image">
+            <div class="book-title">The Book Thief <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Markus Zusak</div>
+            <div class="book-details">
+                <div>Pages: 560</div>
+                <div>Size: 4.24 MB</div>
+                
+                
+                <div>ISBN: 9788426419866</div>
+                <div>Filename: Book Thief, The - Markus Zusak.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Una novela preciosa, tremendamente humana y emocionante, que describe las peripecias de una niña alemana de nueve años desde que es dada en adopción por su madre hasta el final de la II Guerra Mundial. UNO DE LOS 30 MEJORES NOVELAS HISTÓRICAS DE TODOS LOS TIEMPOS SEGÚN ELLE Érase una vez un pueblo donde las noches eran largas y la muerte contaba su propia historia. En el pueblo vivía una niña que quería leer, un hombre que tocaba el acordeón y un joven judío que escribía bellos cuentos para escapar del horror de la guerra. Al cabo de un tiempo, la niña se convirtió en una ladrona que robaba libros y regalaba palabras. Con estas palabras se escribió una historia hermosa y cruel que ahora ya es una novela inolvidable. La crítica ha dicho... « La ladrona de libros deslumbra por sus extraordinarios personajes, su capacidad de emocionar sin clichés y, ante todo, por su omnipresente reflexión sobre el valor de las palabras.» Ricard Ruiz Garzón, El Periódico de Catalunya «La esperanza de Liesel es inexpugnable... Los lectores jóvenes necesitan este tipo de alternativas a la rigidez ideológica, así como exploraciones sobre la importancia de las historias. Y, pensándolo bien, también los adultos.» The New York Times «Elegante, filosófica, conmovedora, bella e importante.» Kirkus Reviews «Merece estar junto al Diario de Ana Frank en nuestra biblioteca.» USA Today «Una narrativa extraordinaria.» SLJ «Zusak no endulza nada, pero logra que un tema aparentemente triste resulte tolerable tal como lo hizo Kurt Vonnegut en Matadero cinco: con un humor sombrío, reconfortante.» Time Magazine «Un gran logro. [...] Un libro desafiante en extensión y tema.» Publishers Weekly «Uno de los libros más esperados en años.» The Wall Street Journal</div>
+            <div class="book-tags">
+                <span class="tag">Thief</span><span class="tag">Markus</span><span class="tag">Zusak</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=iMxmEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Nine Liars" class="book-image">
+            <div class="book-title">Nine Liars <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Maureen Johnson</div>
+            <div class="book-details">
+                <div>Pages: 409</div>
+                <div>Size: 2.64 MB</div>
+                <div>Published: 2022-12-27</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780063032712</div>
+                <div>Filename: 9780063032651.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Stevie Bell solved the case of Truly Devious, and now she’s taking her detecting skills abroad when she becomes embroiled in a mystery from 1990s England. Another pulse-pounding and laugh-out-loud stand-alone mystery from New York Times bestselling author Maureen Johnson. Senior year at Ellingham Academy for Stevie Bell isn’t going well. Her boyfriend, David, is studying in London. Her friends are obsessed with college applications. With the cold case of the century solved, Stevie is adrift. There is nothing to distract her from the questions pinging around her brain—questions about college, love, and life in general. Relief comes when David invites Stevie and her friends to join him for study abroad, and his new friend Izzy introduces her to a double-murder cold case. In 1995, nine friends from Cambridge University went to a country house and played a drunken game of hide-and-seek. Two were found in the woodshed the next day, murdered with an ax. The case was assumed to be a burglary gone wrong, but one of the remaining seven saw something she can’t explain. This was no break-in. Someone’s lying about what happened in the woodshed. Seven suspects. Two murders. One killer still playing a deadly game.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Young Adult Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=u-ZCEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Friendship Pact" class="book-image">
+            <div class="book-title">The Friendship Pact <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Jill Shalvis</div>
+            <div class="book-details">
+                <div>Pages: 372</div>
+                <div>Size: 4.79 MB</div>
+                <div>Published: 2022-06-14</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780063095489</div>
+                <div>Filename: 9780063095489.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">New York Times bestselling author Jill Shalvis returns to Sunrise Cove with a powerful, moving story about a young woman on a quest to find the truth about her father who learns the meaning of true love along the way. Alone in the world, Tae Holmes and her mother April pretty much raised each other, but as Tae starts asking questions about the father she’s never met, April, for the first time in her life, goes silent. To make matters worse, Tae is dangerously close to broke and just manages to avoid financial meltdown when she lands a shiny new contract with an adventure company for athletes with disabilities and wounded warriors. Her first big fundraiser event falls flat, but what starts out as a terrible, horrible, no-good night turns into something else entirely when Tae finds herself face-to-face with Riggs Copeland. She hasn’t seen the former Marine since their brief fling in high school, and while still intensely drawn to him, she likes her past burned and buried, thank you very much. Hence their friendship pact. But when April oddly refuses to help Tae track down her father, it’s Riggs who unexpectedly comes to her aid. On a hunt to unlock the past, the two of them find themselves on a wild ride and learn a shocking truth, while also reluctantly bonding in a way neither had seen coming. Now Tae must decide whether she’s going to choose love … or walk away from her own happiness.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=1QV8EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Serial Killer’s Sister" class="book-image">
+            <div class="book-title">The Serial Killer’s Sister <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Alice Hunter</div>
+            <div class="book-details">
+                <div>Pages: 297</div>
+                <div>Size: 1.31 MB</div>
+                <div>Published: 2023-05-11</div>
+                <div>Publisher: HarperCollins UK</div>
+                <div>ISBN: 9780008562229</div>
+                <div>Filename: 9780008562212.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">She thought she’d left her past behind. She was wrong...</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=NXgsEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Mercy Street" class="book-image">
+            <div class="book-title">Mercy Street <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Jennifer Haigh</div>
+            <div class="book-details">
+                <div>Pages: 325</div>
+                <div>Size: 4.93 MB</div>
+                <div>Published: 2022-02-01</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780062414748</div>
+                <div>Filename: 9780061763304.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">NATIONAL BESTSELLER Named a Best Book of the Year by the Washington Post, the New Yorker, and the Boston Globe “Ms. Haigh is an expertly nuanced storyteller long overdue for major attention. Her work is gripping, real, and totally immersive, akin to that of writers as different as Richard Price, Richard Ford, and Richard Russo.”—Janet Maslin, New York Times The highly praised, “extraordinary” (New York Times Book Review) novel about the disparate lives that intersect at a women’s clinic in Boston, by New York Times bestselling author Jennifer Haigh For almost a decade, Claudia has counseled patients at Mercy Street, a clinic in the heart of the city. The work is consuming, the unending dramas of women in crisis. For its patients, Mercy Street offers more than health care; for many, it is a second chance. But outside the clinic, the reality is different. Anonymous threats are frequent. A small, determined group of anti-abortion demonstrators appears each morning at its door. As the protests intensify, fear creeps into Claudia’s days, a humming anxiety she manages with frequent visits to Timmy, an affable pot dealer in the midst of his own existential crisis. At Timmy’s, she encounters a random assortment of customers, including Anthony, a lost soul who spends most of his life online, chatting with the mysterious Excelsior11—the screenname of Victor Prine, an anti-abortion crusader who has set his sights on Mercy Street and is ready to risk it all for his beliefs. Mercy Street is a novel for right now, a story of the polarized American present. Jennifer Haigh, “an expert natural storyteller with a keen sense of her characters’ humanity” (New York Times), has written a groundbreaking novel, a fearless examination of one of the most divisive issues of our time.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=E-49EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Mustique Island" class="book-image">
+            <div class="book-title">Mustique Island <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Sarah McCoy</div>
+            <div class="book-details">
+                <div>Pages: 332</div>
+                <div>Size: 3.28 MB</div>
+                <div>Published: 2022-05-10</div>
+                <div>Publisher: HarperCollins</div>
+                <div>ISBN: 9780062984401</div>
+                <div>Filename: 9780062984371.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">From bestselling author Sarah McCoy, a sun-splashed romp with a rich divorcée and her two wayward daughters in 1970s Mustique, the world’s most exclusive private island, where Princess Margaret and Mick Jagger were regulars and scandals stayed hidden from the press. It’s January 1972 but the sun is white hot when Willy May Michael’s boat first kisses the dock of Mustique Isle. Tucked into the southernmost curve of the Caribbean, Mustique is a private island that has become a haven for the wealthy and privileged. Its owner is the eccentric British playboy Colin Tennant, who is determined to turn this speck of white sand into a luxurious neo-colonial retreat for his rich friends and into a royal court in exile for the Queen’s rebellious sister, Princess Margaret—one where Her Royal Highness can skinny dip, party, and entertain lovers away from the public eye. Willy May, a former beauty queen from Texas—who is also no stranger to marital scandals—seeks out Mustique for its peaceful isolation. Determined to rebuild her life and her relationships with her two daughters, Hilly, a model, and Joanne, a musician, she constructs a fanciful white beach house across the island from Princess Margaret—and finds herself pulled into the island’s inner circle of aristocrats, rock stars, and hangers-on. When Willy May’s daughters arrive, they discover that beneath its veneer of decadence, Mustique has a dark side, and like sand caught in the undertow, their mother-daughter story will shift and resettle in ways they never could have imagined.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=Re2-DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of A thousand splendid suns" class="book-image">
+            <div class="book-title">A thousand splendid suns <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Khaled Hosseini</div>
+            <div class="book-details">
+                <div>Pages: 271</div>
+                <div>Size: 1.01 MB</div>
+                
+                
+                <div>ISBN: 9788415630258</div>
+                <div>Filename: thousand splendid suns, A - Khaled Hosseini.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Una conmovedora historia de amistad y supervivencia entre dos mujeres afganas de orígenes muy dispares. Superando con creces el rotundo éxito de Cometas en el cielo, la segunda novela de Khaled Hosseini saltó de inmediato al primer puesto en todos los países donde se ha publicado. Nueva demostración del asombroso instinto narrativo del autor, el libro cuenta la historia de amistad entre dos mujeres cuyos destinos se entrelazan por obra del azar y de las convulsiones que ha sufrido Afganistán en los últimos treinta años. Hija ilegítima de un rico hombre de negocios, Mariam se cría con su madre en una modesta vivienda a las afueras de Herat. A los quince años, su vida cambia drásticamente cuando su padre la envía a Kabul a casarse con Rashid, un hosco zapatero treinta años mayor que ella. Casi dos décadas más tarde, Rashid encuentra en las calles de Kabul a Laila, una joven de quince años sin hogar. Cuando el zapatero le ofrece cobijo en su casa, que deberá compartir con Mariam, entre las dos mujeres se inicia una relación que acabará siendo tan profunda como la de dos hermanas, tan fuerte como la de madre e hija. Pese a la diferencia de edad y las distintas experiencias que la vida les ha deparado, la necesidad de afrontar las terribles circunstancias que las rodean, hará que Mariam y Laila vayan forjando un vínculo indestructible que les otorgará la fuerza necesaria para superar el miedo y dar cabida a la esperanza.</div>
+            <div class="book-tags">
+                <span class="tag">thousand</span><span class="tag">Hosseini</span><span class="tag">Khaled</span><span class="tag">splendid</span><span class="tag">suns</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Their Eyes Were Watching God <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Zora Neale Hurston</div>
+            <div class="book-details">
+                <div>Pages: 207</div>
+                <div>Size: 2.09 MB</div>
+                <div>Published: 1937</div>
+                
+                <div>ISBN: 9780252017780</div>
+                <div>Filename: Their Eyes Were Watching God - Zora Neale Hurston.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">No description available</div>
+            <div class="book-tags">
+                <span class="tag">Hurston</span><span class="tag">Were</span><span class="tag">Watching</span><span class="tag">Neale</span><span class="tag">Zora</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">African American women</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=5DNF7gngKT0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Lost Continent" class="book-image">
+            <div class="book-title">The Lost Continent <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Bill Bryson</div>
+            <div class="book-details">
+                <div>Pages: 388</div>
+                <div>Size: 0.88 MB</div>
+                <div>Published: 2010-03-02</div>
+                <div>Publisher: Random House</div>
+                <div>ISBN: 9781409095811</div>
+                <div>Filename: 9780060920081.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">‘I come from Des Moines. Somebody had to’ And, as soon as Bill Bryson was old enough, he left. Des Moines couldn’t hold him, but it did lure him back. After ten years in England, he returned to the land of his youth, and drove almost 14,000 miles in search of a mythical small town called Amalgam, the kind of trim and sunny place where the films of his youth were set. Instead, his search led him to Anywhere, USA; a lookalike strip of gas stations, motels and hamburger outlets populated by lookalike people with a penchant for synthetic fibres. He discovered a continent that was doubly lost; lost to itself because blighted by greed, pollution, mobile homes and television; lost to him because he had become a stranger in his own land. Bryson’s acclaimed first success, The Lost Continent is a classic of travel literature – hilariously, stomach-achingly, funny, yet tinged with heartache – and the book that first staked Bill Bryson’s claim as the most beloved writer of his generation.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Travel</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=g422yyua-P8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Paradox of Choice" class="book-image">
+            <div class="book-title">The Paradox of Choice <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Barry Schwartz</div>
+            <div class="book-details">
+                <div>Pages: 308</div>
+                <div>Size: 1.69 MB</div>
+                <div>Published: 2009-10-13</div>
+                <div>Publisher: Harper Collins</div>
+                <div>ISBN: 9780061748998</div>
+                <div>Filename: 9780060005696.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Whether we're buying a pair of jeans, ordering a cup of coffee, selecting a long-distance carrier, applying to college, choosing a doctor, or setting up a 401(k), everyday decisions—both big and small—have become increasingly complex due to the overwhelming abundance of choice with which we are presented. As Americans, we assume that more choice means better options and greater satisfaction. But beware of excessive choice: choice overload can make you question the decisions you make before you even make them, it can set you up for unrealistically high expectations, and it can make you blame yourself for any and all failures. In the long run, this can lead to decision-making paralysis, anxiety, and perpetual stress. And, in a culture that tells us that there is no excuse for falling short of perfection when your options are limitless, too much choice can lead to clinical depression. In The Paradox of Choice, Barry Schwartz explains at what point choice—the hallmark of individual freedom and self-determination that we so cherish—becomes detrimental to our psychological and emotional well-being. In accessible, engaging, and anecdotal prose, Schwartz shows how the dramatic explosion in choice—from the mundane to the profound challenges of balancing career, family, and individual needs—has paradoxically become a problem instead of a solution. Schwartz also shows how our obsession with choice encourages us to seek that which makes us feel worse. By synthesizing current research in the social sciences, Schwartz makes the counter intuitive case that eliminating choices can greatly reduce the stress, anxiety, and busyness of our lives. He offers eleven practical steps on how to limit choices to a manageable number, have the discipline to focus on those that are important and ignore the rest, and ultimately derive greater satisfaction from the choices you have to make.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Psychology</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=dVDVAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Not That Kind of Girl" class="book-image">
+            <div class="book-title">Not That Kind of Girl <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Lena Dunham</div>
+            <div class="book-details">
+                <div>Pages: 290</div>
+                <div>Size: 6.04 MB</div>
+                <div>Published: 2014-09-30</div>
+                <div>Publisher: Random House</div>
+                <div>ISBN: 9780812995008</div>
+                <div>Filename: 9780007515547.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">#1 NEW YORK TIMES BESTSELLER • Includes two new essays! NAMED ONE OF THE TEN BEST BOOKS OF THE YEAR BY MICHIKO KAKUTANI, THE NEW YORK TIMES • NAMED ONE OF THE BEST BOOKS OF THE YEAR BY BUZZFEED, THE GLOBE AND MAIL, AND LIBRARY JOURNAL For readers of Nora Ephron, Tina Fey, and David Sedaris, this hilarious, wise, and fiercely candid collection of personal essays establishes Lena Dunham—the acclaimed creator, producer, and star of HBO’s Girls—as one of the most original young talents writing today. In Not That Kind of Girl, Dunham illuminates the experiences that are part of making one’s way in the world: falling in love, feeling alone, being ten pounds overweight despite eating only health food, having to prove yourself in a room full of men twice your age, finding true love, and most of all, having the guts to believe that your story is one that deserves to be told. “Take My Virginity (No Really, Take It)” is the account of Dunham’s first time, and how her expectations of sex didn’t quite live up to the actual event (“No floodgate had been opened, no vault of true womanhood unlocked”); “Girls & Jerks” explores her former attraction to less-than-nice guys—guys who had perfected the “dynamic of disrespect” she found so intriguing; “Is This Even Real?” is a meditation on her lifelong obsession with death and dying—what she calls her “genetically predestined morbidity.” And in “I Didn’t F*** Them, but They Yelled at Me,” she imagines the tell-all she will write when she is eighty and past caring, able to reflect honestly on the sexism and condescension she has encountered in Hollywood, where women are “treated like the paper thingies that protect glasses in hotel bathrooms—necessary but infinitely disposable.” Exuberant, moving, and keenly observed, Not That Kind of Girl is a series of dispatches from the frontlines of the struggle that is growing up. “I’m already predicting my future shame at thinking I had anything to offer you,” Dunham writes. “But if I can take what I’ve learned and make one menial job easier for you, or prevent you from having the kind of sex where you feel you must keep your sneakers on in case you want to run away during the act, then every misstep of mine will have been worthwhile.” Praise for Not That Kind of Girl “The gifted Ms. Dunham not only writes with observant precision, but also brings a measure of perspective, nostalgia and an older person’s sort of wisdom to her portrait of her (not all that much) younger self and her world. . . . As acute and heartfelt as it is funny.”—Michiko Kakutani, The New York Times “It’s not Lena Dunham’s candor that makes me gasp. Rather, it’s her writing—which is full of surprises where you least expect them. A fine, subversive book.”—David Sedaris “This book should be required reading for anyone who thinks they understand the experience of being a young woman in our culture. I thought I knew the author rather well, and I found many (not altogether welcome) surprises.”—Carroll Dunham “Witty, illuminating, maddening, bracingly bleak . . . [Dunham] is a genuine artist, and a disturber of the order.”—The Atlantic</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Biography & Autobiography</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">The Day the World Came to Town: 9/11 in Gander, Newfoundland </div>
+            <div class="book-author">by Defede, Jim</div>
+            <div class="book-details">
+                <div>Pages: 221</div>
+                <div>Size: 1.68 MB</div>
+                
+                
+                <div>ISBN: 9780060513603</div>
+                <div>Filename: 9780060513603.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">No description available</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=wXgigaQGZ-8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of A Summer to Remember" class="book-image">
+            <div class="book-title">A Summer to Remember <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Mary Balogh</div>
+            <div class="book-details">
+                <div>Pages: 386</div>
+                <div>Size: 1.25 MB</div>
+                <div>Published: 2003-03-04</div>
+                <div>Publisher: Dell</div>
+                <div>ISBN: 9780440334095</div>
+                <div>Filename: Summer to Remember, A - Mary Balogh.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">BONUS: This edition contains an excerpt from Mary Balogh's The Secret Mistress. “Matchless storyteller”(Romantic Times) Mary Balogh weaves a tantalizing web of wit and seduction in her new novel—an irresistible tale of two unlikely lovers and one unforgettable summer. Kit Butler is cool, dangerous, one of London’s mostinfamous bachelors—marriage is the last thing on his mind. But Kit’s family has other plans. Desperate to thwart his father’s matchmaking, Kit needs a bride...fast. Enter Miss Lauren Edgeworth. A year after being abandoned at the altar, Lauren has determined that marriage is not for her. When these two fiercely independent souls meet, sparks fly—and a deal is hatched. Lauren will masquerade as Kit’s intended if he agrees to provide a passionate, adventurous, unforgettable summer. When summer ends, she will break off the engagement, rendering herself unmarriageable and leaving them both free. Everything is going perfectly—until Kit does the unthinkable: He begins to fall in love. A summer to remember is not enough for him. But how can he convince Lauren to be his...for better, for worse, for the rest of their lives?</div>
+            <div class="book-tags">
+                <span class="tag">Balogh</span><span class="tag">Mary</span><span class="tag">Summer</span><span class="tag">Remember</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=CpjZDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Berlin Girl" class="book-image">
+            <div class="book-title">The Berlin Girl <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Mandy Robotham</div>
+            <div class="book-details">
+                <div>Pages: 404</div>
+                <div>Size: 1.33 MB</div>
+                <div>Published: 2020-10-29</div>
+                <div>Publisher: HarperCollins UK</div>
+                <div>ISBN: 9780008364502</div>
+                <div>Filename: 9780008418632.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">***A USA Today Bestseller.*** The heart-wrenching and unforgettable tale of a world on the brink of war from the internationally bestselling author of The German Midwife.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=A_9ZEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Party Guest" class="book-image">
+            <div class="book-title">The Party Guest <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Amanda Robson</div>
+            <div class="book-details">
+                <div>Pages: 385</div>
+                <div>Size: 2.68 MB</div>
+                <div>Published: 2022-06-16</div>
+                <div>Publisher: HarperCollins UK</div>
+                <div>ISBN: 9780008430634</div>
+                <div>Filename: 9780008430627.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">‘At the end of chapters, I was either “Wow” or “Oh my God!”’ Reader Review ⭐⭐⭐⭐⭐ ‘Robson does it again. The end will leave you flabbergasted!’ Reader Review ⭐⭐⭐⭐⭐ ‘The intense suspense had me finishing this novel in a day!’ Reader Review ⭐⭐⭐⭐⭐ A birthday to remember. But would they rather forget...?</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+    </div>
+    
+    <div class="footer">
+        <p>Created with Digital Book Library Generator</p>
+    </div>
+    
+    <script>
+        // Simple search functionality
+        document.getElementById('search-button').addEventListener('click', performSearch);
+        document.getElementById('search-input').addEventListener('keyup', function(event) {
+            if (event.key === "Enter") {
+                performSearch();
+            }
+        });
+        
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const books = document.querySelectorAll('.book-card');
+            
+            books.forEach(book => {
+                const content = book.textContent.toLowerCase();
+                if (content.includes(searchTerm)) {
+                    book.style.display = 'block';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

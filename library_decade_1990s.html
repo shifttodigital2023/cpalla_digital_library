@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1990s - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>1990s</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 15 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="CHRISTMAS MIRACLES brings together three previously published and long out-of-print novellas, each of which demonstrates how the wonder of the season can bring together two would-be lovers or two estranged lovers and create a bond between them that will last a lifetime and beyond. In &quot;The Wassail Bowl&quot; an aristocrat has summoned his young son to a family house party but is disconcerted when his estranged wife and her illegitimate daughter arrive with him. When he expresses his displeasure, she picks up a large bowl of wassail from the hall table and dumps its sticky contents over his head. The only way for the story to proceed after that is up! In &quot;The Bond Street Carolers&quot; a gentleman who hates Christmas is appalled when his ears are assailed on fashionable Bond Street by a group of inferior carolers--until, that is, he is rooted to the spot by the pure soprano voice of a young boy soloist. As a connoisseur of music and the arts, he must have the boy to sing at one of his concerts--but the child&#39;s widowed mother will have nothing to do with what she sees as exploitation. In &quot;Guarded by Angels&quot; an estranged couple are separately marooned at the same cottage by a snow storm and must spend Christmas together without coming to blows. But they have a great deal of assistance from their very different guardian angels.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/292264-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">A Regency Christmas Carol</div>
+                        <div class="book-author">by Mary Balogh & Anne Barbour & Elisabeth Fairchild & Carla Kelly & Edith Layton</div>
+                        <div class="book-meta">📅 1997 • 🏢 Signet </div>
+                    </div>
+                </div>
+                <div class="book-description">CHRISTMAS MIRACLES brings together three previously published and long out-of-print novellas, each of which demonstrates how the wonder of the season can bring together two would-be lovers or two estranged lovers and create a bond between them that will last a lifetime and beyond. In "The Wassail Bo...</div>
+                <div class="book-categories"><span class="category-tag">Fiction, Romance, Historical, Regency</span><span class="category-tag">Christmas, fiction</span><span class="category-tag">American Christmas stories</span><span class="category-tag">Anthology</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="BONUS: This edition contains an excerpt from Mary Balogh&#39;s The Secret Mistress. New York Times bestselling author Mary Balogh returns to the seductive world she knows so well–Regency England–in a new novel filled with her trademark wit, sensuality, and breathtaking storytelling. With this, the first in a dazzling new quartet of novels, Balogh invites us into a special world–a select academy for young ladies– a world of innocence and temptation. Drawing us into the lives of four women, teachers at Miss Martin’s School for Girls, Balogh introduces this novel’s marvelous heroine: music teacher Frances Allard–and the man who seduces her with a passion no woman could possibly forget.… They meet in a ferocious snowstorm. She is a young teacher with a secret past. He is the cool, black-caped stranger who unexpectedly comes to her rescue. Between these two unlikely strangers, desire is instantaneous…and utterly impossible to resist. Stranded together in a rustic country inn, Lucius Marshall, who is the Viscount Sinclair, and Frances Allard share a night of glorious, unforgettable passion. But Frances knows her place–and it is far from the privileged world of the sensual aristocrat. Due to begin her teaching position at Miss Martin’s School in Bath, Frances must try to forget that one extraordinary night–and the man who touched her with such exquisite tenderness and abandon. But Frances cannot hide forever. And when fate once again throws them together, Lucius refuses to take no for an answer. If Frances will not be his wife, he will make her his mistress. So begins an odyssey fraught with intrigue, one that defies propriety and shocks the straitlaced ton. For Lucius’s passionate, single-minded pursuit is about to force Frances to give up all her secrets–except one–to win the heart of the man she already loves. Once again this incomparable storyteller captures a time and a place like no other. And in Lucius and Frances, Mary Balogh gives us her most unlikely lovers yet–a nobleman in search of the perfect wife and an unconventional woman willing to risk everything for an unforgettable love.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/292136-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">A Regency Christmas Feast</div>
+                        <div class="book-author">by Mary Balogh & Sandra Heath & Edith Layton & Barbara Metzger & Patricia Rice & Edith Layton</div>
+                        <div class="book-meta">📅 1996 • 🏢 Signet Book </div>
+                    </div>
+                </div>
+                <div class="book-description">BONUS: This edition contains an excerpt from Mary Balogh's The Secret Mistress. New York Times bestselling author Mary Balogh returns to the seductive world she knows so well–Regency England–in a new novel filled with her trademark wit, sensuality, and breathtaking storytelling. With this, the first...</div>
+                <div class="book-categories"><span class="category-tag">Fiction, Romance, Historical, Regency</span><span class="category-tag">Anthology</span><span class="category-tag">Christmas stories</span><span class="category-tag">Short Stories</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="New 25th Anniversary Edition __________ &#39;I am still haunted by Mah&#39;s memoir . . . Riveting. A marvel of memory. Poignant proof of the human will to endure&#39; Amy Tan, bestselling author of The Joy Luck Club 1940s, Shanghai. As the civil war rages on and China falls under communist rule, young Adeline lives in constant fear. Not of the war, but of her family: blamed for the death of her mother, she is rejected by her father and abused by her cruel stepmother. With the help of her aunt, Adeline escapes to the United States where she finds love, happiness and success. But will that be enough to quell a lifelong yearning for acceptance, or will she return to the family that rejected her years ago Falling Leaves Return to their Roots is both the enthralling story of a Chinese family in a time of political upheaval, and a moving account of one girl&#39;s unrelenting will to survive. __________ &#39;Falling Leaves is a terrible and riveting family history . . . It is also a story about endurance and the cost it can exact. Gripping&#39; Daily Telegraph &#39;An illuminating account of the destructive nature of family relationships set against a backdrop of China in change&#39; Mail on Sunday &#39;An act, not of vengeance or bitterness, but of catharsis&#39; Sunday Telegraph">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=7HgpFaOcz2YC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Falling Leaves Return to Their Roots</div>
+                        <div class="book-author">by Adeline Yen Mah</div>
+                        <div class="book-meta">📅 1998 • 🏢 Penguin UK • 📄 293 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">New 25th Anniversary Edition __________ 'I am still haunted by Mah's memoir . . . Riveting. A marvel of memory. Poignant proof of the human will to endure' Amy Tan, bestselling author of The Joy Luck Club 1940s, Shanghai. As the civil war rages on and China falls under communist rule, young Adeline ...</div>
+                <div class="book-categories"><span class="category-tag">California</span><span class="category-tag">Biography</span><span class="category-tag">China</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A classic from the New York Times bestselling author of A Walk in the Woods and The Body. After living in Britain for two decades, Bill Bryson recently moved back to the United States with his English wife and four children (he had read somewhere that nearly 3 million Americans believed they had been abducted by aliens—as he later put it, &quot;it was clear my people needed me&quot;). They were greeted by a new and improved America that boasts microwave pancakes, twenty-four-hour dental-floss hotlines, and the staunch conviction that ice is not a luxury item. Delivering the brilliant comic musings that are a Bryson hallmark, I&#39;m a Stranger Here Myself recounts his sometimes disconcerting reunion with the land of his birth. The result is a book filled with hysterical scenes of one man&#39;s attempt to reacquaint himself with his own country, but it is also an extended if at times bemused love letter to the homeland he has returned to after twenty years away.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=xb4wSmJLnhAC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">I'm a Stranger Here Myself</div>
+                        <div class="book-author">by Bill Bryson</div>
+                        <div class="book-meta">📅 1999 • 🏢 Crown • 📄 308 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A classic from the New York Times bestselling author of A Walk in the Woods and The Body. After living in Britain for two decades, Bill Bryson recently moved back to the United States with his English wife and four children (he had read somewhere that nearly 3 million Americans believed they had bee...</div>
+                <div class="book-categories"><span class="category-tag">Large type books</span><span class="category-tag">Social life and customs</span><span class="category-tag">New York Times reviewed</span><span class="category-tag">Anecdotes</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NATIONAL BESTSELLER • The father of positive psychology draws on more than twenty years of clinical research to show you how to overcome depression, boost your immune system, and make yourself happier. &quot;Vaulted me out of my funk.... So, fellow moderate pessimists, go buy this book.&quot; —The New York Times Book Review Offering many simple techniques anyone can practice, Dr. Seligman explains how to break an “I–give–up” habit, develop a more constructive explanatory style for interpreting your behavior, and experience the benefits of a more positive interior dialogue. With generous additional advice on how to encourage optimistic behavior at school, at work and in children, Learned Optimism is both profound and practical—and valuable for every phase of life.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=bT9ecAYHKq0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Learned Optimism</div>
+                        <div class="book-author">by Martin E. P. Seligman</div>
+                        <div class="book-meta">📅 1991 • 🏢 Alfred A. Knopf </div>
+                    </div>
+                </div>
+                <div class="book-description">NATIONAL BESTSELLER • The father of positive psychology draws on more than twenty years of clinical research to show you how to overcome depression, boost your immune system, and make yourself happier. "Vaulted me out of my funk.... So, fellow moderate pessimists, go buy this book." —The New York Ti...</div>
+                <div class="book-categories"><span class="category-tag">Self Help</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Criticizes the way history is presented in current textbooks, and suggests a fresh and more accurate approach to teaching American history.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/804808-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Lies My Teacher Told Me</div>
+                        <div class="book-author">by James W. Loewen & Rebecca Stefoff</div>
+                        <div class="book-meta">📅 1994 • 🏢 New Press, The </div>
+                    </div>
+                </div>
+                <div class="book-description">Criticizes the way history is presented in current textbooks, and suggests a fresh and more accurate approach to teaching American history.</div>
+                <div class="book-categories"><span class="category-tag">Thanksgiving Day</span><span class="category-tag">Beeldvorming</span><span class="category-tag">Racism in textbooks</span><span class="category-tag">Education</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The romantic novel about a midwestern librarian named Letitia Thornquist and a seasoned CEO named Joel Blackstone.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=x7OZkzIOgYAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Perfect Partners</div>
+                        <div class="book-author">by Jayne Ann Krentz</div>
+                        <div class="book-meta">📅 1992 • 🏢 Simon and Schuster • 📄 372 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The romantic novel about a midwestern librarian named Letitia Thornquist and a seasoned CEO named Joel Blackstone.</div>
+                <div class="book-categories"><span class="category-tag">Large type books</span><span class="category-tag">Business enterprises</span><span class="category-tag">Fiction, romance, contemporary</span><span class="category-tag">Fiction, general</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A historical romance set in Victorian England, by the award-winning author of A Counterfeit Betrothal. Soon after Rebecca marries Julian, he is killed in the Crimea under mysterious circumstances. Forced to live on charity, Rebecca must marry a rake. Against all odds, she falls in love--right before Julian miraculously returns.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=wb12HgQkMuUC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Tangled</div>
+                        <div class="book-author">by Mary Balogh</div>
+                        <div class="book-meta">📅 1994 • 🏢 Topaz • 📄 390 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">A historical romance set in Victorian England, by the award-winning author of A Counterfeit Betrothal. Soon after Rebecca marries Julian, he is killed in the Crimea under mysterious circumstances. Forced to live on charity, Rebecca must marry a rake. Against all odds, she falls in love--right before...</div>
+                <div class="book-categories"><span class="category-tag">Fiction, Romance, Historical, Regency</span><span class="category-tag">Nobility,  fiction</span><span class="category-tag">Gentry, fiction</span><span class="category-tag">Soldiers, fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Ries and Trout share their rules for certain successes in the world of marketing. Combining a wide-ranging historical overview with a keen eye for the future, the authors bring to light 22 superlative tools and innovative techniques for the international marketplace.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=e8SgPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The 22 Immutable Laws of Marketing</div>
+                        <div class="book-author">by Al Ries & Jack Trout</div>
+                        <div class="book-meta">📅 1994 • 🏢 Profile Books(GB) • 📄 160 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Ries and Trout share their rules for certain successes in the world of marketing. Combining a wide-ranging historical overview with a keen eye for the future, the authors bring to light 22 superlative tools and innovative techniques for the international marketplace.</div>
+                <div class="book-categories"><span class="category-tag">Marketing</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="This groundbreaking book proposes that the rise of alphabetic literacy reconfigured the human brain and brought about profound changes in history, religion, and gender relations. Making remarkable connections across brain function, myth, and anthropology, Dr. Shlain shows why pre-literate cultures were principally informed by holistic, right-brain modes that venerated the Goddess, images, and feminine values. Writing drove cultures toward linear left-brain thinking and this shift upset the balance between men and women, initiating the decline of the feminine and ushering in patriarchal rule. Examining the cultures of the Israelites, Greeks, Christians, and Muslims, Shlain reinterprets ancient myths and parables in light of his theory. Provocative and inspiring, this book is a paradigm-shattering work that will transform your view of history and the mind.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=7Qsnr7cN5MsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Alphabet Versus the Goddess</div>
+                        <div class="book-author">by Leonard Shlain</div>
+                        <div class="book-meta">📅 1999 • 🏢 Penguin • 📄 496 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">This groundbreaking book proposes that the rise of alphabetic literacy reconfigured the human brain and brought about profound changes in history, religion, and gender relations. Making remarkable connections across brain function, myth, and anthropology, Dr. Shlain shows why pre-literate cultures w...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Misogyny</span><span class="category-tag">Alphabet</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Una novela preciosa, tremendamente humana y emocionante, que describe las peripecias de una niña alemana de nueve años desde que es dada en adopción por su madre hasta el final de la II Guerra Mundial. UNO DE LOS 30 MEJORES NOVELAS HISTÓRICAS DE TODOS LOS TIEMPOS SEGÚN ELLE Érase una vez un pueblo donde las noches eran largas y la muerte contaba su propia historia. En el pueblo vivía una niña que quería leer, un hombre que tocaba el acordeón y un joven judío que escribía bellos cuentos para escapar del horror de la guerra. Al cabo de un tiempo, la niña se convirtió en una ladrona que robaba libros y regalaba palabras. Con estas palabras se escribió una historia hermosa y cruel que ahora ya es una novela inolvidable. La crítica ha dicho... «Un libro imprescindible y, desde luego, una de las novelas históricas más recomendadas si te gusta la buena literatura». Begoña Alonso, Elle « La ladrona de libros deslumbra por sus extraordinarios personajes, su capacidad de emocionar sin clichés y, ante todo, por su omnipresente reflexión sobre el valor de las palabras.» Ricard Ruiz Garzón, El Periódico de Catalunya «La esperanza de Liesel es inexpugnable... Los lectores jóvenes necesitan este tipo de alternativas a la rigidez ideológica, así como exploraciones sobre la importancia de las historias. Y, pensándolo bien, también los adultos.» The New York Times «Elegante, filosófica, conmovedora, bella e importante.» Kirkus Reviews «Merece estar junto al Diario de Ana Frank en nuestra biblioteca.» USA Today «Una narrativa extraordinaria.» SLJ «Zusak no endulza nada, pero logra que un tema aparentemente triste resulte tolerable tal como lo hizo Kurt Vonnegut en Matadero cinco: con un humor sombrío, reconfortante.» Time Magazine «Un gran logro. [...] Un libro desafiante en extensión y tema.» Publishers Weekly «Uno de los libros más esperados en años.» The Wall Street Journal">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8153054-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Book Thief</div>
+                        <div class="book-author">by Markus Zusak</div>
+                        <div class="book-meta">📅 1998 • 🏢 POCKET </div>
+                    </div>
+                </div>
+                <div class="book-description">Una novela preciosa, tremendamente humana y emocionante, que describe las peripecias de una niña alemana de nueve años desde que es dada en adopción por su madre hasta el final de la II Guerra Mundial. UNO DE LOS 30 MEJORES NOVELAS HISTÓRICAS DE TODOS LOS TIEMPOS SEGÚN ELLE Érase una vez un pueblo d...</div>
+                <div class="book-categories"><span class="category-tag">Books and reading</span><span class="category-tag">New York Times reviewed</span><span class="category-tag">nyt:young-adult-paperback-monthly=2022-09-04</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="El autor, Nicholas Evans ha llegado al corazón de millones de lectores con su inolvidable novela de amor, fortaleza y redención. Ahora, Robert Redford ha creado una gran obra cinematográfica basada en El hombre que susurraba al oído de los caballos, protagonizada por Redford, Kristin Scott Thomas, Scarlett Johansson and Sam Neill. No se pierda el estreno de la película en Mayo, la cual irá acompañada de nuevos aficionados al libro.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/14621022-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Horse Whisperer</div>
+                        <div class="book-author">by Nicholas Evans</div>
+                        <div class="book-meta">📅 1995 • 🏢 Goldmann </div>
+                    </div>
+                </div>
+                <div class="book-description">El autor, Nicholas Evans ha llegado al corazón de millones de lectores con su inolvidable novela de amor, fortaleza y redención. Ahora, Robert Redford ha creado una gran obra cinematográfica basada en El hombre que susurraba al oído de los caballos, protagonizada por Redford, Kristin Scott Thomas, S...</div>
+                <div class="book-categories"><span class="category-tag">Caballos</span><span class="category-tag">Curadores</span><span class="category-tag">Domestic fiction</span><span class="category-tag">Healers</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The international bestseller—don&#39;t compete without it! A major bestseller in Japan, Financial Times Top Ten book of the year, Book-of-the-Month Club bestseller, and required reading at the best business schools, Thinking Strategically is a crash course in outmaneuvering any rival. This entertaining guide builds on scores of case studies taken from business, sports, the movies, politics, and gambling. It outlines the basics of good strategy making and then shows how you can apply them in any area of your life.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/6617108-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Thinking Strategically</div>
+                        <div class="book-author">by Avinash K. Dixit & Barry J. Nalebuff</div>
+                        <div class="book-meta">📅 1991 • 🏢 Yediʻot aḥaronot </div>
+                    </div>
+                </div>
+                <div class="book-description">The international bestseller—don't compete without it! A major bestseller in Japan, Financial Times Top Ten book of the year, Book-of-the-Month Club bestseller, and required reading at the best business schools, Thinking Strategically is a crash course in outmaneuvering any rival. This entertaining ...</div>
+                <div class="book-categories"><span class="category-tag">Game theory</span><span class="category-tag">Concurrentie</span><span class="category-tag">Strategic planning</span><span class="category-tag">Business and Economics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Essays provide a view of British life during the nineteenth century.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=HKj8jUM630EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">What Jane Austen Ate and Charles Dickens Knew</div>
+                        <div class="book-author">by Daniel Pool</div>
+                        <div class="book-meta">📅 1994 • 🏢 Simon and Schuster • 📄 420 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Essays provide a view of British life during the nineteenth century.</div>
+                <div class="book-categories"><span class="category-tag">Manners and customs in literature</span><span class="category-tag">Social life and customs</span><span class="category-tag">Knowledge</span><span class="category-tag">England</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In one complete volume, here are the five classic novels from Douglas Adams’s beloved Hitchhiker series. Now celebrating the pivotal 42nd anniversary of The Hitchhiker’s Guide to the Galaxy, soon to be a Hulu original series! The Hitchhiker’s Guide to the Galaxy (Nominated as one of America’s best-loved novels by PBS’s The Great American Read) Seconds before the Earth is demolished for a galactic freeway, Arthur Dent is saved by Ford Prefect, a researcher for the revised Guide. Together they stick out their thumbs to the stars and begin a wild journey through time and space. The Restaurant at the End of the Universe The moment before annihilation at the hands of warmongers is a curious time to crave tea. It could only happen to the cosmically displaced Arthur Dent and his comrades as they hurtle across the galaxy in a desperate search for a place to eat. Life, the Universe and Everything The unhappy inhabitants of planet Krikkit are sick of looking at the night sky– so they plan to destroy it. The universe, that is. Now only five individuals can avert Armageddon: mild-mannered Arthur Dent and his stalwart crew. So Long, and Thanks for All the Fish Back on Earth, Arthur Dent is ready to believe that the past eight years were all just a figment of his stressed-out imagination. But a gift-wrapped fishbowl with a cryptic inscription thrusts him back to reality. So to speak. Mostly Harmless Just when Arthur Dent makes the terrible mistake of starting to enjoy life, all hell breaks loose. Can he save the Earth from total obliteration? Can he save the Guide from a hostile alien takeover? Can he save his daughter from herself? Includes the bonus story “Young Zaphod Plays It Safe” “With droll wit, a keen eye for detail and heavy doses of insight . . . Adams makes us laugh until we cry.”—San Diego Union-Tribune “Lively, sharply satirical, brilliantly written . . . ranks with the best set pieces in Mark Twain.”—The Atlantic">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/12065834-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Works (Hitch Hiker's Guide to the Galaxy / Restaurant at the End of the Universe / Life, the Universe and Everything / So Long, and Thanks for All the Fish / Mostly Harmless / Young Zaphod Plays it Safe)</div>
+                        <div class="book-author">by Douglas Adams</div>
+                        <div class="book-meta">📅 1996 • 🏢 Harmony </div>
+                    </div>
+                </div>
+                <div class="book-description">In one complete volume, here are the five classic novels from Douglas Adams’s beloved Hitchhiker series. Now celebrating the pivotal 42nd anniversary of The Hitchhiker’s Guide to the Galaxy, soon to be a Hulu original series! The Hitchhiker’s Guide to the Galaxy (Nominated as one of America’s best-l...</div>
+                <div class="book-categories"><span class="category-tag">wit and humour</span><span class="category-tag">Humorous fiction</span><span class="category-tag">Fiction</span><span class="category-tag">comic science fiction</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 15:58:02 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

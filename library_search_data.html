@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>data - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>data</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 14 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="A exploration of the latest trend in technology and the impact it will have on the economy, science, and society at large.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8467930-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Big Data: A Revolution That Will Transform How We Live, Work, and Think</div>
+                        <div class="book-author">by Viktor Mayer-Schönberger & Kenneth Cukier</div>
+                        <div class="book-meta">📅 2013 • 🏢 Eamon Dolan/Houghton Mifflin Harcourt </div>
+                    </div>
+                </div>
+                <div class="book-description">A exploration of the latest trend in technology and the impact it will have on the economy, science, and society at large.</div>
+                <div class="book-categories"><span class="category-tag">Technological innovations</span><span class="category-tag">Social change</span><span class="category-tag">Big data</span><span class="category-tag">Business and Economics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The bestselling introduction to bioinformatics and genomics – now in its third edition Widely received in its previous editions, Bioinformatics and Functional Genomics offers the most broad-based introduction to this explosive new discipline. Now in a thoroughly updated and expanded third edition, it continues to be the go-to source for students and professionals involved in biomedical research. This book provides up-to-the-minute coverage of the fields of bioinformatics and genomics. Features new to this edition include: Extensive revisions and a slight reorder of chapters for a more effective organization A brand new chapter on next-generation sequencing An expanded companion website, also updated as and when new information becomes available Greater emphasis on a computational approach, with clear guidance of how software tools work and introductions to the use of command-line tools such as software for next-generation sequence analysis, the R programming language, and NCBI search utilities The book is complemented by lavish illustrations and more than 500 figures and tables - many newly-created for the third edition to enhance clarity and understanding. Each chapter includes learning objectives, a problem set, pitfalls section, boxes explaining key techniques and mathematics/statistics principles, a summary, recommended reading, and a list of freely available software. Readers may visit a related Web page for supplemental information such as PowerPoints and audiovisual files of lectures, and videocasts of how to perform many basic operations: www.wiley.com/go/pevsnerbioinformatics. Bioinformatics and Functional Genomics, Third Edition serves as an excellent single-source textbook for advanced undergraduate and beginning graduate-level courses in the biological sciences and computer sciences. It is also an indispensable resource for biologists in a broad variety of disciplines who use the tools of bioinformatics and genomics to study particular research problems; bioinformaticists and computer scientists who develop computer algorithms and databases; and medical researchers and clinicians who want to understand the genomic basis of viral, bacterial, parasitic, or other diseases.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=dgmeCAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Bioinformatics and Functional Genomics</div>
+                        <div class="book-author">by Jonathan Pevsner</div>
+                        <div class="book-meta">📅 2015 • 🏢 John Wiley & Sons • 📄 1168 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The bestselling introduction to bioinformatics and genomics – now in its third edition Widely received in its previous editions, Bioinformatics and Functional Genomics offers the most broad-based introduction to this explosive new discipline. Now in a thoroughly updated and expanded third edition, i...</div>
+                <div class="book-categories"><span class="category-tag">Bioinformatics</span><span class="category-tag">Nonfiction</span><span class="category-tag">Proteomics</span><span class="category-tag">Genetics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER An adrenaline-fuelled exposé of life inside the tech bubble, Chaos Monkeys lays bare the secrets, power plays and lifestyle excesses of the visionaries, grunts, sociopaths, opportunists and money cowboys who are revolutionising our world. Written by startup CEO and industry provocateur Antonio García Martínez, this is Liar’s Poker meets The Social Network. Computer engineers use ‘chaos monkey’ software to wreak havoc and test system robustness. Similarly, tech entrepreneurs like Antonio García Martínez are society’s chaos monkeys – their innovations disrupt every aspect of our lives, from transportation (Uber) and holidays (Airbnb) to television (Netflix) and dating (Tinder) – all in search of the perfect business miracle. Describing himself as ‘high-strung, fast-talking, and wired on a combination of caffeine, fear, and greed at all times’, García Martínez left Wall Street to make his fortune in Silicon Valley, becoming CEO of his own startup, before bailing and being poached by Facebook’s nascent advertising team. Here he turned users’ data into profit for COO Sheryl Sandberg and chairman and CEO Mark ‘Zuck’ Zuckerberg. Forced out of Facebook in the wake of a bitter internal product war, García Martínez took his unique brand of entrepreneurial hyperactivity to rivals Twitter. Along the way, he got into a lot of trouble with a lot of people, brewed illegal beer on the Facebook campus (accidentally flooding Zuckerberg&#39;s desk), lived on a yacht, raced sport cars on the highway, and enthusiastically pursued the lifestyle of an overpaid Silicon Valley mercenary. In Chaos Monkeys he tells you HOW – and HOW NOT – to make a fortune through startups and digital marketing. Highly entertaining and always offering genuine insight, García Martínez unravels the chaotic evolution of social media and online marketing. From startups and credit derivatives to Big Brother and data tracking, social media monetisation and digital ‘privacy’, he shares both his scathing observations and outrageous antics, taking us on a subversive and very funny tour of the fascinatingly insular and unbelievably wealthy tech industry.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Xe7RCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Chaos Monkeys</div>
+                        <div class="book-author">by Antonio Garcia Martinez</div>
+                        <div class="book-meta">📅 2016 • 🏢 Random House • 📄 574 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER An adrenaline-fuelled exposé of life inside the tech bubble, Chaos Monkeys lays bare the secrets, power plays and lifestyle excesses of the visionaries, grunts, sociopaths, opportunists and money cowboys who are revolutionising our world. Written by startup CEO and industry...</div>
+                <div class="book-categories"><span class="category-tag">Internet marketing</span><span class="category-tag">Management</span><span class="category-tag">Social media</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="INSTANT NEW YORK TIMES BESTSELLER “A new masterpiece from one of my favorite authors… [How The World Really Works] is a compelling and highly readable book that leaves readers with the fundamental grounding needed to help solve the world’s toughest challenges.”—Bill Gates “Provocative but perceptive . . . You can agree or disagree with Smil—accept or doubt his ‘just the facts’ posture—but you probably shouldn’t ignore him.”—The Washington Post An essential analysis of the modern science and technology that makes our twenty-first century lives possible—a scientist&#39;s investigation into what science really does, and does not, accomplish. We have never had so much information at our fingertips and yet most of us don’t know how the world really works. This book explains seven of the most fundamental realities governing our survival and prosperity. From energy and food production, through our material world and its globalization, to risks, our environment and its future, How the World Really Works offers a much-needed reality check—because before we can tackle problems effectively, we must understand the facts. In this ambitious and thought-provoking book we see, for example, that globalization isn’t inevitable—the foolishness of allowing 70 per cent of the world’s rubber gloves to be made in just one factory became glaringly obvious in 2020—and that our societies have been steadily increasing their dependence on fossil fuels, such that any promises of decarbonization by 2050 are a fairy tale. For example, each greenhouse-grown supermarket-bought tomato has the equivalent of five tablespoons of diesel embedded in its production, and we have no way of producing steel, cement or plastics at required scales without huge carbon emissions. Ultimately, Smil answers the most profound question of our age: are we irrevocably doomed or is a brighter utopia ahead? Compelling, data-rich and revisionist, this wonderfully broad, interdisciplinary guide finds faults with both extremes. Looking at the world through this quantitative lens reveals hidden truths that change the way we see our past, present and uncertain future.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=eTotEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">How the World Really Works</div>
+                        <div class="book-author">by Vaclav Smil</div>
+                        <div class="book-meta">📅 2025 • 🏢 Penguin Group • 📄 337 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">INSTANT NEW YORK TIMES BESTSELLER “A new masterpiece from one of my favorite authors… [How The World Really Works] is a compelling and highly readable book that leaves readers with the fundamental grounding needed to help solve the world’s toughest challenges.”—Bill Gates “Provocative but perceptive...</div>
+                <div class="book-categories"><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2022-05-29</span><span class="category-tag">Science</span><span class="category-tag">Science and civilization</span><span class="category-tag">Social aspects</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="** A New York Times Bestseller ** NAMED ONE OF THE BEST BOOKS OF THE YEAR BY: Time • The New Yorker • NPR • GQ • Elle • Vulture • Fortune • Boing Boing • The Irish Times • The New York Public Library • The Brooklyn Public Library &quot;A complex, smart and ambitious book that at first reads like a self-help manual, then blossoms into a wide-ranging political manifesto.&quot;—Jonah Engel Bromwich, The New York Times Book Review One of President Barack Obama&#39;s &quot;Favorite Books of 2019&quot; Porchlight&#39;s Personal Development & Human Behavior Book of the Year In a world where addictive technology is designed to buy and sell our attention, and our value is determined by our 24/7 data productivity, it can seem impossible to escape. But in this inspiring field guide to dropping out of the attention economy, artist and critic Jenny Odell shows us how we can still win back our lives. Odell sees our attention as the most precious—and overdrawn—resource we have. And we must actively and continuously choose how we use it. We might not spend it on things that capitalism has deemed important … but once we can start paying a new kind of attention, she writes, we can undertake bolder forms of political action, reimagine humankind’s role in the environment, and arrive at more meaningful understandings of happiness and progress. Far from the simple anti-technology screed, or the back-to-nature meditation we read so often, How to do Nothing is an action plan for thinking outside of capitalist narratives of efficiency and techno-determinism. Provocative, timely, and utterly persuasive, this book will change how you see your place in our world.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=OMBkDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">How to Do Nothing</div>
+                        <div class="book-author">by Jenny Odell</div>
+                        <div class="book-meta">📅 2019 • 🏢 Melville House • 📄 257 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">** A New York Times Bestseller ** NAMED ONE OF THE BEST BOOKS OF THE YEAR BY: Time • The New Yorker • NPR • GQ • Elle • Vulture • Fortune • Boing Boing • The Irish Times • The New York Public Library • The Brooklyn Public Library "A complex, smart and ambitious book that at first reads like a self-h...</div>
+                <div class="book-categories"><span class="category-tag">Reflection (Philosophy)</span><span class="category-tag">Technology and Engineering</span><span class="category-tag">Information technology</span><span class="category-tag">Attention</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Problem Solving through Programming in C, is a comprehensive eBook that covers the full spectrum of C programming, from basic syntax to advanced problem-solving techniques. The eBook begins with an introduction to C and its fundamentals, including data types, control structures, functions, arrays, and pointers. It then progresses to more complex topics such as structures, file handling, and memory management, providing students with a solid foundation in C programming concepts. The latter part of the eBook focuses on algorithmic thinking, problem-solving strategies, and real-world applications. It introduces students to algorithm design principles, common algorithms, and the use of flowcharts, sequence diagrams for visualizing program logic. The eBook emphasizes practical skills through numerous examples, exercises helping readers develop the ability to break down complex problems and implement efficient solutions in C. Advanced topics and best practices in C programming are also covered, making this eBook suitable for both beginners and more experienced programmers looking to deepen their understanding of C.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=o4wrEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">I Am With "C": Problem Solving through Programming in C</div>
+                        <div class="book-author">by Akula Mallaiah</div>
+                        <div class="book-meta">📅 2024 • 🏢 Astitva Prakashan • 📄 404 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Problem Solving through Programming in C, is a comprehensive eBook that covers the full spectrum of C programming, from basic syntax to advanced problem-solving techniques. The eBook begins with an introduction to C and its fundamentals, including data types, control structures, functions, arrays, a...</div>
+                <div class="book-categories"><span class="category-tag">Education</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Whether you&#39;re a startup founder trying to disrupt an industry or an entrepreneur trying to provoke change from within, your biggest challenge is creating a product people actually want. Lean Analytics steers you in the right direction. This book shows you how to validate your initial idea, find the right customers, decide what to build, how to monetize your business, and how to spread the word. Packed with more than thirty case studies and insights from over a hundred business experts, Lean Analytics provides you with hard-won, real-world information no entrepreneur can afford to go without. Understand Lean Startup, analytics fundamentals, and the data-driven mindset Look at six sample business models and how they map to new ventures of all sizes Find the One Metric That Matters to you Learn how to draw a line in the sand, so you&#39;ll know it&#39;s time to move forward Apply Lean Analytics principles to large enterprises and established products">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=5xT3EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Lean Analytics - Use Data to Build a Better Startup Faster</div>
+                        <div class="book-author">by Alistair Croll & Benjamin Yoskovitz</div>
+                        <div class="book-meta">📅 2024 • 🏢 O'Reilly Media, Incorporated </div>
+                    </div>
+                </div>
+                <div class="book-description">Whether you're a startup founder trying to disrupt an industry or an entrepreneur trying to provoke change from within, your biggest challenge is creating a product people actually want. Lean Analytics steers you in the right direction. This book shows you how to validate your initial idea, find the...</div>
+                <div class="book-categories"><span class="category-tag">Business and Economics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER • With new information on crunching your own numbers to get the edge the experts have An international sensation—and still the talk of the relevant blogosphere—this Wall Street Journal and New York Times business bestseller examines the “power” in numbers. Today more than ever, number crunching affects your life in ways you might not even imagine. Intuition and experience are no longer enough to make the grade. In order to succeed—even survive—in our data-based world, you need to become statistically literate. Cutting-edge organizations are already crunching increasingly larger databases to find the unseen connections among seemingly unconnected things to predict human behavior with staggeringly accurate results. From Internet sites like Google and Amazon that use filters to keep track of your tastes and your purchasing history, to insurance companies and government agencies that every day make decisions affecting your life, the brave new world of the super crunchers is happening right now. No one who wants to stay ahead of the curve should make another keystroke without reading Ian Ayres’s engrossing and enlightening book.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=dJXZ-EzX6gEC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Super Crunchers</div>
+                        <div class="book-author">by Ian Ayres</div>
+                        <div class="book-meta">📅 2007 • 🏢 Bantam • 📄 274 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER • With new information on crunching your own numbers to get the edge the experts have An international sensation—and still the talk of the relevant blogosphere—this Wall Street Journal and New York Times business bestseller examines the “power” in numbers. Today more than e...</div>
+                <div class="book-categories"><span class="category-tag">Mathematical models</span><span class="category-tag">Statistics</span><span class="category-tag">Business and Economics</span><span class="category-tag">Methodology</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="SOON TO BE A MAJOR TELEVISION EVENT FROM NBC, STARRING RUSSELL HORNSBY, ARIELLE KEBBEL, AND MICHAEL IMPERIOLI. Lincoln Rhyme faces “an Orwellian nightmare” (The New York Times) as a twisted techno-genius destroys lives with impunity by stealing personal information from behind the impenetrable walls of cyberspace. Rhyme’s cousin Arthur has been arrested on murder charges, and the evidence against the estranged relative Lincoln hasn’t seen in years is perfect—too perfect. Lincoln and his partner Amelia Sachs piece together a deadly pattern of similarly vicious frame-ups that leads them to the imposing Strategic Systems Datacorp—and a master of identity theft and manipulation known only as “522.” But cracking this ingenious killer’s realm places Rhyme and Sachs exactly where “522” wants them—in line to be the next victims.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/5158821-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Broken Window</div>
+                        <div class="book-author">by Jeffery Deaver</div>
+                        <div class="book-meta">📅 2008 • 🏢 Simon & Schuster </div>
+                    </div>
+                </div>
+                <div class="book-description">SOON TO BE A MAJOR TELEVISION EVENT FROM NBC, STARRING RUSSELL HORNSBY, ARIELLE KEBBEL, AND MICHAEL IMPERIOLI. Lincoln Rhyme faces “an Orwellian nightmare” (The New York Times) as a twisted techno-genius destroys lives with impunity by stealing personal information from behind the impenetrable walls...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">Serial murderers</span><span class="category-tag">Police</span><span class="category-tag">Lincoln Rhyme (Fictitious character)</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In his first book since the bestselling Fermat&#39;s Enigma, Simon Singh offers the first sweeping history of encryption, tracing its evolution and revealing the dramatic effects codes have had on wars, nations, and individual lives. From Mary, Queen of Scots, trapped by her own code, to the Navajo Code Talkers who helped the Allies win World War II, to the incredible (and incredibly simple) logisitical breakthrough that made Internet commerce secure, The Code Book tells the story of the most powerful intellectual weapon ever known: secrecy. Throughout the text are clear technical and mathematical explanations, and portraits of the remarkable personalities who wrote and broke the world&#39;s most difficult codes. Accessible, compelling, and remarkably far-reaching, this book will forever alter your view of history and what drives it. It will also make you wonder how private that e-mail you just sent really is.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=skt7TrLK5uYC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Code Book</div>
+                        <div class="book-author">by Simon Singh</div>
+                        <div class="book-meta">📅 2000 • 🏢 Vintage • 📄 436 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">In his first book since the bestselling Fermat's Enigma, Simon Singh offers the first sweeping history of encryption, tracing its evolution and revealing the dramatic effects codes have had on wars, nations, and individual lives. From Mary, Queen of Scots, trapped by her own code, to the Navajo Code...</div>
+                <div class="book-categories"><span class="category-tag">History</span><span class="category-tag">Confidential communications</span><span class="category-tag">Cryptography</span><span class="category-tag">Data encryption (Computer science)</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;We need this message more than ever&#39; – Malala Yousafzai The Sunday Times bestseller. Hard-hitting and uplifting true stories of the women around the world facing extreme gender inequality who, when the wider community supports them to challenge the status quo, improve life for the whole of society. The Moment of Lift is a timely and necessary call to action for women&#39;s empowerment. The right to: Spend your own money. Go to school. Earn an income. Access contraceptives. Work outside the home. Walk outside the home. Choose whom to marry. Get a loan. Start a business. Own property. Divorce a husband. See a doctor. Drive a car. All of these rights are denied to women in some parts of the world. &#39;How can we summon a moment of lift for human beings – and especially for women? Because when you lift up women, you lift up humanity.&#39; In this moving and compelling book, Melinda shares the stories of the inspiring people she’s met during her work and travels around the world and the lessons she’s learned from them. As she writes in the introduction, “That is why I had to write this book – to share the stories of people who have given focus and urgency to my life. I want all of us to see ways we can lift women up where we live.” Melinda’s unforgettable narrative is backed by startling data as she presents the issues that most need our attention – from child marriage to lack of access to contraceptives to gender inequity in the workplace. And, for the first time, she writes about her personal life and the road to equality in her own marriage. Throughout, she shows how there has never been more opportunity to change the world – and ourselves. When we lift others up, they lift us up, too.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8574094-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Moment of Lift: How Empowering Women Changes the World</div>
+                        <div class="book-author">by Melinda Gates & Ana Guelbenzu de San Eustaquio</div>
+                        <div class="book-meta">📅 2019 • 🏢 Pan Macmillan Australia Pty, Limited </div>
+                    </div>
+                </div>
+                <div class="book-description">'We need this message more than ever' – Malala Yousafzai The Sunday Times bestseller. Hard-hitting and uplifting true stories of the women around the world facing extreme gender inequality who, when the wider community supports them to challenge the status quo, improve life for the whole of society....</div>
+                <div class="book-categories"><span class="category-tag">Women, economic conditions</span><span class="category-tag">Feminism</span><span class="category-tag">Equality</span><span class="category-tag">Women, social conditions</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Doing well with money isn’t necessarily about what you know. It’s about how you behave. And behavior is hard to teach, even to really smart people. Money—investing, personal finance, and business decisions—is typically taught as a math-based field, where data and formulas tell us exactly what to do. But in the real world people don’t make financial decisions on a spreadsheet. They make them at the dinner table, or in a meeting room, where personal history, your own unique view of the world, ego, pride, marketing, and odd incentives are scrambled together. In The Psychology of Money, award-winning author Morgan Housel shares 19 short stories exploring the strange ways people think about money and teaches you how to make better sense of one of life’s most important topics.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=5HrrDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Psychology of Money</div>
+                        <div class="book-author">by Morgan Housel</div>
+                        <div class="book-meta">📅 2020 • 🏢 Harriman House Limited • 📄 256 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Doing well with money isn’t necessarily about what you know. It’s about how you behave. And behavior is hard to teach, even to really smart people. Money—investing, personal finance, and business decisions—is typically taught as a math-based field, where data and formulas tell us exactly what to do....</div>
+                <div class="book-categories"><span class="category-tag">Consumption (Economics)</span><span class="category-tag">Money</span><span class="category-tag">Business and Economics</span><span class="category-tag">Quality of life</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER • The groundbreaking exploration of probability and uncertainty that explains how to make better predictions in a world drowning in data, from the nation’s foremost political forecaster—updated with insights into the pandemic, journalism today, and polling One of The Wall Street Journal’s Ten Best Works of Nonfiction of the Year “Could turn out to be one of the more momentous books of the decade.”—The New York Times Book Review Most predictions fail, often at great cost to society, because experts and laypeople mistake more confident predictions for more accurate ones. But overconfidence is often the reason for failure. If our appreciation of uncertainty improves, our predictions can get better too. This is the “prediction paradox”: The more humility we have about our ability to make predictions, the more successful we can be in planning for the future. Drawing on his own groundbreaking work in sports and politics, Nate Silver examines the world of prediction, investigating how to seek truth from data. In The Signal and the Noise, Silver visits innovative forecasters in a range of areas, from hurricanes to baseball to global pandemics, from the poker table to the stock market, from Capitol Hill to the NBA. He discovers that what the most accurate ones have in common is a superior command of probability—as well as a healthy dose of humility. With everything from the global economy to the fight against disease hanging on the quality of our predictions, Nate Silver’s insights are an essential read.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/7256893-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Signal and the Noise</div>
+                        <div class="book-author">by Nate Silver</div>
+                        <div class="book-meta">📅 2012 • 🏢 Penguin </div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER • The groundbreaking exploration of probability and uncertainty that explains how to make better predictions in a world drowning in data, from the nation’s foremost political forecaster—updated with insights into the pandemic, journalism today, and polling One of The Wall S...</div>
+                <div class="book-categories"><span class="category-tag">History</span><span class="category-tag">Bayesian statistical decision theory</span><span class="category-tag">Theory of Knowledge</span><span class="category-tag">Methodology</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Does God exist? Can spirituality be integrated with science? Is happiness possible? Do miracles really happen? Not only does The Visionary Window answer &quot; yes&quot; to all of these questions, but it skillfully combines the fields of philosophy, cosmology, religion, and psychology to form a new way of thinking about science and spirituality. Stepping beyond the classic work of prominent seventies physicist Fritjof Capra, Goswami details his own pioneering exploration of science and spirit, revealing the complete integration between modern science and spiritual traditions. Using stories and colorful examples from pop culture, Goswami addresses complex issues in language and terminology easily accessible to the lay reader. He provides quantum physics-based theory and new experimental data verifying the metaphysical truth that exists when employed in the context of a new science, science within the primacy of consciousness. With a new holistic worldview, Goswami also discusses the creativity of the body to self heal; the power of spiritual practice and how to choose a meditative path; and the five stages of spiritual growth, culminating in the ability to transcend the physical laws of nature. Readers, scientists and spiritual leaders alike will find answers to many of life’s deepest mysteries.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=9E5bBgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Visionary Window</div>
+                        <div class="book-author">by Amit Goswami</div>
+                        <div class="book-meta">📅 2012 • 🏢 Quest • 📄 341 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Does God exist? Can spirituality be integrated with science? Is happiness possible? Do miracles really happen? Not only does The Visionary Window answer " yes" to all of these questions, but it skillfully combines the fields of philosophy, cosmology, religion, and psychology to form a new way of thi...</div>
+                <div class="book-categories"><span class="category-tag">Religious aspects</span><span class="category-tag">Quantum theory</span><span class="category-tag">Religion</span><span class="category-tag">Religious aspects of Quantum theory</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 16:13:42 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

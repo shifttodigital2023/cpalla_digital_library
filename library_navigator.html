@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Digital Library - Navigator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .stats-overview {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .navigation-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .nav-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .nav-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .nav-card h3 {
+            color: #333;
+            font-size: 1.2em;
+        }
+        
+        .count {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        
+        .preview-covers {
+            display: flex;
+            gap: 5px;
+            justify-content: flex-start;
+        }
+        
+        .preview-cover {
+            width: 40px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .search-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .action-buttons {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 My Digital Library</h1>
+            <p>Navigate your collection by genre, author, or any way you like</p>
+        </div>
+        
+        <div class="stats-overview">
+            <h2>Library Overview</h2>
+            
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">475</div>
+                <div class="stat-label">Total Books</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">520</div>
+                <div class="stat-label">Authors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1130</div>
+                <div class="stat-label">Genres</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">469</div>
+                <div class="stat-label">With Covers</div>
+            </div>
+        </div>
+        
+        </div>
+        
+        <div class="search-section">
+            <h2 class="section-title">🔍 Search Your Library</h2>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search by title, author, or keyword..." id="searchInput">
+                <button class="search-btn" onclick="searchLibrary()">Search</button>
+            </div>
+        </div>
+        
+        <div class="navigation-section">
+            <h2 class="section-title">📚 Browse by Genre</h2>
+            <div class="nav-grid">
+                
+            <div class="nav-card" onclick="window.location.href='library_genre_Fiction.html'">
+                <div class="nav-card-header">
+                    <h3>Fiction</h3>
+                    <span class="count">165 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=x7OZkzIOgYAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=otNb51TRSLAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/6671426-M.jpg" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_Business_and_Economics.html'">
+                <div class="nav-card-header">
+                    <h3>Business and Economics</h3>
+                    <span class="count">87 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=7wF9DAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=jHT_BgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/8277621-M.jpg" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_Biography.html'">
+                <div class="nav-card-header">
+                    <h3>Biography</h3>
+                    <span class="count">70 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=oGIleQI257AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=YV0IskcivVIC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=TjNvPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_New_York_Times_bestseller.html'">
+                <div class="nav-card-header">
+                    <h3>New York Times bestseller</h3>
+                    <span class="count">41 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=TjNvPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=ZPD4DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=GVtJDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_History.html'">
+                <div class="nav-card-header">
+                    <h3>History</h3>
+                    <span class="count">33 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=TjNvPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/8277621-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=HKj8jUM630EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_Nonfiction.html'">
+                <div class="nav-card-header">
+                    <h3>Nonfiction</h3>
+                    <span class="count">21 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=7wF9DAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/6305705-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=3MyPti17CyoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_Self_Help.html'">
+                <div class="nav-card-header">
+                    <h3>Self Help</h3>
+                    <span class="count">18 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=kxCYDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/10126775-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=yfYIEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_Uncategorized.html'">
+                <div class="nav-card-header">
+                    <h3>Uncategorized</h3>
+                    <span class="count">17 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://covers.openlibrary.org/b/id/13319634-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=2RIcAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_Social_Science.html'">
+                <div class="nav-card-header">
+                    <h3>Social Science</h3>
+                    <span class="count">16 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://covers.openlibrary.org/b/id/1235183-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=KuMtBQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=7Qsnr7cN5MsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_Psychology.html'">
+                <div class="nav-card-header">
+                    <h3>Psychology</h3>
+                    <span class="count">16 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=y2MhEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=jt_6jvj3xnkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=pBWYDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_American_literature.html'">
+                <div class="nav-card-header">
+                    <h3>American literature</h3>
+                    <span class="count">14 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=rNWfDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=4x1_EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=8kz2DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_genre_Social_aspects.html'">
+                <div class="nav-card-header">
+                    <h3>Social aspects</h3>
+                    <span class="count">12 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://covers.openlibrary.org/b/id/1235183-M.jpg" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/7105433-M.jpg" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="navigation-section">
+            <h2 class="section-title">✍️ Browse by Author</h2>
+            <div class="nav-grid">
+                
+            <div class="nav-card" onclick="window.location.href='library_author_Albert_Einstein.html'">
+                <div class="nav-card-header">
+                    <h3>Albert Einstein</h3>
+                    <span class="count">2 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=Yp3uEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/309847-M.jpg" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_author_Allie_Brosh.html'">
+                <div class="nav-card-header">
+                    <h3>Allie Brosh</h3>
+                    <span class="count">2 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=bgnLDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=rBNupiFKTGEC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_author_Ana_Huang.html'">
+                <div class="nav-card-header">
+                    <h3>Ana Huang</h3>
+                    <span class="count">2 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=tVm0EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=a-djEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_author_Arietta_Richmond.html'">
+                <div class="nav-card-header">
+                    <h3>Arietta Richmond</h3>
+                    <span class="count">2 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=_CvZzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=cTXZzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_author_Barack_Obama.html'">
+                <div class="nav-card-header">
+                    <h3>Barack Obama</h3>
+                    <span class="count">2 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=Rpk81dM767kC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=8zR-1qOLq20C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_author_Barbara_Ehrenreich.html'">
+                <div class="nav-card-header">
+                    <h3>Barbara Ehrenreich</h3>
+                    <span class="count">2 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://covers.openlibrary.org/b/id/12646596-M.jpg" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/8356732-M.jpg" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_author_Bill_Bryson.html'">
+                <div class="nav-card-header">
+                    <h3>Bill Bryson</h3>
+                    <span class="count">3 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=xb4wSmJLnhAC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/12857063-M.jpg" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_author_Brian_Greene.html'">
+                <div class="nav-card-header">
+                    <h3>Brian Greene</h3>
+                    <span class="count">2 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=MNHzwnEYi40C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=DNd2K6mxLpIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="navigation-section">
+            <h2 class="section-title">📅 Browse by Decade</h2>
+            <div class="nav-grid">
+                
+            <div class="nav-card" onclick="window.location.href='library_decade_2020s.html'">
+                <div class="nav-card-header">
+                    <h3>2020s</h3>
+                    <span class="count">154 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://covers.openlibrary.org/b/id/13319634-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=Nl_hDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=ZPD4DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_decade_2010s.html'">
+                <div class="nav-card-header">
+                    <h3>2010s</h3>
+                    <span class="count">203 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=TjNvPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=7wF9DAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/9214451-M.jpg" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_decade_2000s.html'">
+                <div class="nav-card-header">
+                    <h3>2000s</h3>
+                    <span class="count">88 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=oGIleQI257AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=YV0IskcivVIC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=jHT_BgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_decade_1990s.html'">
+                <div class="nav-card-header">
+                    <h3>1990s</h3>
+                    <span class="count">15 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=x7OZkzIOgYAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=e8SgPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=HKj8jUM630EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_decade_1980s.html'">
+                <div class="nav-card-header">
+                    <h3>1980s</h3>
+                    <span class="count">5 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=KAMVAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/253583-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=45KHPwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="navigation-section">
+            <h2 class="section-title">🏢 Browse by Publisher</h2>
+            <div class="nav-grid">
+                
+            <div class="nav-card" onclick="window.location.href='library_publisher_Random_House.html'">
+                <div class="nav-card-header">
+                    <h3>Random House</h3>
+                    <span class="count">41 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://covers.openlibrary.org/b/id/8808863-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=MNHzwnEYi40C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=KuMtBQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_publisher_Hachette_UK.html'">
+                <div class="nav-card-header">
+                    <h3>Hachette UK</h3>
+                    <span class="count">35 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=oGIleQI257AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=7wF9DAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=otNb51TRSLAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_publisher_Penguin.html'">
+                <div class="nav-card-header">
+                    <h3>Penguin</h3>
+                    <span class="count">26 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=ZPD4DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=7Qsnr7cN5MsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_publisher_Simon_and_Schuster.html'">
+                <div class="nav-card-header">
+                    <h3>Simon and Schuster</h3>
+                    <span class="count">24 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=x7OZkzIOgYAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=Cg0bDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=GG-C13nO3wsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_publisher_HarperCollins.html'">
+                <div class="nav-card-header">
+                    <h3>HarperCollins</h3>
+                    <span class="count">20 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=hIaIDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://covers.openlibrary.org/b/id/6305705-M.jpg" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=xsu2DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            <div class="nav-card" onclick="window.location.href='library_publisher_Penguin_UK.html'">
+                <div class="nav-card-header">
+                    <h3>Penguin UK</h3>
+                    <span class="count">12 books</span>
+                </div>
+                <div class="preview-covers">
+                    <img src="https://books.google.com/books/content?id=jt_6jvj3xnkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=Lsc8DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover"><img src="https://books.google.com/books/content?id=bFTl2b80zyQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Book cover" class="preview-cover">
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="#" class="btn" onclick="viewAllBooks()">📖 View All Books</a>
+            <a href="#" class="btn" onclick="viewRecentlyAdded()">🆕 Recently Added</a>
+            <a href="#" class="btn" onclick="viewFavorites()">⭐ Highly Rated</a>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 16:35:25 | Digital Library Navigator</p>
+            <p>Powered by cached metadata from your book collection</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterByGenre(genre) {
+            // Generate filtered library page for specific genre
+            alert(`Filtering by genre: ${genre}`);
+            // TODO: Generate filtered HTML page
+        }
+        
+        function filterByAuthor(author) {
+            alert(`Filtering by author: ${author}`);
+            // TODO: Generate filtered HTML page
+        }
+        
+        function filterByDecade(decade) {
+            alert(`Filtering by decade: ${decade}`);
+            // TODO: Generate filtered HTML page
+        }
+        
+        function filterByPublisher(publisher) {
+            alert(`Filtering by publisher: ${publisher}`);
+            // TODO: Generate filtered HTML page
+        }
+        
+        function searchLibrary() {
+            const searchTerm = document.getElementById('searchInput').value;
+            if (searchTerm) {
+                alert(`Searching for: ${searchTerm}`);
+                // TODO: Generate search results page
+            }
+        }
+        
+        function viewAllBooks() {
+            window.location.href = 'library_all_books.html';
+        }
+        
+        function viewRecentlyAdded() {
+            window.location.href = 'library_recently_added.html';
+        }
+        
+        function viewFavorites() {
+            window.location.href = 'library_highly_rated.html';
+        }
+        
+        // Enter key support for search
+        document.getElementById('searchInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchLibrary();
+            }
+        });
+    </script>
+</body>
+</html>

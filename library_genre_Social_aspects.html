@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social aspects - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Social aspects</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 12 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="The authors document how four forces--exponential technologies, the DIY innovator, the Technophilanthropist, and the Rising Billion--are conspiring to solve our biggest problems. &quot;Abundance&quot; establishes hard targets for change and lays out a strategic roadmap for governments, industry and entrepreneurs, giving us plenty of reason for optimism.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/7105433-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Abundance</div>
+                        <div class="book-author">by Peter H. Diamandis & Steven Kotler</div>
+                        <div class="book-meta">📅 2012 • 🏢 Free </div>
+                    </div>
+                </div>
+                <div class="book-description">The authors document how four forces--exponential technologies, the DIY innovator, the Technophilanthropist, and the Rising Billion--are conspiring to solve our biggest problems. "Abundance" establishes hard targets for change and lays out a strategic roadmap for governments, industry and entreprene...</div>
+                <div class="book-categories"><span class="category-tag">Technology</span><span class="category-tag">Business and Economics</span><span class="category-tag">Technological forecasting</span><span class="category-tag">Technological innovations</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="What happens when media and politics become forms of entertainment? As our world begins to look more and more like Orwell&#39;s 1984, Neil&#39;s Postman&#39;s essential guide to the modern media is more relevant than ever. &quot;It&#39;s unlikely that Trump has ever read Amusing Ourselves to Death, but his ascent would not have surprised Postman.” -CNN Originally published in 1985, Neil Postman’s groundbreaking polemic about the corrosive effects of television on our politics and public discourse has been hailed as a twenty-first-century book published in the twentieth century. Now, with television joined by more sophisticated electronic media—from the Internet to cell phones to DVDs—it has taken on even greater significance. Amusing Ourselves to Death is a prophetic look at what happens when politics, journalism, education, and even religion become subject to the demands of entertainment. It is also a blueprint for regaining control of our media, so that they can serve our highest goals. “A brilliant, powerful, and important book. This is an indictment that Postman has laid down and, so far as I can see, an irrefutable one.” –Jonathan Yardley, The Washington Post Book World">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=oup6iagfox8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Amusing Ourselves to Death</div>
+                        <div class="book-author">by Neil Postman</div>
+                        <div class="book-meta">📅 2005 • 🏢 Penguin • 📄 210 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">What happens when media and politics become forms of entertainment? As our world begins to look more and more like Orwell's 1984, Neil's Postman's essential guide to the modern media is more relevant than ever. "It's unlikely that Trump has ever read Amusing Ourselves to Death, but his ascent would ...</div>
+                <div class="book-categories"><span class="category-tag">Social aspects of Television broadcasting</span><span class="category-tag">Social Science</span><span class="category-tag">Mass media</span><span class="category-tag">Influence</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A exploration of the latest trend in technology and the impact it will have on the economy, science, and society at large.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8467930-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Big Data: A Revolution That Will Transform How We Live, Work, and Think</div>
+                        <div class="book-author">by Viktor Mayer-Schönberger & Kenneth Cukier</div>
+                        <div class="book-meta">📅 2013 • 🏢 Eamon Dolan/Houghton Mifflin Harcourt </div>
+                    </div>
+                </div>
+                <div class="book-description">A exploration of the latest trend in technology and the impact it will have on the economy, science, and society at large.</div>
+                <div class="book-categories"><span class="category-tag">Big data</span><span class="category-tag">Social change</span><span class="category-tag">Technological innovations</span><span class="category-tag">Social aspects</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In Border and Rule, one of North America’s foremost thinkers and immigrant rights organizers delivers an unflinching examination of migration as a pillar of global governance and gendered racial class formation. Harsha Walia disrupts easy explanations for the migrant and refugee crises, instead showing them to be the inevitable outcomes of the conquest, capitalist globalization, and climate change that are generating mass dispossession worldwide. Border and Rule explores a number of seemingly disparate global geographies with shared logics of border rule that displace, immobilize, criminalize, exploit, and expel migrants and refugees. With her keen ability to connect the dots, Walia demonstrates how borders divide the international working class and consolidate imperial, capitalist, and racist nationalist rule. Ambitious in scope and internationalist in orientation, Border and Rule breaks through American exceptionalist and liberal responses to the migration crisis and cogently maps the lucrative connections between state violence, capitalism, and right-wing nationalism around the world. Illuminating the brutal mechanics of state formation, Walia exposes US border policy as a product of violent territorial expansion, settler-colonialism, enslavement, and gendered racial ideology. Further, she compellingly details how Fortress Europe and White Australia are using immigration diplomacy and externalized borders to maintain a colonial present, how temporary labor migration in the Arab Gulf states and Canada is central to citizenship regulation and labor control, and how racial violence is escalating deadly nationalism in the US, Israel, India, the Philippines, Brazil, and across Europe, while producing a disaster of statelessness for millions elsewhere. A must-read in these difficult times of war, inequality, climate change, and global health crisis, Border and Rule is a clarion call for revolution. The book includes a foreword from renowned scholar Robin D. G. Kelley and an afterword from acclaimed activist-academic Nick Estes.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=I3rtDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Border and Rule</div>
+                        <div class="book-author">by Harsha Walia</div>
+                        <div class="book-meta">📅 2021 • 🏢 Haymarket • 📄 310 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">In Border and Rule, one of North America’s foremost thinkers and immigrant rights organizers delivers an unflinching examination of migration as a pillar of global governance and gendered racial class formation. Harsha Walia disrupts easy explanations for the migrant and refugee crises, instead show...</div>
+                <div class="book-categories"><span class="category-tag">Boundaries</span><span class="category-tag">Globalization</span><span class="category-tag">Emigration and immigration</span><span class="category-tag">Capitalism</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;Spectacular and terrifyingly true&#39; Owen Jones &#39;Thought-provoking and funny&#39; The Times Up to 40% of us secretly believe our jobs probably aren&#39;t necessary. In other words: they are bullshit jobs. This book shows why, and what we can do about it. In the early twentieth century, people prophesied that technology would see us all working fifteen-hour weeks and driving flying cars. Instead, something curious happened. Not only have the flying cars not materialised, but average working hours have increased rather than decreased. And now, across the developed world, three-quarters of all jobs are in services, finance or admin: jobs that don&#39;t seem to contribute anything to society. In Bullshit Jobs, David Graeber explores how this phenomenon - one more associated with the Soviet Union, but which capitalism was supposed to eliminate - has happened. In doing so, he looks at how, rather than producing anything, work has become an end in itself; the way such work maintains the current broken system of finance capital; and, finally, how we can get out of it. This book is for anyone whose heart has sunk at the sight of a whiteboard, who believes &#39;workshops&#39; should only be for making things, or who just suspects that there might be a better way to run our world.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Lsc8DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Bullshit Jobs</div>
+                        <div class="book-author">by David Graeber</div>
+                        <div class="book-meta">📅 2018 • 🏢 Penguin UK • 📄 396 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">'Spectacular and terrifyingly true' Owen Jones 'Thought-provoking and funny' The Times Up to 40% of us secretly believe our jobs probably aren't necessary. In other words: they are bullshit jobs. This book shows why, and what we can do about it. In the early twentieth century, people prophesied that...</div>
+                <div class="book-categories"><span class="category-tag">Psychological aspects</span><span class="category-tag">Bureaucracy</span><span class="category-tag">Job satisfaction</span><span class="category-tag">Social aspects</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;Her stories have the power to transform your life&#39; Lori Gottlieb, bestselling author of Maybe You Should Talk to Someone &#39;Radically changes the way we think about mental illness, pleasure, pain, reward and stress&#39; Daniel Levitin, bestselling author of The Organized Mind THE NEW YORK TIMES AND SUNDAY TIMES BESTSELLER We are a wired generation. In these fast-paced times we are constantly bombarded by high-reward, high-dopamine stimuli. From texting to social media, food to drugs, gambling to shopping, we have become addicted to fleeting and distracting pleasures that are making us sick. In Dopamine Nation, psychiatrist and bestselling author Dr Anna Lembke reveals why our relentless pursuit of pleasure leads to pain and what we can do about it. Bringing together cutting-edge neuroscience with the gripping real life experiences from her clinical practice, Lembke explores how contentment and connectedness are essential tools in keeping dopamine in check. This is an essential book for anyone wanting to find a balance for a happier life.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=stNDEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Dopamine Nation</div>
+                        <div class="book-author">by Anna Lembke</div>
+                        <div class="book-meta">📅 2021 • 🏢 Hachette UK • 📄 265 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">'Her stories have the power to transform your life' Lori Gottlieb, bestselling author of Maybe You Should Talk to Someone 'Radically changes the way we think about mental illness, pleasure, pain, reward and stress' Daniel Levitin, bestselling author of The Organized Mind THE NEW YORK TIMES AND SUNDA...</div>
+                <div class="book-categories"><span class="category-tag">Pleasure</span><span class="category-tag">Science</span><span class="category-tag">Compulsive behavior</span><span class="category-tag">Pain</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="INSTANT NEW YORK TIMES BESTSELLER “A new masterpiece from one of my favorite authors… [How The World Really Works] is a compelling and highly readable book that leaves readers with the fundamental grounding needed to help solve the world’s toughest challenges.”—Bill Gates “Provocative but perceptive . . . You can agree or disagree with Smil—accept or doubt his ‘just the facts’ posture—but you probably shouldn’t ignore him.”—The Washington Post An essential analysis of the modern science and technology that makes our twenty-first century lives possible—a scientist&#39;s investigation into what science really does, and does not, accomplish. We have never had so much information at our fingertips and yet most of us don’t know how the world really works. This book explains seven of the most fundamental realities governing our survival and prosperity. From energy and food production, through our material world and its globalization, to risks, our environment and its future, How the World Really Works offers a much-needed reality check—because before we can tackle problems effectively, we must understand the facts. In this ambitious and thought-provoking book we see, for example, that globalization isn’t inevitable—the foolishness of allowing 70 per cent of the world’s rubber gloves to be made in just one factory became glaringly obvious in 2020—and that our societies have been steadily increasing their dependence on fossil fuels, such that any promises of decarbonization by 2050 are a fairy tale. For example, each greenhouse-grown supermarket-bought tomato has the equivalent of five tablespoons of diesel embedded in its production, and we have no way of producing steel, cement or plastics at required scales without huge carbon emissions. Ultimately, Smil answers the most profound question of our age: are we irrevocably doomed or is a brighter utopia ahead? Compelling, data-rich and revisionist, this wonderfully broad, interdisciplinary guide finds faults with both extremes. Looking at the world through this quantitative lens reveals hidden truths that change the way we see our past, present and uncertain future.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=eTotEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">How the World Really Works</div>
+                        <div class="book-author">by Vaclav Smil</div>
+                        <div class="book-meta">📅 2025 • 🏢 Penguin Group • 📄 337 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">INSTANT NEW YORK TIMES BESTSELLER “A new masterpiece from one of my favorite authors… [How The World Really Works] is a compelling and highly readable book that leaves readers with the fundamental grounding needed to help solve the world’s toughest challenges.”—Bill Gates “Provocative but perceptive...</div>
+                <div class="book-categories"><span class="category-tag">Science and civilization</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2022-05-29</span><span class="category-tag">Science</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="** A New York Times Bestseller ** NAMED ONE OF THE BEST BOOKS OF THE YEAR BY: Time • The New Yorker • NPR • GQ • Elle • Vulture • Fortune • Boing Boing • The Irish Times • The New York Public Library • The Brooklyn Public Library &quot;A complex, smart and ambitious book that at first reads like a self-help manual, then blossoms into a wide-ranging political manifesto.&quot;—Jonah Engel Bromwich, The New York Times Book Review One of President Barack Obama&#39;s &quot;Favorite Books of 2019&quot; Porchlight&#39;s Personal Development & Human Behavior Book of the Year In a world where addictive technology is designed to buy and sell our attention, and our value is determined by our 24/7 data productivity, it can seem impossible to escape. But in this inspiring field guide to dropping out of the attention economy, artist and critic Jenny Odell shows us how we can still win back our lives. Odell sees our attention as the most precious—and overdrawn—resource we have. And we must actively and continuously choose how we use it. We might not spend it on things that capitalism has deemed important … but once we can start paying a new kind of attention, she writes, we can undertake bolder forms of political action, reimagine humankind’s role in the environment, and arrive at more meaningful understandings of happiness and progress. Far from the simple anti-technology screed, or the back-to-nature meditation we read so often, How to do Nothing is an action plan for thinking outside of capitalist narratives of efficiency and techno-determinism. Provocative, timely, and utterly persuasive, this book will change how you see your place in our world.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=OMBkDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">How to Do Nothing</div>
+                        <div class="book-author">by Jenny Odell</div>
+                        <div class="book-meta">📅 2019 • 🏢 Melville House • 📄 257 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">** A New York Times Bestseller ** NAMED ONE OF THE BEST BOOKS OF THE YEAR BY: Time • The New Yorker • NPR • GQ • Elle • Vulture • Fortune • Boing Boing • The Irish Times • The New York Public Library • The Brooklyn Public Library "A complex, smart and ambitious book that at first reads like a self-h...</div>
+                <div class="book-categories"><span class="category-tag">Information technology</span><span class="category-tag">Attention</span><span class="category-tag">Philosophy</span><span class="category-tag">Technology and Engineering</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&quot;An urgent and expert investigation into behavioral addiction, the dark flipside of today&#39;s unavoidable digital technologies, and how we can turn the tide to regain control. Behavioral addiction may prove to be one of the most important fields of social, medical, and psychological research in our lifetime. The idea that behaviors can be being addictive is new, but the threat is near universal. Experts are just beginning to acknowledge that we are all potential addicts. Adam Alter, a professor of psychology and marketing at NYU, is at the cutting edge of research into what makes these products so compulsive, and he documents the hefty price we&#39;re likely to pay if we continue blindly down our current path. People have been addicted to substances for thousands of years, but for the past two decades, we&#39;ve also been hooked on technologies, such as Instagram, Netflix, and Facebook--inventions that we&#39;ve adopted because we assume they&#39;ll make our lives better. These inventions have profound upsides, but their extraordinary appeal isn&#39;t an accident. Technology companies and marketers have teams of engineers and researchers devoted to keeping us engaged. They know how to push our buttons, and how to coax us into using their products for hours, days, and weeks on end. Tracing the very notion of addiction through history right up until the present day, Alter shows that we&#39;re only just beginning to understand the epidemic of behavioral addiction gripping society. He takes us inside the human brain at the very moment we score points on a smartphone game, or see that someone has liked a photo we&#39;ve posted on Instagram. But more than that, Alter heads the problem off at the pass, letting us know what we can do to step away from the screen. He lays out the options we have address this problem before it truly consumes us. After all, who among us has struggled to ignore the ding of a new email, the next episode in a TV series, or the desire to play a game just one more time? Adam Alter&#39;s previous book, Drunk Tank Pink:And Other Unexpected Forces that Shape How We Think, Feel, and Behave is available in paperback from Penguin&quot;--">
+                <div class="book-header">
+                    <div class="book-cover-placeholder">📖</div>
+                    <div class="book-details">
+                        <div class="book-title">Irresistible</div>
+                        <div class="book-author">by Adam L. Alter</div>
+                        <div class="book-meta">📅 2017 • 🏢 Penguin </div>
+                    </div>
+                </div>
+                <div class="book-description">"An urgent and expert investigation into behavioral addiction, the dark flipside of today's unavoidable digital technologies, and how we can turn the tide to regain control. Behavioral addiction may prove to be one of the most important fields of social, medical, and psychological research in our li...</div>
+                <div class="book-categories"><span class="category-tag">Applied Psychology</span><span class="category-tag">Technology and Engineering</span><span class="category-tag">Digital media</span><span class="category-tag">Social aspects</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In Microtrends: The Small Forces Behind Today’s Big Changes, Mark Penn shows that 75 of the most important trends in the world today are the smallest ones. Exploring everything from politics to religion, food to entertainment, Penn follows the numbers to uncover what&#39;s really popular, not what we think is popular. Because while these trends are shaping the world, they’re relatively unseen – they’re under-the-radar forces that can involve as little as 1 percent of the population. People have never been more sophisticated, more individualistic, or more knowledgeable about the choices they make in their daily lives. Yet it takes intensive, scientific study to find the logical patterns that underlie those choices. While helping you to refine your own trend-spotting skills, Penn pierces remarkably stubborn conventional thinking to find the counterintuitive trends that represent a portrait of society in the 21st century. A groundbreaking book about the way people think and how they act, Microtrends explores the practical implications of these 75 trends for politics, business, and society itself.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/1235183-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Microtrends</div>
+                        <div class="book-author">by Mark J. Penn & Mark Penn & E. Kinney Zalesne</div>
+                        <div class="book-meta">📅 2007 • 🏢 Penguin Books, Limited </div>
+                    </div>
+                </div>
+                <div class="book-description">In Microtrends: The Small Forces Behind Today’s Big Changes, Mark Penn shows that 75 of the most important trends in the world today are the smallest ones. Exploring everything from politics to religion, food to entertainment, Penn follows the numbers to uncover what's really popular, not what we th...</div>
+                <div class="book-categories"><span class="category-tag">Social influence</span><span class="category-tag">Social change</span><span class="category-tag">Social Science</span><span class="category-tag">Population</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Serial entrepreneur and business visionary Dale Partridge reveals seven core beliefs that create success by putting people first. Every day major headlines tell the story of a new and better American marketplace. Established corporations have begun reevaluating the quality of their products, the ethics of their supply chain, and how they can give back by donating a portion of their profit to meaningful causes. Meanwhile, millions of entrepreneurs who want a more responsible and compassionate marketplace have launched a new breed of socially focused business models. Sevenly founder Dale Partridge uncovers the seven core beliefs shared by consumers, starters, and leaders behind this transformation. These beliefs have enabled Dale to build a multimillion-dollar company that is revolutionizing the marketplace In People Over Profit, Partridge will help you realize: People matter Truth wins Transparency frees Authenticity attracts Quality speaks Generosity returns Courage sustains Partridge believes these beliefs are the secret to creating a sustainable world that values honesty over deception, transparency over secrecy, authenticity over hype, and ultimately, people over profit.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=OhiMBQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">People Over Profit</div>
+                        <div class="book-author">by Dale Partridge</div>
+                        <div class="book-meta">📅 2015 • 🏢 HarperCollins Leadership • 📄 238 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Serial entrepreneur and business visionary Dale Partridge reveals seven core beliefs that create success by putting people first. Every day major headlines tell the story of a new and better American marketplace. Established corporations have begun reevaluating the quality of their products, the eth...</div>
+                <div class="book-categories"><span class="category-tag">Organizational behavior</span><span class="category-tag">Business ethics</span><span class="category-tag">Corporate culture</span><span class="category-tag">Management</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="No description available.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/9671797-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Seeking Wisdom</div>
+                        <div class="book-author">by Peter Bevelin</div>
+                        <div class="book-meta">📅 2007 • 🏢 PCA Publications L.L.C. </div>
+                    </div>
+                </div>
+                <div class="book-description">No description available.</div>
+                <div class="book-categories"><span class="category-tag">Social aspects</span><span class="category-tag">Philosophy</span><span class="category-tag">Thought and thinking</span><span class="category-tag">Wisdom</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 16:00:42 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>History</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 33 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="“Allison Yarrow takes you back to the era of Anita Hill and Monica Lewinsky and Tonya Harding and examines how the media fueled America’s sexism.”—Bustle To understand how we got here, we have to rewind the VHS tape. 90s Bitch tells the real story of women and girls in the 1990s, exploring how they were maligned by the media, vilified by popular culture, and objectified in the marketplace. Trailblazing women like Hillary Clinton, Anita Hill, Madeleine Albright, Janet Reno, and Marcia Clark were undermined. Newsmakers like Britney Spears, Monica Lewinsky, Tonya Harding and Lorena Bobbitt were shamed and misunderstood. The advent of the twenty-four-hour news cycle reinforced society&#39;s deeply entrenched misogyny. Meanwhile, marketers hijacked feminism, sold “Girl Power,” and poisoned a generation. Today echoes of 90s “bitchification” still exist everywhere. To understand why, we must revisit and interrogate the 1990s—a decade in which empowerment was twisted into objectification, exploitation, and subjugation. Award–winning journalist Allison Yarrow’s timely examination is a must-read for anyone trying to understand twenty-first century sexism and end it for the next generation. “Yarrow’s biting autopsy of the decade scrutinizes the way society reduced—or “bitchified”—women . . . Direct quotes from politicians, journalists and comedians about the women provide the most jarring, oh-my-god-that-really-happened portions of Yarrow’s decade excavation.” —Pittsburg Post-Gazette “Allison Yarrow is a feminist and a muckraker in the tradition of Betty Friedan, Naomi Klein, and bell hooks.” —Steve Almond, author of Bad Stories: What the Hell Just Happened to Our Country “Yarrow is a skillful scene setter.” —The Los Angeles Review of Books “‘Essential reading for every feminist.” Anne Helen Petersen, author of Too Fat, Too Slutty, Too Loud">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=JhJVDgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">90s Bitch</div>
+                        <div class="book-author">by Allison Yarrow</div>
+                        <div class="book-meta">📅 2018 • 🏢 HarperCollins • 📄 382 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">“Allison Yarrow takes you back to the era of Anita Hill and Monica Lewinsky and Tonya Harding and examines how the media fueled America’s sexism.”—Bustle To understand how we got here, we have to rewind the VHS tape. 90s Bitch tells the real story of women and girls in the 1990s, exploring how they ...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Feminism</span><span class="category-tag">Women, united states, social conditions</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&quot;Today, only twenty percent of Americans are wed by age twenty-nine, compared to nearly sixty percent in 1960. The Population Reference Bureau calls it a &#39;dramatic reversal.&#39; [This book presents a] portrait of contemporary American life and how we got here, through the lens of the single American woman, covering class, race, [and] sexual orientation, and filled with ... anecdotes from ... contemporary and historical figures&quot;--">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=ZaIxDQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">All the Single Ladies</div>
+                        <div class="book-author">by Rebecca Traister</div>
+                        <div class="book-meta">📅 2016 • 🏢 Simon and Schuster • 📄 368 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">"Today, only twenty percent of Americans are wed by age twenty-nine, compared to nearly sixty percent in 1960. The Population Reference Bureau calls it a 'dramatic reversal.' [This book presents a] portrait of contemporary American life and how we got here, through the lens of the single American wo...</div>
+                <div class="book-categories"><span class="category-tag">Single women</span><span class="category-tag">HISTORY / United States / 21st Century</span><span class="category-tag">Civilization</span><span class="category-tag">Women</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Segunda entrega de la exitosa saga de Diana Gabaldon «Outlander» en la que se basa la popular serie de televisión. Una historia de amor diferente, en la que los encuentros fortuitos y el juego equívoco del tiempo se conjugan en un intrigante final. Veinte años después de haber experimentado la más extraña aventura de su vida -un viaje a través del tiempo hasta la Escocia del siglo XVIII-, Claire Randall regresa con su hija Brianna a las imponentes y misteriosas montañas escocesas donde todo comenzó. Con la ayuda de Roger, un joven historiador, Claire se lanza a una obsesiva búsqueda de las tumbas de los caídos en la batalla de Culloden,librada en 1745. El paso del tiempo no ha podido borrar los intensos recuerdos de un amor difícil de explicar. Con el transcurrir de los días, Claire irá descubriendo, ante los ojos incrédulos de su hija y de Roger, el fascinante secreto cuya clave es el cauce interior que conduce al pasado. Reseñas: «Conmovedora, audaz, emocionante... Con gran maestría, Gabaldon entrelaza períodos históricos sin perder nunca el hilo argumental.» Locus «De cualidad superior, un talento que va más allá de una narración inteligente.» The Grand Prairie News">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=u-2-DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Atrapada en el tiempo (Saga Outlander 2)</div>
+                        <div class="book-author">by Diana Gabaldon</div>
+                        <div class="book-meta">📅 2015 • 🏢 SALAMANDRA BOLSILLO • 📄 1192 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Segunda entrega de la exitosa saga de Diana Gabaldon «Outlander» en la que se basa la popular serie de televisión. Una historia de amor diferente, en la que los encuentros fortuitos y el juego equívoco del tiempo se conjugan en un intrigante final. Veinte años después de haber experimentado la más e...</div>
+                <div class="book-categories"><span class="category-tag">Culloden, Battle of, Scotland, 1746</span><span class="category-tag">Jacobite Rebellion, 1745-1746 in fiction</span><span class="category-tag">History</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Abducted from Africa, sold in America. &quot;A deeply affecting record of an extraordinary life&quot;- Daily Telegraph A major literary event: a newly published work from the author of the American classic Their Eyes Were Watching God, with a foreword from Pulitzer Prize-winning author Alice Walker.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=UqG_xgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Barracoon</div>
+                        <div class="book-author">by Zora Neale Hurston</div>
+                        <div class="book-meta">📅 2020 • 🏢 HarperCollins • 📄 208 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Abducted from Africa, sold in America. "A deeply affecting record of an extraordinary life"- Daily Telegraph A major literary event: a newly published work from the author of the American classic Their Eyes Were Watching God, with a foreword from Pulitzer Prize-winning author Alice Walker.</div>
+                <div class="book-categories"><span class="category-tag">West Africans</span><span class="category-tag">Biography</span><span class="category-tag">Slaves</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Nominated for the FT/McKinsey Business Book of the Year Nominated for the Carnegie Medal for Excellence in Nonfiction Amazon Top 5 Business Books of 2017 &#39;A prodigious feat of reporting&#39; - Malcolm Gladwell ‘Black Edge has the grip of a thriller ... Everyone should read this book’ - David Grann, New York Times bestselling author of THE LOST CITY OF Z How do super-rich bankers get away with it? There is a powerful new class of billionaire financiers in the world, who use their phenomenal wealth to write their own rules and laws. Chief among them is Steven Cohen, a Wall Street legend, and the basis for Damian Lewis&#39;s character in BILLIONS, who built his hedge fund into a $15 billion empire on the basis of wizard-like stock trading, and who flies to work by helicopter and owns one of the largest private art collections in the world. But his iconic status was shattered when his fund became the target of a sprawling FBI investigation into insider trading, charged with using illegal inside information – or ‘black edge’ – to beat the market. His firm, SAC Capital, was ultimately indicted and pled guilty to charges of securities and wire fraud, and paid record criminal and civil fines of nearly $2 billion. But even as the company bearing his name pled guilty, Cohen himself was never charged, and is free to start trading publicly again from January 2018. Black Edge offers a revelatory look at the grey zone in which so much of Wall Street functions, and a window into the transformation of the worldwide economy. With meticulous reporting and powerful storytelling, this is a riveting, true-life legal thriller that takes readers inside the US government’s pursuit of Cohen and his employees, and raises urgent questions about the power and wealth of those who sit at the pinnacle of the financial world.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=YYMzDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Black Edge</div>
+                        <div class="book-author">by Sheelah Kolhatkar</div>
+                        <div class="book-meta">📅 2018 • 🏢 Random House • 📄 426 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Nominated for the FT/McKinsey Business Book of the Year Nominated for the Carnegie Medal for Excellence in Nonfiction Amazon Top 5 Business Books of 2017 'A prodigious feat of reporting' - Malcolm Gladwell ‘Black Edge has the grip of a thriller ... Everyone should read this book’ - David Grann, New ...</div>
+                <div class="book-categories"><span class="category-tag">Hedge funds</span><span class="category-tag">Global Financial Crisis, 2008-2009</span><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2017-02-26</span><span class="category-tag">Business and Economics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Her palace shimmered with onyx and gold but was richer still in political and sexual intrigue. Above all else, Cleopatra was a shrewd strategist and an ingenious negotiator. She was married twice, each time to a brother. She waged a brutal civil war against the first and poisoned the second; incest and assassination were family specialties. She had children by Julius Caesar and Mark Antony, two of the most prominent Romans of the day. With Antony she would attempt to forge a new empire, in an alliance that spelled both their ends. Famous long before she was notorious, Cleopatra has gone down in history for all the wrong reasons. Her supple personality and the drama of her circumstances have been lost. In a masterly return to the classical sources, Stacy Schiff boldly separates fact from fiction to rescue the magnetic queen whose death ushered in a new world order.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=XQNfzgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Cleopatra</div>
+                        <div class="book-author">by Stacy Schiff</div>
+                        <div class="book-meta">📅 2011 • 🏢 Back Bay • 📄 432 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Her palace shimmered with onyx and gold but was richer still in political and sexual intrigue. Above all else, Cleopatra was a shrewd strategist and an ingenious negotiator. She was married twice, each time to a brother. She waged a brutal civil war against the first and poisoned the second; incest ...</div>
+                <div class="book-categories"><span class="category-tag">Cleopatra, queen of egypt, -30 b.c.</span><span class="category-tag">Biography</span><span class="category-tag">Kings and rulers</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="**THE GROUNDBREAKING BESTSELLER AND CLASSIC** &#39;Excellent . . . amazing how much still comes as a surprise&#39; New York Times Book Review &#39;Like Capote&#39;s In Cold Blood, this tour de force gets below the who and the what of a horrifying incident to lay bare the devastating why&#39; People &#39;A staggering work of journalism&#39; Washington Post &#39;The tragedies keep coming. As we reel from the latest horror...&#39; So begins the epilogue, illustrating how Columbine has become the template for nearly two decades of &quot;spectacle murders.&quot; It makes the imperative to understand the crime that sparked this flame more urgent than ever. What really happened on April 20th, 1999? The horror left an indelible stamp on the American psyche, but most of what we thought we knew was wrong. It wasn&#39;t about jocks, Goths or the Trench Coast Mafia. Dave Cullen was one of the first reporters on the scene, and he spent ten years on this book, the definitive account. With a keen investigative eye and psychological acumen, he draws on mountains of evidence, insight from the world&#39;s leading forensic psychologists , and the killers&#39; own words and drawings - several reproduced in a new appendix. Cullen paints raw portraits of two polar opposite killers. They contrast starkly with the flashes of resilience and redemption among the survivors.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=zGd2DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Columbine</div>
+                        <div class="book-author">by Dave Cullen</div>
+                        <div class="book-meta">📅 2019 • 🏢 Hachette UK • 📄 512 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">**THE GROUNDBREAKING BESTSELLER AND CLASSIC** 'Excellent . . . amazing how much still comes as a surprise' New York Times Book Review 'Like Capote's In Cold Blood, this tour de force gets below the who and the what of a horrifying incident to lay bare the devastating why' People 'A staggering work o...</div>
+                <div class="book-categories"><span class="category-tag">Columbine High School Massacre (Littleton, Colorado : 1999) fast (OCoLC)fst01755524</span><span class="category-tag">Modern</span><span class="category-tag">Columbine High School</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Winner of the 2019 Lionel Gelber Prize &#39;Majestic, informative and often delightful ... insights on every page&#39; Yanis Varoufakis, Observer The definitive history of the Great Financial Crisis, from the acclaimed author of The Deluge and The Wages of Destruction. In September 2008 the Great Financial Crisis, triggered by the collapse of Lehman brothers, shook the world. A decade later its spectre still haunts us. As the appalling scope and scale of the crash was revealed, the financial institutions that had symbolised the West&#39;s triumph since the end of the Cold War, seemed - through greed, malice and incompetence - to be about to bring the entire system to its knees. Crashed is a brilliantly original and assured analysis of what happened and how we were rescued from something even worse - but at a price which continues to undermine democracy across Europe and the United States. Gnawing away at our institutions are the many billions of dollars which were conjured up to prevent complete collapse. Over and over again, the end of the crisis has been announced, but it continues to hound us - whether in Greece or Ukraine, whether through Brexit or Trump. Adam Tooze follows the trail like no previous writer and has written a book compelling as history, as economic analysis and as political horror story.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=uglLDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Crashed</div>
+                        <div class="book-author">by Adam Tooze</div>
+                        <div class="book-meta">📅 2018 • 🏢 Penguin UK • 📄 582 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Winner of the 2019 Lionel Gelber Prize 'Majestic, informative and often delightful ... insights on every page' Yanis Varoufakis, Observer The definitive history of the Great Financial Crisis, from the acclaimed author of The Deluge and The Wages of Destruction. In September 2008 the Great Financial ...</div>
+                <div class="book-categories"><span class="category-tag">New York Times reviewed</span><span class="category-tag">Global Financial Crisis, 2008-2009</span><span class="category-tag">Business and Economics</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Westerners have long imagined the Himalayas as the world’s last untouched place and a repository of redemptive power and wisdom. Beatniks, hippie seekers, spiritual tourists, mountain climbers—diverse groups of people have traveled there over the years, searching for their own personal Shangri-La. In Far Out, Mark Liechty traces the Western fantasies that captured the imagination of tourists in the decades after World War II, asking how the idea of Nepal shaped the everyday cross-cultural interactions that it made possible. Emerging from centuries of political isolation but eager to engage the world, Nepalis struggled to make sense of the hordes of exotic, enthusiastic foreigners. They quickly embraced the phenomenon, however, and harnessed it to their own ends by building tourists’ fantasies into their national image and crafting Nepal as a premier tourist destination. Liechty describes three distinct phases: the postwar era, when the country provided a Raj-like throwback experience for rich Americans; Nepal’s emergence as an exotic outpost of hippie counterculture in the 1960s; and its rebranding into a hip adventure destination, which began in the 1970s and continues today. He shows how Western projections of Nepal as an isolated place inspired creative enterprises and, paradoxically, allowed locals to participate in the global economy. Based on twenty-five years of research, Far Out blends ethnographic analysis, a lifelong passion for Nepal, and a touch of humor to produce the first comprehensive history of what tourists looked for—and found—on the road to Kathmandu.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8880187-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Far Out</div>
+                        <div class="book-author">by Mark Liechty</div>
+                        <div class="book-meta">📅 2017 • 🏢 University of Chicago </div>
+                    </div>
+                </div>
+                <div class="book-description">Westerners have long imagined the Himalayas as the world’s last untouched place and a repository of redemptive power and wisdom. Beatniks, hippie seekers, spiritual tourists, mountain climbers—diverse groups of people have traveled there over the years, searching for their own personal Shangri-La. I...</div>
+                <div class="book-categories"><span class="category-tag">Youth, asia</span><span class="category-tag">Public opinion, united states</span><span class="category-tag">Hippies</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Is Wall Street bad for Main Street America? &quot;A well-told exploration of why our current economy is leaving too many behind.&quot; —The New York Times In looking at the forces that shaped the 2016 presidential election, one thing is clear: much of the population believes that our economic system is rigged to enrich the privileged elites at the expense of hard-working Americans. This is a belief held equally on both sides of political spectrum, and it seems only to be gaining momentum. A key reason, says Financial Times columnist Rana Foroohar, is the fact that Wall Street is no longer supporting Main Street businesses that create the jobs for the middle and working class. She draws on in-depth reporting and interviews at the highest rungs of business and government to show how the “financialization of America”—the phenomenon by which finance and its way of thinking have come to dominate every corner of business—is threatening the American Dream. Now updated with new material explaining how our corrupted financial sys­tem propelled Donald Trump to power, Makers and Takers explores the confluence of forces that has led American businesses to favor balance-sheet engineering over the actual kind, greed over growth, and short-term profits over putting people to work. From the cozy relationship between Wall Street and Washington, to a tax code designed to benefit wealthy individuals and corporations, to forty years of bad policy decisions, she shows why so many Americans have lost trust in the sys­tem, and why it matters urgently to us all. Through colorful stories of both “Takers,” those stifling job creation while lining their own pockets, and “Makers,” businesses serving the real economy, Foroohar shows how we can reverse these trends for a better path forward.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=xnZpCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Makers and Takers</div>
+                        <div class="book-author">by Rana Foroohar</div>
+                        <div class="book-meta">📅 2016 • 🏢 Crown Currency • 📄 402 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Is Wall Street bad for Main Street America? "A well-told exploration of why our current economy is leaving too many behind." —The New York Times In looking at the forces that shaped the 2016 presidential election, one thing is clear: much of the population believes that our economic system is rigged...</div>
+                <div class="book-categories"><span class="category-tag">Government policy</span><span class="category-tag">Business enterprises</span><span class="category-tag">Finance</span><span class="category-tag">Business and Economics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="WINNER OF THE BBC SAMUEL JOHNSON PRIZE FOR NON-FICTION 2010 A spectacularly revealing and harrowing portrait of ordinary lives in the world&#39;s least ordinary country, North Korea North Korea is Orwell&#39;s 1984 made reality: it is the only country in the world not connected to the internet; Gone with the Wind is a dangerous, banned book; during political rallies, spies study your expression to check your sincerity. After the death of the country&#39;s great leader Kim Il Sung in 1994, famine descended, and Nothing to Envy - winner of the 2010 BBC Samuel Johnson Prize for Non-Fiction - weaves together the stories of adversity and resilience of six residents of Chongin, North Korea&#39;s third-largest city. From extensive interviews and with tenacious investigative work, Barbara Demick has recreated the concerns, culture and lifestyles of North Korean citizens in a gripping narrative, and vividly reconstructed the inner workings of this extraordinary and secretive country.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=MWwAlqolOAYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Nothing To Envy</div>
+                        <div class="book-author">by Barbara Demick</div>
+                        <div class="book-meta">📅 2010 • 🏢 Granta • 📄 388 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">WINNER OF THE BBC SAMUEL JOHNSON PRIZE FOR NON-FICTION 2010 A spectacularly revealing and harrowing portrait of ordinary lives in the world's least ordinary country, North Korea North Korea is Orwell's 1984 made reality: it is the only country in the world not connected to the internet; Gone with th...</div>
+                <div class="book-categories"><span class="category-tag">Economic conditions</span><span class="category-tag">Koreans</span><span class="category-tag">Nonfiction</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The first dual biography of Katherine and Juana, based on a comprehensive re-evaluation of the sources">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=TjNvPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Sister Queens</div>
+                        <div class="book-author">by Julia Fox</div>
+                        <div class="book-meta">📅 2012 • 🏢 Clipper Large Print </div>
+                    </div>
+                </div>
+                <div class="book-description">The first dual biography of Katherine and Juana, based on a comprehensive re-evaluation of the sources</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">Great Britain</span><span class="category-tag">nyt:e-book-nonfiction=2014-07-13</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Como culminación de cincuenta años de estudio e investigación sobre la antigua Roma, Mary Beard, profesora de la Universidad de Cambridge, nos ofrece una magistral visión de conjunto de su historia: una historia que, nos dice, «al cabo de dos mil años, sigue siendo la base de nuestra cultura y nuestra política, de cómo vemos el mundo y nuestro lugar en él». Un especialista como Peter Heather, profesor del King&#39;s College, señala que Beard triunfa en la ambiciosa tarea de «darnos una respuesta coherente a la cuestión de por qué Roma se expandió de un modo tan espectacular». Nada más alejado, sin embargo, de una síntesis académica al uso. En la mayoría de las reseñas críticas de este libro aparecen asociados los calificativos de «magistral» y «entretenido ». Catherine Edwards, por ejemplo, nos dice que «el análisis de las instituciones y de las estructuras se ve constantemente animado en estas páginas por episodios apasionantes».">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Cp_lCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">SPQR</div>
+                        <div class="book-author">by Mary Beard</div>
+                        <div class="book-meta">📅 2016 • 🏢 Grupo Planeta Spain • 📄 487 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Como culminación de cincuenta años de estudio e investigación sobre la antigua Roma, Mary Beard, profesora de la Universidad de Cambridge, nos ofrece una magistral visión de conjunto de su historia: una historia que, nos dice, «al cabo de dos mil años, sigue siendo la base de nuestra cultura y nuest...</div>
+                <div class="book-categories"><span class="category-tag">Histoire</span><span class="category-tag">Rome, history</span><span class="category-tag">Antike</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="One of the world&#39;s leading authorities on war and international politics synthesizes the vast history of strategy&#39;s evolution in this consistently engaging and surprising account of how it came to pervade every aspect of life.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8277621-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Strategy</div>
+                        <div class="book-author">by Lawrence Freedman</div>
+                        <div class="book-meta">📅 2013 • 🏢 Oxford University </div>
+                    </div>
+                </div>
+                <div class="book-description">One of the world's leading authorities on war and international politics synthesizes the vast history of strategy's evolution in this consistently engaging and surprising account of how it came to pervade every aspect of life.</div>
+                <div class="book-categories"><span class="category-tag">Strategy</span><span class="category-tag">Strategic planning</span><span class="category-tag">Strategic culture</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="This groundbreaking book proposes that the rise of alphabetic literacy reconfigured the human brain and brought about profound changes in history, religion, and gender relations. Making remarkable connections across brain function, myth, and anthropology, Dr. Shlain shows why pre-literate cultures were principally informed by holistic, right-brain modes that venerated the Goddess, images, and feminine values. Writing drove cultures toward linear left-brain thinking and this shift upset the balance between men and women, initiating the decline of the feminine and ushering in patriarchal rule. Examining the cultures of the Israelites, Greeks, Christians, and Muslims, Shlain reinterprets ancient myths and parables in light of his theory. Provocative and inspiring, this book is a paradigm-shattering work that will transform your view of history and the mind.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=7Qsnr7cN5MsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Alphabet Versus the Goddess</div>
+                        <div class="book-author">by Leonard Shlain</div>
+                        <div class="book-meta">📅 1999 • 🏢 Penguin • 📄 496 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">This groundbreaking book proposes that the rise of alphabetic literacy reconfigured the human brain and brought about profound changes in history, religion, and gender relations. Making remarkable connections across brain function, myth, and anthropology, Dr. Shlain shows why pre-literate cultures w...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">Misogyny</span><span class="category-tag">Alphabet</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In &#39;The Ascent of Money&#39;, Niall Ferguson shows that finance is in fact the foundation of human progress. What&#39;s more, he reveals financial history as the essential back-story behind all history.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/6327852-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The ascent of money</div>
+                        <div class="book-author">by Niall Ferguson</div>
+                        <div class="book-meta">📅 2008 • 🏢 Yapi Kredi Yayinlari </div>
+                    </div>
+                </div>
+                <div class="book-description">In 'The Ascent of Money', Niall Ferguson shows that finance is in fact the foundation of human progress. What's more, he reveals financial history as the essential back-story behind all history.</div>
+                <div class="book-categories"><span class="category-tag">International finance</span><span class="category-tag">Economic history</span><span class="category-tag">Finance</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In his first book since the bestselling Fermat&#39;s Enigma, Simon Singh offers the first sweeping history of encryption, tracing its evolution and revealing the dramatic effects codes have had on wars, nations, and individual lives. From Mary, Queen of Scots, trapped by her own code, to the Navajo Code Talkers who helped the Allies win World War II, to the incredible (and incredibly simple) logisitical breakthrough that made Internet commerce secure, The Code Book tells the story of the most powerful intellectual weapon ever known: secrecy. Throughout the text are clear technical and mathematical explanations, and portraits of the remarkable personalities who wrote and broke the world&#39;s most difficult codes. Accessible, compelling, and remarkably far-reaching, this book will forever alter your view of history and what drives it. It will also make you wonder how private that e-mail you just sent really is.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=skt7TrLK5uYC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Code Book</div>
+                        <div class="book-author">by Simon Singh</div>
+                        <div class="book-meta">📅 2000 • 🏢 Vintage • 📄 436 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">In his first book since the bestselling Fermat's Enigma, Simon Singh offers the first sweeping history of encryption, tracing its evolution and revealing the dramatic effects codes have had on wars, nations, and individual lives. From Mary, Queen of Scots, trapped by her own code, to the Navajo Code...</div>
+                <div class="book-categories"><span class="category-tag">Coding theory</span><span class="category-tag">Data encryption (Computer science)</span><span class="category-tag">History</span><span class="category-tag">Confidential communications</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The True Story Behind the Events on 9/11 that Inspired Broadway’s Smash Hit Musical Come from Away, Featuring All New Material from the Author When 38 jetliners bound for the United States were forced to land at Gander International Airport in Canada by the closing of U.S. airspace on September 11, the population of this small town on Newfoundland Island swelled from 10,300 to nearly 17,000. The citizens of Gander met the stranded passengers with an overwhelming display of friendship and goodwill. As the passengers stepped from the airplanes, exhausted, hungry and distraught after being held on board for nearly 24 hours while security checked all of the baggage, they were greeted with a feast prepared by the townspeople. Local bus drivers who had been on strike came off the picket lines to transport the passengers to the various shelters set up in local schools and churches. Linens and toiletries were bought and donated. A middle school provided showers, as well as access to computers, email, and televisions, allowing the passengers to stay in touch with family and follow the news. Over the course of those four days, many of the passengers developed friendships with Gander residents that they expect to last a lifetime. As a show of thanks, scholarship funds for the children of Gander have been formed and donations have been made to provide new computers for the schools. This book recounts the inspiring story of the residents of Gander, Canada, whose acts of kindness have touched the lives of thousands of people and been an example of humanity and goodwill.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/26510-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Day the World Came to Town</div>
+                        <div class="book-author">by Jim DeFede</div>
+                        <div class="book-meta">📅 2002 • 🏢 William Morrow </div>
+                    </div>
+                </div>
+                <div class="book-description">The True Story Behind the Events on 9/11 that Inspired Broadway’s Smash Hit Musical Come from Away, Featuring All New Material from the Author When 38 jetliners bound for the United States were forced to land at Gander International Airport in Canada by the closing of U.S. airspace on September 11, ...</div>
+                <div class="book-categories"><span class="category-tag">Air travel</span><span class="category-tag">September 11 Terrorist Attacks, 2001</span><span class="category-tag">Aeronautics, Commercial</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="From New York Times bestselling author Sam Kean comes incredible stories of science, history, finance, mythology, the arts, medicine, and more, as told by the Periodic Table. Why did Gandhi hate iodine (I, 53)? How did radium (Ra, 88) nearly ruin Marie Curie&#39;s reputation? And why is gallium (Ga, 31) the go-to element for laboratory pranksters? The Periodic Table is a crowning scientific achievement, but it&#39;s also a treasure trove of adventure, betrayal, and obsession. These fascinating tales follow every element on the table as they play out their parts in human history, and in the lives of the (frequently) mad scientists who discovered them. The Disappearing Spoon masterfully fuses science with the classic lore of invention, investigation, and discovery -- from the Big Bang through the end of time. Though solid at room temperature, gallium is a moldable metal that melts at 84 degrees Fahrenheit. A classic science prank is to mold gallium spoons, serve them with tea, and watch guests recoil as their utensils disappear.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=9fE2AQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Disappearing Spoon</div>
+                        <div class="book-author">by Sam Kean</div>
+                        <div class="book-meta">📅 2010 • 🏢 Hachette UK • 📄 333 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">From New York Times bestselling author Sam Kean comes incredible stories of science, history, finance, mythology, the arts, medicine, and more, as told by the Periodic Table. Why did Gandhi hate iodine (I, 53)? How did radium (Ra, 88) nearly ruin Marie Curie's reputation? And why is gallium (Ga, 31)...</div>
+                <div class="book-categories"><span class="category-tag">Miscellanea</span><span class="category-tag">Chemical elements</span><span class="category-tag">Chemistry</span><span class="category-tag">Chemists</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;Exquisite&#39; – Daily Mail Shortlisted for the Walter Scott Prize Based on true events, The Good People is Hannah Kent&#39;s engrossing novel about superstition and devoted love. Ireland, 1825. Nóra, bereft after the sudden death of her husband, finds herself alone and caring for her young grandson Micheál, who cannot speak or walk. What happened to the healthy, happy grandson she met when her daughter was still alive? Mary arrives in the valley to help Nóra just as the whispers are spreading: stories of unexplained misfortunes, of illnesses, and rumours that Micheál is a changeling child who is bringing bad luck to the valley. Nance has lived in the valley all of her life. She is a healer who knows how to use the plants and berries of the woodland; she understands the magic in the old ways. And she might be able to help Micheál . . . As these three women are drawn together in the hope of restoring Micheál, their world of folklore and belief, of ritual and stories, tightens around them. It will lead them down a dangerous path, and force them to question everything they have ever known. &#39;An even better novel than Burial Rites — a starkly realised tale of love, grief and misconceived beliefs – Sunday Times &#39;An imaginative tour de force . . . exquisite&#39; – Daily Mail">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/9343983-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Good People</div>
+                        <div class="book-author">by Hannah Kent</div>
+                        <div class="book-meta">📅 2017 • 🏢 Back Bay </div>
+                    </div>
+                </div>
+                <div class="book-description">'Exquisite' – Daily Mail Shortlisted for the Walter Scott Prize Based on true events, The Good People is Hannah Kent's engrossing novel about superstition and devoted love. Ireland, 1825. Nóra, bereft after the sudden death of her husband, finds herself alone and caring for her young grandson Micheá...</div>
+                <div class="book-categories"><span class="category-tag">Ireland, fiction</span><span class="category-tag">History</span><span class="category-tag">Fiction</span><span class="category-tag">Fiction, family life</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="#1 New York Times bestseller “Barry will teach you almost everything you need to know about one of the deadliest outbreaks in human history.”—Bill Gates &quot;Monumental... an authoritative and disturbing morality tale.&quot;—Chicago Tribune The strongest weapon against pandemic is the truth. Read why in the definitive account of the 1918 Flu Epidemic. Magisterial in its breadth of perspective and depth of research, The Great Influenza provides us with a precise and sobering model as we confront the epidemics looming on our own horizon. As Barry concludes, &quot;The final lesson of 1918, a simple one yet one most difficult to execute, is that...those in authority must retain the public&#39;s trust. The way to do that is to distort nothing, to put the best face on nothing, to try to manipulate no one. Lincoln said that first, and best. A leader must make whatever horror exists concrete. Only then will people be able to break it apart.&quot; At the height of World War I, history’s most lethal influenza virus erupted in an army camp in Kansas, moved east with American troops, then exploded, killing as many as 100 million people worldwide. It killed more people in twenty-four months than AIDS killed in twenty-four years, more in a year than the Black Death killed in a century. But this was not the Middle Ages, and 1918 marked the first collision of science and epidemic disease.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=d7691ImvK7YC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Great Influenza</div>
+                        <div class="book-author">by John M. Barry</div>
+                        <div class="book-meta">📅 2005 • 🏢 Penguin • 📄 609 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">#1 New York Times bestseller “Barry will teach you almost everything you need to know about one of the deadliest outbreaks in human history.”—Bill Gates "Monumental... an authoritative and disturbing morality tale."—Chicago Tribune The strongest weapon against pandemic is the truth. Read why in the ...</div>
+                <div class="book-categories"><span class="category-tag">Influenza</span><span class="category-tag">Influenza Epidemic, 1918-1919</span><span class="category-tag">History</span><span class="category-tag">Medical</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Biography detailing the comic effects on Jacobs&#39; life that occur when he attempts to read the Encyclopaedia Britannica volumes A to Z.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=n6szDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Know-It-All</div>
+                        <div class="book-author">by A. J. Jacobs</div>
+                        <div class="book-meta">📅 2005 • 🏢 Simon and Schuster • 📄 400 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Biography detailing the comic effects on Jacobs' life that occur when he attempts to read the Encyclopaedia Britannica volumes A to Z.</div>
+                <div class="book-categories"><span class="category-tag">Learning and scholarship</span><span class="category-tag">Reading Level-Grade 9</span><span class="category-tag">History</span><span class="category-tag">Encyclopaedia Britannica</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A REESE WITHERSPOON x HELLO SUNSHINE BOOK CLUB PICK A WASHINGTON POST TOP 10 BOOK OF THE YEAR * A NEW YORK TIMES BESTSELLER and NEW YORK TIMES NOTABLE BOOK OF 2018 “A constant pleasure to read…Everybody who loves books should check out The Library Book.” —The Washington Post “CAPTIVATING…DELIGHTFUL.” —Christian Science Monitor * “EXQUISITELY WRITTEN, CONSISTENTLY ENTERTAINING.” —The New York Times * “MESMERIZING…RIVETING.” —Booklist (starred review) A dazzling love letter to a beloved institution—and an investigation into one of its greatest mysteries—from the bestselling author hailed as a “national treasure” by The Washington Post. On the morning of April 29, 1986, a fire alarm sounded in the Los Angeles Public Library. As the moments passed, the patrons and staff who had been cleared out of the building realized this was not the usual fire alarm. As one fireman recounted, “Once that first stack got going, it was ‘Goodbye, Charlie.’” The fire was disastrous: it reached 2000 degrees and burned for more than seven hours. By the time it was extinguished, it had consumed four hundred thousand books and damaged seven hundred thousand more. Investigators descended on the scene, but more than thirty years later, the mystery remains: Did someone purposefully set fire to the library—and if so, who? Weaving her lifelong love of books and reading into an investigation of the fire, award-winning New Yorker reporter and New York Times bestselling author Susan Orlean delivers a mesmerizing and uniquely compelling book that manages to tell the broader story of libraries and librarians in a way that has never been done before. In The Library Book, Orlean chronicles the LAPL fire and its aftermath to showcase the larger, crucial role that libraries play in our lives; delves into the evolution of libraries across the country and around the world, from their humble beginnings as a metropolitan charitable initiative to their current status as a cornerstone of national identity; brings each department of the library to vivid life through on-the-ground reporting; studies arson and attempts to burn a copy of a book herself; reflects on her own experiences in libraries; and reexamines the case of Harry Peak, the blond-haired actor long suspected of setting fire to the LAPL more than thirty years ago. Along the way, Orlean introduces us to an unforgettable cast of characters from libraries past and present—from Mary Foy, who in 1880 at eighteen years old was named the head of the Los Angeles Public Library at a time when men still dominated the role, to Dr. C.J.K. Jones, a pastor, citrus farmer, and polymath known as “The Human Encyclopedia” who roamed the library dispensing information; from Charles Lummis, a wildly eccentric journalist and adventurer who was determined to make the L.A. library one of the best in the world, to the current staff, who do heroic work every day to ensure that their institution remains a vital part of the city it serves. Brimming with her signature wit, insight, compassion, and talent for deep research, The Library Book is Susan Orlean’s thrilling journey through the stacks that reveals how these beloved institutions provide much more than just books—and why they remain an essential part of the heart, mind, and soul of our country. It is also a master journalist’s reminder that, perhaps especially in the digital era, they are more necessary than ever.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=OcNWDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Library Book</div>
+                        <div class="book-author">by Susan Orlean</div>
+                        <div class="book-meta">📅 2018 • 🏢 Simon and Schuster • 📄 336 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A REESE WITHERSPOON x HELLO SUNSHINE BOOK CLUB PICK A WASHINGTON POST TOP 10 BOOK OF THE YEAR * A NEW YORK TIMES BESTSELLER and NEW YORK TIMES NOTABLE BOOK OF 2018 “A constant pleasure to read…Everybody who loves books should check out The Library Book.” —The Washington Post “CAPTIVATING…DELIGHTFUL....</div>
+                <div class="book-categories"><span class="category-tag">True Crime</span><span class="category-tag">Los Angeles Public Library</span><span class="category-tag">History</span><span class="category-tag">Libraries</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="No description available.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/12857063-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Mother Tongue</div>
+                        <div class="book-author">by Bill Bryson</div>
+                        <div class="book-meta">🏢 Tandem Library </div>
+                    </div>
+                </div>
+                <div class="book-description">No description available.</div>
+                <div class="book-categories"><span class="category-tag">English language</span><span class="category-tag">History</span><span class="category-tag">English language, history</span><span class="category-tag">New York Times reviewed</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The Orientalist unravels the mysterious life of a man born on the border between West and East, a Jewish man with a passion for the Arab world. Tom Reiss first came across the man who called himself &#39;Kurban Said&#39; when he went to the ex-USSR to research the oil business on the Caspian Sea, and discovered a novel instead. Written on the eve of the Second World War, Ali and Nino is a captivating love story set in the glamorous city of Baku, Azerbaijan&#39;s capital. The novel&#39;s depiction of a lost cosmopolitan society is enthralling, but equally intriguing is the identity of the man who wrote it. Who was its supposed author? And why was he so forgotten that no one could agree on the simplest facts about him? For five years, Reiss tracked Lev Nussimbaum, alias Kurban Said, from a wealthy Jewish childhood in Baku, to a romantic adolescence in Persia on the run from the Bolsheviks, and an exile in Berlin as bestselling author and self-proclaimed Muslim prince. The result is a thoroughly unexpected picture of the twentieth-century - of the origins of our ideas about race and religious self-definition, and of the roots of modern fanaticism.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=3MyPti17CyoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Orientalist</div>
+                        <div class="book-author">by Tom Reiss</div>
+                        <div class="book-meta">📅 2010 • 🏢 Random House • 📄 476 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The Orientalist unravels the mysterious life of a man born on the border between West and East, a Jewish man with a passion for the Arab world. Tom Reiss first came across the man who called himself 'Kurban Said' when he went to the ex-USSR to research the oil business on the Caspian Sea, and discov...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">Nonfiction</span><span class="category-tag">History</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="What if society wasn&#39;t fundamentally rational, but was motivated by insanity? This thought sets Jon Ronson on an utterly compelling adventure into the world of madness. Along the way, Jon meets psychopaths, those whose lives have been touched by madness and those whose job it is to diagnose it, including the influential psychologist who developed the Psychopath Test, from whom Jon learns the art of psychopath-spotting. A skill which seemingly reveals that madness could indeed be at the heart of everything . . . Combining Jon Ronson&#39;s trademark humour, charm and investigative incision, The Psychopath Test is both entertaining and honest, unearthing dangerous truths and asking serious questions about how we define normality in a world where we are increasingly judged by our maddest edges. &#39;The belly laughs come thick and fast – my God, he is funny . . . provocative and interesting&#39; – Observer">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=XswUKz4IRmgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Psychopath Test</div>
+                        <div class="book-author">by Jon Ronson</div>
+                        <div class="book-meta">📅 2011 • 🏢 Pan Macmillan • 📄 247 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">What if society wasn't fundamentally rational, but was motivated by insanity? This thought sets Jon Ronson on an utterly compelling adventure into the world of madness. Along the way, Jon meets psychopaths, those whose lives have been touched by madness and those whose job it is to diagnose it, incl...</div>
+                <div class="book-categories"><span class="category-tag">Mentally ill</span><span class="category-tag">SOCIAL SCIENCE</span><span class="category-tag">Psychology, pathological</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER • The groundbreaking exploration of probability and uncertainty that explains how to make better predictions in a world drowning in data, from the nation’s foremost political forecaster—updated with insights into the pandemic, journalism today, and polling One of The Wall Street Journal’s Ten Best Works of Nonfiction of the Year “Could turn out to be one of the more momentous books of the decade.”—The New York Times Book Review Most predictions fail, often at great cost to society, because experts and laypeople mistake more confident predictions for more accurate ones. But overconfidence is often the reason for failure. If our appreciation of uncertainty improves, our predictions can get better too. This is the “prediction paradox”: The more humility we have about our ability to make predictions, the more successful we can be in planning for the future. Drawing on his own groundbreaking work in sports and politics, Nate Silver examines the world of prediction, investigating how to seek truth from data. In The Signal and the Noise, Silver visits innovative forecasters in a range of areas, from hurricanes to baseball to global pandemics, from the poker table to the stock market, from Capitol Hill to the NBA. He discovers that what the most accurate ones have in common is a superior command of probability—as well as a healthy dose of humility. With everything from the global economy to the fight against disease hanging on the quality of our predictions, Nate Silver’s insights are an essential read.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/7256893-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Signal and the Noise</div>
+                        <div class="book-author">by Nate Silver</div>
+                        <div class="book-meta">📅 2012 • 🏢 Penguin </div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER • The groundbreaking exploration of probability and uncertainty that explains how to make better predictions in a world drowning in data, from the nation’s foremost political forecaster—updated with insights into the pandemic, journalism today, and polling One of The Wall S...</div>
+                <div class="book-categories"><span class="category-tag">Methodology</span><span class="category-tag">Bayesian statistical decision theory</span><span class="category-tag">Theory of Knowledge</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The pacy, sensitive and formidably argued history of the causes of the First World War, from acclaimed historian and author Christopher Clark SUNDAY TIMES and INDEPENDENT BOOKS OF THE YEAR 2012 The moments that it took Gavrilo Princip to step forward to the stalled car and shoot dead Franz Ferdinand and his wife were perhaps the most fateful of the modern era. An act of terrorism of staggering efficiency, it fulfilled its every aim: it would liberate Bosnia from Habsburg rule and it created a powerful new Serbia, but it also brought down four great empires, killed millions of men and destroyed a civilization. What made a seemingly prosperous and complacent Europe so vulnerable to the impact of this assassination? In The Sleepwalkers Christopher Clark retells the story of the outbreak of the First World War and its causes. Above all, it shows how the failure to understand the seriousness of the chaotic, near genocidal fighting in the Balkans would drag Europe into catastrophe. Reviews: &#39;Formidable ... one of the most impressive and stimulating studies of the period ever published&#39; Max Hastings,Sunday Times &#39;Easily the best book ever written on the subject ... A work of rare beauty that combines meticulous research with sensitive analysis and elegant prose. The enormous weight of its quality inspires amazement and awe ... Academics should take note: Good history can still be a good story&#39; Washington Post &#39;A lovingly researched work of the highest scholarship. It is hard to believe we will ever see a better narrative of what was perhaps the biggest collective blunder in the history of international relations&#39; Niall Ferguson &#39;[Reading The Sleepwalkers], it is as if a light had been turned on a half-darkened stage of shadowy characters cursing among themselves without reason ... [Clark] demolishes the standard view ... The brilliance of Clark&#39;s far-reaching history is that we are able to discern how the past was genuinely prologue ... In conception, steely scholarship and piercing insights, his book is a masterpiece&#39; Harold Evans, New York Times Book Review &#39;Impeccably researched, provocatively argued and elegantly written ... a model of scholarship&#39; Sunday Times Books of the Year &#39;Superb ... effectively consigns the old historical consensus to the bin ... It&#39;s not often that one has the privilege of reading a book that reforges our understanding of one of the seminal events of world history&#39; Mail Online &#39;A monumental new volume ... Revelatory, even revolutionary ... Clark has done a masterful job explaining the inexplicable&#39; Boston Globe &#39;Superb ... One of the great mysteries of history is how Europe&#39;s great powers could have stumbled into World War I ... This is the single best book I have read on this important topic&#39; Fareed Zakaria &#39;A meticulously researched, superbly organized, and handsomely written account&#39; Military History &#39;Clark is a masterly historian ... His account vividly reconstructs key decision points while deftly sketching the context driving them ... A magisterial work&#39; Wall Street Journal About the author: Christopher Clark is Professor of Modern History at the University of Cambridge and a Fellow of St Catharine&#39;s College. He is the author of The Politics of Conversion, Kaiser Wilhelm II and Iron Kingdom. Widely praised around the world, Iron Kingdom became a major bestseller. He has been awarded the Officer&#39;s Cross of the Order of Merit of the Federal Republic of Germany.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=unxCQH3LKBcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Sleepwalkers</div>
+                        <div class="book-author">by Christopher Clark</div>
+                        <div class="book-meta">📅 2012 • 🏢 Penguin UK • 📄 502 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">The pacy, sensitive and formidably argued history of the causes of the First World War, from acclaimed historian and author Christopher Clark SUNDAY TIMES and INDEPENDENT BOOKS OF THE YEAR 2012 The moments that it took Gavrilo Princip to step forward to the stalled car and shoot dead Franz Ferdinand...</div>
+                <div class="book-categories"><span class="category-tag">World War, 1914-1918</span><span class="category-tag">Politics and government</span><span class="category-tag">Causes</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="*The No.1 Sunday Times Bestseller* &#39;THE BEST TRUE SPY STORY I HAVE EVER READ&#39; JOHN LE CARRÉ A thrilling Cold War story about a KGB double agent, by one of Britain&#39;s greatest historians - now with a new afterword On a warm July evening in 1985, a middle-aged man stood on the pavement of a busy avenue in the heart of Moscow, holding a plastic carrier bag. In his grey suit and tie, he looked like any other Soviet citizen. The bag alone was mildly conspicuous, printed with the red logo of Safeway, the British supermarket. The man was a spy. A senior KGB officer, for more than a decade he had supplied his British spymasters with a stream of priceless secrets from deep within the Soviet intelligence machine. No spy had done more to damage the KGB. The Safeway bag was a signal: to activate his escape plan to be smuggled out of Soviet Russia. So began one of the boldest and most extraordinary episodes in the history of spying. Ben Macintyre reveals a tale of espionage, betrayal and raw courage that changed the course of the Cold War forever... BEN MACINTYRE&#39;S NEXT BOOK, COLDITZ, IS AVAILABLE FOR PRE-ORDER NOW">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=xGJODwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Spy and the Traitor</div>
+                        <div class="book-author">by Ben Macintyre</div>
+                        <div class="book-meta">📅 2018 • 🏢 Penguin UK • 📄 350 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">*The No.1 Sunday Times Bestseller* 'THE BEST TRUE SPY STORY I HAVE EVER READ' JOHN LE CARRÉ A thrilling Cold War story about a KGB double agent, by one of Britain's greatest historians - now with a new afterword On a warm July evening in 1985, a middle-aged man stood on the pavement of a busy avenue...</div>
+                <div class="book-categories"><span class="category-tag">Soviet Union. Komitet gosudarstvenno bezopasnosti</span><span class="category-tag">Spies</span><span class="category-tag">History</span><span class="category-tag">Intelligence service</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Winner of the Pulitzer Prize for Nonfiction • Winner of the National Book Award • New York Times Bestseller • A Kirkus Reviews &quot;Best Book of the 21st Century (So Far)&quot; Renowned scholar Stephen Greenblatt brings the past to vivid life in what is at once a supreme work of scholarship, a literary page-turner, and a thrilling testament to the power of the written word. In the winter of 1417, a short, genial, cannily alert man in his late thirties plucked a very old manuscript off a dusty shelf in a remote monastery, saw with excitement what he had discovered, and ordered that it be copied. He was Poggio Bracciolini, the greatest book hunter of the Renaissance. His discovery, Lucretius’ ancient poem On the Nature of Things, had been almost entirely lost to history for more than a thousand years. It was a beautiful poem of the most dangerous ideas: that the universe functions without the aid of gods, that religious fear is damaging to human life, that pleasure and virtue are not opposites but intertwined, and that matter is made up of very small material particles in eternal motion, randomly colliding and swerving in new directions. Its return to circulation changed the course of history. The poem’s vision would shape the thought of Galileo and Freud, Darwin and Einstein, and—in the hands of Thomas Jefferson—leave its trace on the Declaration of Independence. From the gardens of the ancient philosophers to the dark chambers of monastic scriptoria during the Middle Ages to the cynical, competitive court of a corrupt and dangerous pope, Greenblatt brings Poggio’s search and discovery to life in a way that deepens our understanding of the world we live in now. “An intellectually invigorating, nonfiction version of a Dan Brown–like mystery-in-the-archives thriller.” —Boston Globe">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=MLZ-Bq-P6JMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Swerve</div>
+                        <div class="book-author">by Stephen Greenblatt</div>
+                        <div class="book-meta">📅 2012 • 🏢 W. W. Norton & Company • 📄 388 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Winner of the Pulitzer Prize for Nonfiction • Winner of the National Book Award • New York Times Bestseller • A Kirkus Reviews "Best Book of the 21st Century (So Far)" Renowned scholar Stephen Greenblatt brings the past to vivid life in what is at once a supreme work of scholarship, a literary page-...</div>
+                <div class="book-categories"><span class="category-tag">Modern Civilization</span><span class="category-tag">Renaissance</span><span class="category-tag">Influence</span><span class="category-tag">Renaissance Science</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;An oppressive, forensic, psychological thriller: J.K. Rowling meets Antony Beevor, Stephen King and Marina Warner ... Schiff&#39;s writing is to die for&#39; THE TIMES It began in 1692, over an exceptionally raw Massachusetts winter, when a minister&#39;s niece started to scream and convulse. It ended less than a year later, but not before panic had infected the entire colony, nineteen men and women had been hanged, and a band of adolescent girls had brought Massachusetts to its knees. Vividly capturing the dark, unsettled atmosphere of seventeenth-century America, Stacy Schiff&#39;s magisterial history draws us into this anxious time. She shows us how quickly the epidemic of accusations, trials, and executions span out of control. Above all, Schiff&#39;s astonishing research reveals details and complexity that few other historians have seen.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=C3TlCQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Witches</div>
+                        <div class="book-author">by Stacy Schiff</div>
+                        <div class="book-meta">📅 2015 • 🏢 Hachette UK • 📄 619 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">'An oppressive, forensic, psychological thriller: J.K. Rowling meets Antony Beevor, Stephen King and Marina Warner ... Schiff's writing is to die for' THE TIMES It began in 1692, over an exceptionally raw Massachusetts winter, when a minister's niece started to scream and convulse. It ended less tha...</div>
+                <div class="book-categories"><span class="category-tag">Trials (Witchcraft)</span><span class="category-tag">Salem (mass.), history</span><span class="category-tag">Witchcraft</span><span class="category-tag">Women</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="El libro en que se inspiró la serie de HBO. PREMIO NOBEL DE LITERATURA 2015 La escritora bielorrusa da voz a aquellas personas que sobrevivieron al desastre de Chernóbil y que fueron silenciadas y olvidadas por su propio gobierno. Este libro les da la oportunidad de contar su historia. Chernóbil, 1986. «Cierra las ventanillas y acuéstate. Hay un incendio en la central. Vendré pronto.» Esto fue lo último que un joven bombero dijo a su esposa antes de acudir al lugar de la explosión. No regresó. Y en cierto modo, ya no volvió a verle, pues en el hospital su marido dejó de ser su marido. Todavía hoy ella se pregunta si su historia trata sobre el amor o la muerte. Voces de Chernóbil está planteado como si fuera una tragedia griega, con coros y unos héroes marcados por un destino fatal, cuyas voces fueron silenciadas durante muchos años por una polis representada aquí por la antigua URSS. Pero,a diferencia de una tragedia griega, no hubo posibilidad de catarsis. «[...] por su escritura polifónica, que es un monumento al valor y al sufrimiento en nuestro tiempo.». -Jurado de la Academia Sueca al otorgar a la autora el Premio Nobel de Literatura 2015. ENGLISH DESCRIPTION Winner of the Nobel Prize in Literature Winner of the National Book Critics Circle Award On April 26, 1986, the worst nuclear reactor accident in history occurred in Chernobyl and contaminated as much as three quarters of Europe. Voices from Chernobyl is the first book to present personal accounts of the tragedy. Journalist Svetlana Alexievich interviewed hundreds of people affected by the meltdown---from innocent citizens to firefighters to those called in to clean up the disaster---and their stories reveal the fear, anger, and uncertainty with which they still live. Comprised of interviews in monologue form, Voices from Chernobyl is a crucially important work, unforgettable in its emotional power and honesty.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=mFSREAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Voces de Chernobil / Voices from Chernobyl</div>
+                        <div class="book-author">by Svetlana Alexievich</div>
+                        <div class="book-meta">📅 2019 • 🏢 National Geographic </div>
+                    </div>
+                </div>
+                <div class="book-description">El libro en que se inspiró la serie de HBO. PREMIO NOBEL DE LITERATURA 2015 La escritora bielorrusa da voz a aquellas personas que sobrevivieron al desastre de Chernóbil y que fueron silenciadas y olvidadas por su propio gobierno. Este libro les da la oportunidad de contar su historia. Chernóbil, 19...</div>
+                <div class="book-categories"><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Essays provide a view of British life during the nineteenth century.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=HKj8jUM630EC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">What Jane Austen Ate and Charles Dickens Knew</div>
+                        <div class="book-author">by Daniel Pool</div>
+                        <div class="book-meta">📅 1994 • 🏢 Simon and Schuster • 📄 420 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Essays provide a view of British life during the nineteenth century.</div>
+                <div class="book-categories"><span class="category-tag">Manners and customs in literature</span><span class="category-tag">Social life and customs</span><span class="category-tag">Knowledge</span><span class="category-tag">England</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 15:58:02 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New York Times bestseller - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>New York Times bestseller</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 41 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="Descubra cómo una política de empresa basada en la felicidad de todos sus miembros ayuda a tener una mayor productividad y beneficios a largo plazo. Tony Hsieh comparte diferentes experiencias que ha adquirido tanto en los negocios como personalmente, a lo largo de su vida, desde sus inicios hasta la creación de su empresa, Zappos. Rápido y realista, nos muestra cómo la felicidad es un efectivo modelo de negocio a seguir para lograr el éxito, y cómo concentrándonos en la felicidad de esos que nos rodean, podemos aumentar nuestro propio nivel de felicidad. -El modelo de negocio que propone este libro mejora la rentabilidad empresarial a largo plazo. Explica cómo encontrar el equilibrio justo entre beneficios, pasión y propósitos, tanto en la vida como en los negocios. -Bestseller no 1 del Wall Street Journal y del New York Times durante 27 semanas consecutivas.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Mrx8saBxyuAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Delivering Happiness</div>
+                        <div class="book-author">by Tony Hsieh</div>
+                        <div class="book-meta">📅 2013 • 🏢 Profit Editorial • 📄 222 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Descubra cómo una política de empresa basada en la felicidad de todos sus miembros ayuda a tener una mayor productividad y beneficios a largo plazo. Tony Hsieh comparte diferentes experiencias que ha adquirido tanto en los negocios como personalmente, a lo largo de su vida, desde sus inicios hasta l...</div>
+                <div class="book-categories"><span class="category-tag">Leadership</span><span class="category-tag">Business and Economics</span><span class="category-tag">Success in business</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A celebration of our female friendships, of our messy years, and of growing up together. Glittering with wit, heart, and humour, it’s a book to share with every woman you’ve ever been lucky enough to call a friend. “Nearly everything I know about love, I&#39;ve learnt from my long-term friendships with women.” I know that love can be loud and jubilant. It can be dancing in the swampy mud and the pouring rain at a festival and shouting “YOU ARE AMAZING” over the band. It’s laughing until you wheeze. It’s walking along the street together on a Saturday night and feeling an entire city is yours. I also know that love is a pretty quiet thing. It’s lying on the sofa together drinking coffee, talking about where you’re going to go that morning to drink more coffee. It’s folding down pages of books you think they’d find interesting. I know that love happens under the splendour of fireworks and sunsets, but also happens when you’re lying on blow-up airbeds in a childhood bedroom, sitting in A&E or in the queue for a passport. ***** WHAT READERS ARE SAYING: ‘A book every girl in her 20s needs to read’ ‘I’ll never stop recommending this book’ ‘This is my comfort book! I LOOOOVE THIS BOOK TO MY CORE’ ‘I wish I could read it for the first time again’ A Sunday Times bestseller, September 2022 TikTok Book Awards Winner, August 2023">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=IGkwDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Everything I Know About Love</div>
+                        <div class="book-author">by Dolly Alderton</div>
+                        <div class="book-meta">📅 2018 • 🏢 Penguin UK • 📄 289 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A celebration of our female friendships, of our messy years, and of growing up together. Glittering with wit, heart, and humour, it’s a book to share with every woman you’ve ever been lucky enough to call a friend. “Nearly everything I know about love, I've learnt from my long-term friendships with ...</div>
+                <div class="book-categories"><span class="category-tag">Man-woman relationships</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">nyt:paperback-nonfiction=2023-04-09</span><span class="category-tag">Friendship</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A life-changing gift of a book: What if you tried to stop doing everything, so you could finally get round to what counts? **The instant Sunday Times bestseller** Rejecting the futile modern obsession with &#39;getting everything done,&#39; Four Thousand Weeks introduces readers to tools for constructing a meaningful life by embracing rather than denying their limitations. Drawing on the insights of both ancient and contemporary philosophers, psychologists, and spiritual teachers, Oliver Burkeman sets out to realign our relationship with time - and in doing so, to liberate us from its tyranny. Embrace your limits. Change your life. Discover how to make your four thousand weeks count in 2025. &#39;Life is finite. You don&#39;t have to fit everything in... Read this book and wake up to a new way of thinking and living&#39; Emma Gannon &#39;Every sentence is riven with gold&#39; Chris Evans &#39;Comforting, fascinating, engaging, inspiring and useful&#39; Marian Keyes">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=0Zh0DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Four Thousand Weeks</div>
+                        <div class="book-author">by Oliver Burkeman</div>
+                        <div class="book-meta">📅 2021 • 🏢 Random House • 📄 224 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A life-changing gift of a book: What if you tried to stop doing everything, so you could finally get round to what counts? **The instant Sunday Times bestseller** Rejecting the futile modern obsession with 'getting everything done,' Four Thousand Weeks introduces readers to tools for constructing a ...</div>
+                <div class="book-categories"><span class="category-tag">Self Help</span><span class="category-tag">Happiness</span><span class="category-tag">nyt:business-books=2021-09-12</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="AN INSTANT NEW YORK TIMES BESTSELLER A Read with Jenna Today Show Book Club Pick! &quot;Plumbs the depths of marriage, motherhood and friendship with warmth and wit. I devoured it in one gulp!” —Maria Semple A warm, incisive new novel about the enduring bonds of marriage and friendship from Cynthia D’Aprix Sweeney, author of the instant New York Times bestseller The Nest Flora Mancini has been happily married for more than twenty years. But everything she thought she knew about herself, her marriage, and her relationship with her best friend, Margot, is upended when she stumbles upon an envelope containing her husband’s wedding ring—the one he claimed he lost one summer when their daughter, Ruby, was five. Flora and Julian struggled for years, scraping together just enough acting work to raise Ruby in Manhattan and keep Julian’s small theater company—Good Company—afloat. A move to Los Angeles brought their first real career successes, a chance to breathe easier, and a reunion with Margot, now a bona fide television star. But has their new life been built on lies? What happened that summer all those years ago? And what happens now? With Cynthia D’Aprix Sweeney’s signature tenderness, humor, and insight, Good Company tells a bighearted story of the lifelong relationships that both wound and heal us. A Most Anticipated Book From: OprahMag.com * Refinery29 * Houston Chronicle * The Millions * Elle * Buzzfeed">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=B1H1DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Good Company</div>
+                        <div class="book-author">by Cynthia D'Aprix Sweeney</div>
+                        <div class="book-meta">📅 2021 • 🏢 HarperCollins • 📄 291 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">AN INSTANT NEW YORK TIMES BESTSELLER A Read with Jenna Today Show Book Club Pick! "Plumbs the depths of marriage, motherhood and friendship with warmth and wit. I devoured it in one gulp!” —Maria Semple A warm, incisive new novel about the enduring bonds of marriage and friendship from Cynthia D’Apr...</div>
+                <div class="book-categories"><span class="category-tag">New York Times reviewed</span><span class="category-tag">Married people, fiction</span><span class="category-tag">Marriage, fiction</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="#1 NATIONAL BESTSELLER • A passionate call to arms against our era’s most pervasive human rights violation—the oppression of women and girls in the developing world. From the bestselling authors of Tightrope, two of our most fiercely moral voices With Pulitzer Prize winners Nicholas D. Kristof and Sheryl WuDunn as our guides, we undertake an odyssey through Africa and Asia to meet the extraordinary women struggling there, among them a Cambodian teenager sold into sex slavery and an Ethiopian woman who suffered devastating injuries in childbirth. Drawing on the breadth of their combined reporting experience, Kristof and WuDunn depict our world with anger, sadness, clarity, and, ultimately, hope. They show how a little help can transform the lives of women and girls abroad. That Cambodian girl eventually escaped from her brothel and, with assistance from an aid group, built a thriving retail business that supports her family. The Ethiopian woman had her injuries repaired and in time became a surgeon. A Zimbabwean mother of five, counseled to return to school, earned her doctorate and became an expert on AIDS. Through these stories, Kristof and WuDunn help us see that the key to economic progress lies in unleashing women’s potential. They make clear how so many people have helped to do just that, and how we can each do our part. Throughout much of the world, the greatest unexploited economic resource is the female half of the population. Countries such as China have prospered precisely because they emancipated women and brought them into the formal economy. Unleashing that process globally is not only the right thing to do; it’s also the best strategy for fighting poverty. Deeply felt, pragmatic, and inspirational, Half the Sky is essential reading for every global citizen.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=q2eNLtaZ7osC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Half the Sky</div>
+                        <div class="book-author">by Nicholas D. Kristof & Sheryl WuDunn</div>
+                        <div class="book-meta">📅 2009 • 🏢 Vintage • 📄 321 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">#1 NATIONAL BESTSELLER • A passionate call to arms against our era’s most pervasive human rights violation—the oppression of women and girls in the developing world. From the bestselling authors of Tightrope, two of our most fiercely moral voices With Pulitzer Prize winners Nicholas D. Kristof and S...</div>
+                <div class="book-categories"><span class="category-tag">Sociology</span><span class="category-tag">Nonfiction</span><span class="category-tag">Crimes against</span><span class="category-tag">Politics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="From Jeannette Walls, the bestselling author of The Glass Castle, a riveting new novel about an indomitable young woman in Prohibition-era Virginia Most folk thought Sallie Kincaid was a nobody who’d amount to nothing. Sallie had other plans. Sallie Kincaid is the daughter of the biggest man in a small town, the charismatic Duke Kincaid. Born at the turn of the twentieth century into a life of comfort and privilege, Sallie remembers little about her mother, who died in a violent argument with the Duke. By the time she is just eight years old, the Duke has remarried and had a son, Eddie. While Sallie is the Duke&#39;s daughter, sharp-witted and resourceful, Eddie is his mother’s son, timid and cerebral. When Sallie tries to teach young Eddie to be more like their father, her daredevil coaching leads to an accident, and Sallie is cast out. Nine years later, she returns, determined to reclaim her place in the family. That’s a lot more complicated than Sallie expected, and she enters a world of conflict and lawlessness. Sallie confronts the secrets and scandals that hide in the shadows of the Big House, navigates the factions in the family and town, and finally comes into her own as a bold, sometimes reckless bootlegger. &#39;Jeannette Walls created my new favorite hero in her protagonist, Sallie Kincaid. Sallie is sharp, bold, unflinching, and humorous despite, or maybe because of, her hardships.&#39; — Jennette McCurdy, bestselling author of I’m Glad My Mom Died &#39;Hang the Moon is Jeannette Walls&#39;s masterwork. Epic in scope, the novel is a thrill ride through Prohibition and change in the American South . . . The prose is so elegant and so close to the bone you feel Sallie&#39;s heartbeat. Glorious.&#39; ― Adriana Trigiani, author of The Good Left Undone &#39;Does what all good books should: it affirms our faith in the human spirit.&#39; ― Dani Shapiro on The Glass Castle &#39;Like J.D. Salinger or Hemingway before her, Jeannette Walls has the talent of knowing exactly how to let a story tell itself.&#39; ― Sunday Independent on The Glass Castle">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Lg17EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Hang the Moon</div>
+                        <div class="book-author">by Jeannette Walls</div>
+                        <div class="book-meta">📅 2023 • 🏢 Simon and Schuster • 📄 354 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">From Jeannette Walls, the bestselling author of The Glass Castle, a riveting new novel about an indomitable young woman in Prohibition-era Virginia Most folk thought Sallie Kincaid was a nobody who’d amount to nothing. Sallie had other plans. Sallie Kincaid is the daughter of the biggest man in a sm...</div>
+                <div class="book-categories"><span class="category-tag">nyt:combined-print-and-e-book-fiction=2023-04-16</span><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="INSTANT NEW YORK TIMES BESTSELLER “A new masterpiece from one of my favorite authors… [How The World Really Works] is a compelling and highly readable book that leaves readers with the fundamental grounding needed to help solve the world’s toughest challenges.”—Bill Gates “Provocative but perceptive . . . You can agree or disagree with Smil—accept or doubt his ‘just the facts’ posture—but you probably shouldn’t ignore him.”—The Washington Post An essential analysis of the modern science and technology that makes our twenty-first century lives possible—a scientist&#39;s investigation into what science really does, and does not, accomplish. We have never had so much information at our fingertips and yet most of us don’t know how the world really works. This book explains seven of the most fundamental realities governing our survival and prosperity. From energy and food production, through our material world and its globalization, to risks, our environment and its future, How the World Really Works offers a much-needed reality check—because before we can tackle problems effectively, we must understand the facts. In this ambitious and thought-provoking book we see, for example, that globalization isn’t inevitable—the foolishness of allowing 70 per cent of the world’s rubber gloves to be made in just one factory became glaringly obvious in 2020—and that our societies have been steadily increasing their dependence on fossil fuels, such that any promises of decarbonization by 2050 are a fairy tale. For example, each greenhouse-grown supermarket-bought tomato has the equivalent of five tablespoons of diesel embedded in its production, and we have no way of producing steel, cement or plastics at required scales without huge carbon emissions. Ultimately, Smil answers the most profound question of our age: are we irrevocably doomed or is a brighter utopia ahead? Compelling, data-rich and revisionist, this wonderfully broad, interdisciplinary guide finds faults with both extremes. Looking at the world through this quantitative lens reveals hidden truths that change the way we see our past, present and uncertain future.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=eTotEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">How the World Really Works</div>
+                        <div class="book-author">by Vaclav Smil</div>
+                        <div class="book-meta">📅 2025 • 🏢 Penguin Group • 📄 337 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">INSTANT NEW YORK TIMES BESTSELLER “A new masterpiece from one of my favorite authors… [How The World Really Works] is a compelling and highly readable book that leaves readers with the fundamental grounding needed to help solve the world’s toughest challenges.”—Bill Gates “Provocative but perceptive...</div>
+                <div class="book-categories"><span class="category-tag">Science and civilization</span><span class="category-tag">Social aspects</span><span class="category-tag">Science</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Thoroughly revised and expanded for a new generation of readers, this classic guide to enjoying literature to its fullest—a lively, enlightening, and entertaining introduction to a diverse range of writing and literary devices that enrich these works, including symbols, themes, and contexts—teaches you how to make your everyday reading experience richer and more rewarding. While books can be enjoyed for their basic stories, there are often deeper literary meanings beneath the surface. How to Read Literature Like a Professor helps us to discover those hidden truths by looking at literature with the practiced analytical eye—and the literary codes—of a college professor. What does it mean when a protagonist is traveling along a dusty road? When he hands a drink to his companion? When he’s drenched in a sudden rain shower? Thomas C. Foster provides answers to these questions as he explores every aspect of fiction, from major themes to literary models, narrative devices, and form. Offering a broad overview of literature—a world where a road leads to a quest, a shared meal may signify a communion, and rain, whether cleansing or destructive, is never just a shower—he shows us how to make our reading experience more intellectually satisfying and fun. The world, and curricula, have changed. This third edition has been thoroughly revised to reflect those changes, and features new chapters, a new preface and epilogue, as well as fresh teaching points Foster has developed over the past decade. Foster updates the books he discusses to include more diverse, inclusive, and modern works, such as Angie Thomas’s The Hate U Give; Emily St. John Mandel’s Station Eleven; Neil Gaiman’s Neverwhere; Elizabeth Acevedo’s The Poet X; Helen Oyeyemi&#39;s Mr. Fox and Boy, Snow, Bird; Sandra Cisneros’s The House on Mango Street; Zora Neale Hurston’s Their Eyes Were Watching God; Maggie O’Farrell’s Hamnet; Madeline Miller’s Circe; Pat Barker’s The Silence of the Girls; and Tahereh Mafi’s A Very Large Expanse of Sea.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/9392168-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">How to Read Literature Like a Professor</div>
+                        <div class="book-author">by Thomas C Foster</div>
+                        <div class="book-meta">📅 2013 • 🏢 Harpercollins </div>
+                    </div>
+                </div>
+                <div class="book-description">Thoroughly revised and expanded for a new generation of readers, this classic guide to enjoying literature to its fullest—a lively, enlightening, and entertaining introduction to a diverse range of writing and literary devices that enrich these works, including symbols, themes, and contexts—teaches ...</div>
+                <div class="book-categories"><span class="category-tag">Books and reading</span><span class="category-tag">nyt:education=2015-06-07</span><span class="category-tag">Literature, history and criticism</span><span class="category-tag">Criticism</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="“The most interesting book ever written about Google” (The Washington Post) delivers the inside story behind the most successful and admired technology company of our time, now updated with a new Afterword. Google is arguably the most important company in the world today, with such pervasive influence that its name is a verb. The company founded by two Stanford graduate students—Larry Page and Sergey Brin—has become a tech giant known the world over. Since starting with its search engine, Google has moved into mobile phones, computer operating systems, power utilities, self-driving cars, all while remaining the most powerful company in the advertising business. Granted unprecedented access to the company, Levy disclosed that the key to Google’s success in all these businesses lay in its engineering mindset and adoption of certain internet values such as speed, openness, experimentation, and risk-taking. Levy discloses details behind Google’s relationship with China, including how Brin disagreed with his colleagues on the China strategy—and why its social networking initiative failed; the first time Google tried chasing a successful competitor. He examines Google’s rocky relationship with government regulators, particularly in the EU, and how it has responded when employees left the company for smaller, nimbler start-ups. In the Plex is the “most authoritative…and in many ways the most entertaining” (James Gleick, The New York Book Review) account of Google to date and offers “an instructive primer on how the minds behind the world’s most influential internet company function” (Richard Waters, The Wall Street Journal).">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8001223-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">In the Plex</div>
+                        <div class="book-author">by Steven Levy</div>
+                        <div class="book-meta">📅 2011 • 🏢 Simon & Schuster </div>
+                    </div>
+                </div>
+                <div class="book-description">“The most interesting book ever written about Google” (The Washington Post) delivers the inside story behind the most successful and admired technology company of our time, now updated with a new Afterword. Google is arguably the most important company in the world today, with such pervasive influen...</div>
+                <div class="book-categories"><span class="category-tag">Google</span><span class="category-tag">Biography</span><span class="category-tag">Internet industry</span><span class="category-tag">Google (Firm)</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Older women often feel invisible, but sometimes that&#39;s their secret weapon. Billie, Mary Alice, Helen and Natalie have worked for the Museum, an elite network of assassins, for forty years. But now their talents are considered old-school and no one appreciates their real-world resourcefulness in an age of technology. When the foursome is sent on an all-expenses-paid trip to mark their retirement, they are targeted by one of their own. Only the Board, the top-level members of the Museum, can order the termination of field agents, and the women realise they&#39;ve been marked for death. To get out alive they have to turn against their own organization, relying on experience and each other to get the job done, knowing that working together is the secret to their survival. They&#39;re about to teach the Board what it really means to be a woman - and a killer - of a certain age.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=gAV6EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Killers of a Certain Age</div>
+                        <div class="book-author">by Deanna Raybourn</div>
+                        <div class="book-meta">📅 2022 • 🏢 Hachette UK • 📄 368 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Older women often feel invisible, but sometimes that's their secret weapon. Billie, Mary Alice, Helen and Natalie have worked for the Museum, an elite network of assassins, for forty years. But now their talents are considered old-school and no one appreciates their real-world resourcefulness in an ...</div>
+                <div class="book-categories"><span class="category-tag">nyt:hardcover-fiction=2022-09-25</span><span class="category-tag">Fiction, mystery and detective, cozy, general</span><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Trabajo, trabajo y más trabajo. Linus Baker podría ser una persona cualquiera, en un lugar cualquiera, viviendo una vida cualquiera. Él estaba convencido de esto y, si tú lo hubieras conocido, tampoco habrías dudado en asegurar que pertenecía al montón, ni más, ni menos. Y así era, hasta el día en que la Altísima Dirección llama a este funcionario del Departamento Encargado de los Jóvenes Mágicos para supervisar un orfanato del que apenas hay registros. Con esta nueva tarea entre manos, Linus viajará a la isla de Marsyas, donde deberá supervisar a seis huérfanos catalogados como peligrosos (hablamos del futuro Anticristo, entre otros) y a su enigmático tutor. Ahí, deberá dejar de lado sus miedos y prejuicios, que no son pocos, para darse cuenta de que lo que realmente tiene que hacer no es aquello a lo que fue enviado. Porque en Marsyas, Linus descubrirá que el camino a la felicidad es distinto para cada uno de nosotros, y que si te atreves a recorrerlo, llegarás al lugar donde te encontrarás a ti mismo. Un libro que llenará tu corazón.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=4x1_EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">La casa en el mar más azul (Edición mexicana)</div>
+                        <div class="book-author">by TJ Klune</div>
+                        <div class="book-meta">📅 2022 • 🏢 Crossbooks México • 📄 489 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Trabajo, trabajo y más trabajo. Linus Baker podría ser una persona cualquiera, en un lugar cualquiera, viviendo una vida cualquiera. Él estaba convencido de esto y, si tú lo hubieras conocido, tampoco habrías dudado en asegurar que pertenecía al montón, ni más, ni menos. Y así era, hasta el día en q...</div>
+                <div class="book-categories"><span class="category-tag">LGBTQ science fiction and fantasy</span><span class="category-tag">Serie:Cerulean_Chronicles</span><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="THE FUNNY AND INSPIRING, MULTI-AWARD-WINNING BESTSELLER WITH MORE THAN 8 MILLION COPIES SOLD, now a major Apple TV+ series starring Brie Larson A Book of the Year for: Guardian, Times, Sunday Times, New York Times, Good House Keeping, Woman & Home, Stylist, TLS Oprah Daily, Newsweek, Mail on Sunday, NPR, India Knight, Hay Festival, Waterstones, Amazon, Books Are My Bag, and many more! &#39;The most charming, life-enhancing novel’ Sunday Times &#39;Funny, thought-provoking and stylish&#39; Guardian ‘The best book I&#39;ve read recently. I loved it’ - SARA COX, BBC 2 Between the Covers ‘Everyone needs to read this’ 5-star reader review ___________ A woman ahead of her time. But exactly right for ours Chemist Elizabeth Zott is not your average woman. In fact, she would be the first to point out that there is no such thing. But it&#39;s the early 1960s and her all-male team at Hastings Research Institute take a very unscientific view of equality. Except for one: Calvin Evans, the lonely, brilliant, Nobel-Prize-nominated grudge-holder who falls in love with - of all things - her mind. Like science, life is unpredictable. Forced to leave her job at the institute, Elizabeth Zott soon finds herself the reluctant star of America&#39;s most beloved cooking show, Supper at Six. Elizabeth&#39;s unusual approach to cooking (&#39;Combine one tablespoon acetic acid with a pinch of sodium chloride&#39;) proves revolutionary. But as her following grows, not everyone is happy. Because as it turns out, Elizabeth Zott isn&#39;t just teaching women to cook. She&#39;s daring them to change the status quo. One molecule at a time. __________ A New York Times ‘Top 100 Best Books of the 21st Century’ Reader&#39;s Pick Author of the Year at the British Book Awards Author of the Year, Waterstones Winner of the Goodreads Choice Best Debut Novel Award Winner of the Books are My Bag Reader&#39;s Choice Award Winner of the Books are My Bag Breakthrough Author Award Shortlisted for the HWA Crown Award PRAISE FOR LESSONS IN CHEMISTRY: &#39;Laugh-out-loud funny and brimming with life, generosity and courage&#39; Rachel Joyce, bestselling author of The Homemade God ‘Full of humour, heartbreak and characters who feel like real people’ Red Magazine ‘Page-turning and highly satisfying’ – Maggie Shipstead, bestselling author of Great Circle &#39;I loved Lessons in Chemistry and am devastated to have finished it!&#39; Nigella Lawson &#39;A novel that sparks joy with every page&#39; Elizabeth Day, bestselling author of Magpie &#39;Witty and sometimes hilarious ... the Catch-22 of early feminism&#39; Stephen King ‘A beautiful, sharp, funny and dark modern classic. I adored it&#39; Chris Whitaker, bestselling author of All the Colours of the Dark ‘The best book that I have read this year – a funny, warm, unique book’ 5-star reader review ‘Witty, poignant, clever, brilliantly plotted...believe the hype’ 5-star reader review ‘Funny, honest and heart-wrenching this book had me hooked until the end.’ 5-star reader review Lessons in Chemistry has sold over 8 million copies worldwide across all formats, People, January 2025 Front cover may vary">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=G2U4EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Lessons in Chemistry</div>
+                        <div class="book-author">by Bonnie Garmus</div>
+                        <div class="book-meta">📅 2022 • 🏢 Random House • 📄 347 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">THE FUNNY AND INSPIRING, MULTI-AWARD-WINNING BESTSELLER WITH MORE THAN 8 MILLION COPIES SOLD, now a major Apple TV+ series starring Brie Larson A Book of the Year for: Guardian, Times, Sunday Times, New York Times, Good House Keeping, Woman & Home, Stylist, TLS Oprah Daily, Newsweek, Mail on Sunday,...</div>
+                <div class="book-categories"><span class="category-tag">Single mothers</span><span class="category-tag">nyt:hardcover-fiction=2022-04-24</span><span class="category-tag">Women scientists</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Ganadora del Premio Pulitzer 1992 Maus nos cuenta la historia de Vladek Spiegelman, un judío superviviente del Holocausto, y de su hijo, un historietista que intenta reconciliarse con su padre, con la terrible historia de este y con la mismísima Historia. La forma de este relato, un cómic (donde los nazis son gatos y los judíos, ratones), logra desposeernos de cualquier atisbo de cercanía que podamos tener con los hechos que aquí se refieren, y lo consigue precisamente porque se acerca a lo inefable empleando formas diminutivas. Como ha señalado el New York Times Book Review, este libro es «un formidable hito, que aporta el detalle de un documental y la viveza de una novela… un suceso literario de primer orden». A medio camino entre Polonia y Rego Park, en Nueva York, Maus detalla dos historias poderosas: la primera es el relato de cómo el padre de Spiegelman y su esposa sobrevivieron a la Europa de Hitler, una narración espeluznante llena de incontables encontronazos con la muerte, de escapatorias improbables y de sentimiento de terror ante la posibilidad del arresto y la traición; la segunda trata de la relación tortuosa que el autor mantiene con su padre en la vejez, en un intento de llevarse bien con él y que, sin embargo, está trufado de pequeñas discusiones y visitas intermitentes, mientras al fondo acecha un legado histórico tan gigantesco que impide ningún tipo de sosiego. A todos los niveles, este es el relato definitivo de un superviviente… y también el de los hijos que, de algún modo, tienen que sobrevivir a los supervivientes. La parte I de Maus nos conduce, de la mano de los padres de Spiegelman, hasta las puertas de Auschwitz, y asimismo nos arrima al abatimiento que siente su hijo. Hay que dejar atrás nuestras ideas preconcebidas. Estos gatos y estos ratones no son Tom y Jerry, sino algo muy diferente. Esto es un nuevo tipo de literatura. ENGLISH DESCRIPTION The bestselling first installment of the graphic novel acclaimed as “the most affecting and successful narrative ever done about the Holocaust” (Wall Street Journal) and “the first masterpiece in comic book history” (The New Yorker) PULITZER PRIZE WINNER One of Variety’s “Banned and Challenged Books Everyone Should Read” A brutally moving work of art —widely hailed as the greatest graphic novel ever written— Maus recounts the chilling experiences of the author’s father during the Holocaust, with Jews drawn as wide-eyed mice and Nazis as menacing cats. Maus is a haunting tale within a tale, weaving the author’s account of his tortured relationship with his aging father into an astonishing retelling of one of history&#39;s most unspeakable tragedies. It is an unforgettable story of survival and a disarming look at the legacy of trauma.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/10210168-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Maus I</div>
+                        <div class="book-author">by Art Spiegelman</div>
+                        <div class="book-meta">📅 1986 • 🏢 Tandem Library </div>
+                    </div>
+                </div>
+                <div class="book-description">Ganadora del Premio Pulitzer 1992 Maus nos cuenta la historia de Vladek Spiegelman, un judío superviviente del Holocausto, y de su hijo, un historietista que intenta reconciliarse con su padre, con la terrible historia de este y con la mismísima Historia. La forma de este relato, un cómic (donde los...</div>
+                <div class="book-categories"><span class="category-tag">Comics and Graphic Novels</span><span class="category-tag">graphic novel</span><span class="category-tag">history</span><span class="category-tag">nyt:paperback_graphic_books=2011-09-17</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Uno de los libros más esperados del año según Today, Oprah Daily, BuzzFeed, SheReads, PopSugar, BookRiot ¡y muchos más! Una coincidencia hace que dos desconocidos vivan una aventura de un único día y se hagan una promesa que solo uno cumple. La nueva novela de la autora superventas de Todos nuestros veranos, Carley Fortune. Fern Brookbanks ha malgastado demasiados años pensando en Will Baxter. Pasó solo veinticuatro horas con el artista en un día fortuito de aventuras por Toronto. Se confiaron sus sueños y secretos y prometieron reencontrarse un año después. Fern acudió a la cita. Will, no. Ahora, ella vive en la casa de su niñez, regenta el resort de su madre en Muskoka, que está hecho un desastre, y necesita un salvavidas. Para su eterna sorpresa, su deseo se cumple cuando Will aparece, nueve años tarde, con una maleta y una oferta para ayudarla. Pero ¿cómo va a fiarse ella de ese hombre trajeado que se parece tan poco al que conoció? Will oculta algo, y Fern no está segura de querer saber qué. Sin embargo, hace años él la rescató. Y puede que haya llegado la hora de que ella le devuelva el favor.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/13244078-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Meet Me at the Lake</div>
+                        <div class="book-author">by Carley Fortune</div>
+                        <div class="book-meta">📅 2023 • 🏢 Penguin Publishing Group </div>
+                    </div>
+                </div>
+                <div class="book-description">Uno de los libros más esperados del año según Today, Oprah Daily, BuzzFeed, SheReads, PopSugar, BookRiot ¡y muchos más! Una coincidencia hace que dos desconocidos vivan una aventura de un único día y se hagan una promesa que solo uno cumple. La nueva novela de la autora superventas de Todos nuestros...</div>
+                <div class="book-categories"><span class="category-tag">nyt:combined-print-and-e-book-fiction=2023-05-21</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;Be prepared to be amazed&#39; Guardian Can anyone get a perfect memory? Joshua Foer used to be like most of us, forgetting phone numbers and mislaying keys. Then he learnt the art of memory training, and a year later found himself in the finals of the US Memory Championship. He also discovered a truth we often forget: that, even in an age of technology, memory is the key to everything we are. In Moonwalking with Einstein he takes us on an astonishing journey through the mind, from ancient &#39;memory palace&#39; techniques to neuroscience, from the man who can recall nine thousand books to another who constantly forgets who he is. In doing so, Foer shows how we can all improve our memories. &#39;Captivating ... engaging ... smart and funny&#39; The New York Times &#39;Delightful ... uplifting ... it shows that our minds can do extraordinary things&#39; Wall Street Journal &#39;Great fun ... a book worth remembering&#39; Independent &#39;A lovely exploration of the ways that we preserve our lives and our world in the golden amber of human memory&#39; New Scientist">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=bFTl2b80zyQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Moonwalking with Einstein</div>
+                        <div class="book-author">by Joshua Foer</div>
+                        <div class="book-meta">📅 2011 • 🏢 Penguin UK • 📄 302 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">'Be prepared to be amazed' Guardian Can anyone get a perfect memory? Joshua Foer used to be like most of us, forgetting phone numbers and mislaying keys. Then he learnt the art of memory training, and a year later found himself in the finals of the US Memory Championship. He also discovered a truth ...</div>
+                <div class="book-categories"><span class="category-tag">brain training</span><span class="category-tag">mnemonics</span><span class="category-tag">memory improvement</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Ken Follett regresa al thriller con una vertiginosa novela que imagina lo inimaginable. En el desierto del Sáhara, dos agentes de inteligencia siguen la pista a un poderoso grupo terrorista arriesgando sus vidas -y, cuando se enamoran perdidamente, sus carreras- a cada paso. En China, un alto cargo del gobierno con grandes ambiciones batalla contra los viejos halcones del ala dura del Partido que amenazan con empujar al país a un punto de no retorno. Y en Estados Unidos, la presidenta se enfrenta a una crisis global y al asedio de sus implacables oponentes políticos. Está dispuesta a todo para evitar una guerra innecesaria. Pero cuando un acto de agresión conduce a otro y las potencias más poderosas del mundo se ven atrapadas en una compleja red de alianzas de la que no pueden escapar, comienza una frenética carrera contrarreloj. ¿Podrá alguien, incluso con las mejores intenciones y las más excepcionales habilidades, detener lo inevitable? Nunca es un thriller extraordinario, lleno de heroínas y villanos, falsos profetas, agentes de élite, políticos desencantados y cínicos revolucionarios. Follett envía un mensaje de advertencia para nuestros tiempos en una historia intensa y trepidante que transporta a los lectores hasta el filo del abismo. «Cuando me documentaba para La caída de los gigantes, me impactó darme cuenta de que la Primera Guerra Mundial fue una guerra que nadie quería. Ningún líder europeo de ninguno de los dos bandos tenía intención de que sucediera. Pero, uno por uno, los emperadores y primeros ministros tomaron decisiones -decisiones lógicas y moderadas- que nos acercaron un pasito más al conflicto más terrible que el mundo ha conocido. Llegué a creer que todo fue un trágico accidente. Y me pregunté: ¿podría volver a ocurrir?» KEN FOLLETT La crítica ha dicho: « Nunca es el mejor libro de Ken Follett. Es aterrador. Desafío a cualquiera a abandonarlo tras haber leído las primeras 150 páginas». Stephen King «Un thriller brutal. Puro Ken Follett». Jacinto Antón, El País «No pueden perderse Nunca. Lo van a pasar terriblemente bien». Pepa Fernández, RNE «Una de las mejores novelas de espías que he leído en bastante tiempo». Sergio Vila-Sanjuán, La Vanguardia «Follett tiene una de las imaginaciones más brillantes y desbordantes de la literatura contemporánea». Javier del Pino, Cadena SER «Un adictivo thriller político que ya se perfila como otro best seller mundial». El Mundo «Urgente y ferozmente apasionante». The Washington Post «Un thriller deslumbrante y una de las lecturas más emocionantes del año». Daily Express «Audaz en su escala y meticulosamente documentado, Nunca hace que el resto de libros de espionaje internacional parezcan apocados, perezosos y provincianos». The Sunday Times «Prepárense para una experiencia electrizante». CNN.com «Absolutamente fascinante... Un thriller inteligente, aterrador y muy plausible». Booklist «Fantástico... Una imponente y poderosa demostración de uno de los mejores escritores del género». Publishers Weekly Sobre el autor han dicho: «Follett es un maestro». The Washington Post «Sigo envidiando como el primer día la capacidad de Follett para entretener. Sus tramas funcionan siempre y te mantiene pegado a cada página». Juan Gómez Jurado, ABC">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/11957174-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Never</div>
+                        <div class="book-author">by Ken Follett</div>
+                        <div class="book-meta">📅 2021 • 🏢 Viking </div>
+                    </div>
+                </div>
+                <div class="book-description">Ken Follett regresa al thriller con una vertiginosa novela que imagina lo inimaginable. En el desierto del Sáhara, dos agentes de inteligencia siguen la pista a un poderoso grupo terrorista arriesgando sus vidas -y, cuando se enamoran perdidamente, sus carreras- a cada paso. En China, un alto cargo ...</div>
+                <div class="book-categories"><span class="category-tag">Deserts</span><span class="category-tag">nyt:hardcover-fiction=2021-11-28</span><span class="category-tag">English literature</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Penguin Readers is an ELT graded reader series. Please note that the eBook edition does NOT include access to the audio edition and digital book. Written for learners of English as a foreign language, each title includes carefully adapted text, new illustrations and language learning exercises. Titles include popular classics, exciting contemporary fiction, and thought-provoking non-fiction, introducing language learners to bestselling authors and compelling content. The eight levels of Penguin Readers follow the Common European Framework of Reference for language learning (CEFR). Exercises at the back of each Reader help language learners to practise grammar, vocabulary, and key exam skills. Before, during and after-reading questions test readers&#39; story comprehension and develop vocabulary. No Rules Rules, a Level 4 Reader, is A2+ in the CEFR framework. The text is made up of sentences with up to three clauses, introducing more complex uses of present perfect simple, passives, phrasal verbs and simple relative clauses. It is well supported by illustrations, which appear regularly. Reed Hastings started Netflix with Marc Randolph in 1997. Their company has completely changed how we watch TV and films. In this book, Reed explains the secret to the company&#39;s success and how at Netflix, there really are NO rules.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/10524294-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">No Rules Rules</div>
+                        <div class="book-author">by Reed Hastings & Erin Meyer</div>
+                        <div class="book-meta">📅 2020 • 🏢 Penguin Audio </div>
+                    </div>
+                </div>
+                <div class="book-description">Penguin Readers is an ELT graded reader series. Please note that the eBook edition does NOT include access to the audio edition and digital book. Written for learners of English as a foreign language, each title includes carefully adapted text, new illustrations and language learning exercises. Titl...</div>
+                <div class="book-categories"><span class="category-tag">Industrial management</span><span class="category-tag">Young Adult Nonfiction</span><span class="category-tag">Corporations, united states</span><span class="category-tag">nyt:business-books=2020-10-11</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&quot;America&#39;s funniest science writer&quot; ( Washington Post) explores the irresistibly strange universe of life without gravity in this New York Times bestseller. The best-selling author of Stiff and Bonk explores the irresistibly strange universe of space travel and life without gravity. From the Space Shuttle training toilet to a crash test of NASA&#39;s new space capsule, Mary Roach takes us on the surreally entertaining trip into the science of life in space and space on Earth.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/6455470-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Packing for Mars</div>
+                        <div class="book-author">by Mary Roach</div>
+                        <div class="book-meta">📅 2010 • 🏢 Norton & Company, Incorporated, W. W. </div>
+                    </div>
+                </div>
+                <div class="book-description">"America's funniest science writer" ( Washington Post) explores the irresistibly strange universe of life without gravity in this New York Times bestseller. The best-selling author of Stiff and Bonk explores the irresistibly strange universe of space travel and life without gravity. From the Space S...</div>
+                <div class="book-categories"><span class="category-tag">Manned space flight</span><span class="category-tag">Space biology</span><span class="category-tag">nyt:hardcover_nonfiction=2010-08-01</span><span class="category-tag">Science</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="THE NEW YORK TIMES BESTSELLER ONE OF BARACK OBAMA&#39;S FAVOURITE BOOKS OF 2023 A searing study of American poverty from the Pulitzer Prize-winning author of Evicted The United States is the richest country on earth, yet has more poverty than any other advanced democracy. One in seven Americans live below the poverty line, a line which hasn&#39;t shifted over the last fifty years, despite the efforts of successive governments. Why is there so much scarcity in this land of dollars? In Poverty, by America, acclaimed sociologist Matthew Desmond examines American poverty today and the stories we tell ourselves about it. Spanning social isolation, mass incarceration, the housing crisis, domestic violence, crack and opioid epidemics, welfare cuts and more, Desmond argues that poverty does not result from a lack of resources or good policy ideas. We already know how to eliminate it. The hard part is getting more of us to care. To do so, we need a new story. As things stand, liberals explain poverty through insurmountable structural issues, whereas conservatives highlight personal failings and poor life choices. Both abdicate responsibility, and ignore the reality that the advantages of the rich only come at the expense of the poor. It is time better-paid citizens put themselves back in the narrative, recognizing that the depth and expanse of poverty in any nation reflects our failure to look out for one another. Poverty must ultimately be met by community: all this suffering and want is our doing, and we can undo it.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=gYN2EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Poverty, by America</div>
+                        <div class="book-author">by Matthew Desmond</div>
+                        <div class="book-meta">📅 2023 • 🏢 Random House • 📄 263 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">THE NEW YORK TIMES BESTSELLER ONE OF BARACK OBAMA'S FAVOURITE BOOKS OF 2023 A searing study of American poverty from the Pulitzer Prize-winning author of Evicted The United States is the richest country on earth, yet has more poverty than any other advanced democracy. One in seven Americans live bel...</div>
+                <div class="book-categories"><span class="category-tag">Social Science</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2023-04-09</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Una novela sobre las almas gemelas y el primer amor de Colleen Hoover, autora de Romper el círculo. Colleen Hoover, un fenómeno imparable. Después de una dura infancia, Beyah Grim consigue una beca para abandonar para siempre el lugar en el que nunca ha sido feliz. Pero dos meses antes de marcharse una muerte inesperada la deja sin hogar y se ve obligada a pasar el resto del verano en Texas con un padre al que apenas conoce. Rota y ansiosa por que el verano pase rápido, Beyah no tiene tiempo ni paciencia para Samson, el rico y melancólico vecino de al lado. Sin embargo, la conexión entre ellos es demasiado intensa como para ignorarla. Tienen claro que sus planes de futuro les van a separar así que deciden mantener una relación casual de verano. Lo que no saben todavía es que una corriente inesperada está a punto de arrastrar sus corazones al mar.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=2zRBEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Primer amor (Heart Bones)</div>
+                        <div class="book-author">by Colleen Hoover</div>
+                        <div class="book-meta">📅 2025 • 🏢 Editorial Planeta • 📄 301 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Una novela sobre las almas gemelas y el primer amor de Colleen Hoover, autora de Romper el círculo. Colleen Hoover, un fenómeno imparable. Después de una dura infancia, Beyah Grim consigue una beca para abandonar para siempre el lugar en el que nunca ha sido feliz. Pero dos meses antes de marcharse ...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">nyt:combined-print-and-e-book-fiction=2023-02-19</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;A goldmine of surprising insights. Makes you smarter with every page&#39; - James Clear, author of Atomic Habits The essential guide to improving your performance, and a powerful argument for how to succeed in any field: develop broad interests and skills while everyone around you is rushing to specialize. The instant Sunday Times bestseller From the ‘10,000 hours rule’ to the power of tiger parenting, we have been taught that success in any field requires early specialization and many hours of deliberate practice. If you only dabble or delay, you&#39;ll never catch up with those who got a head start. This is completely wrong. In this landmark book, David Epstein shows you that the way to succeed is by sampling widely, gaining a breadth of experiences, taking detours, experimenting relentlessly and juggling many interests – this is the power of developing range. Studying the world&#39;s most successful athletes, artists, musicians, inventors and scientists, Epstein demonstrates why, in most fields, generalists, not specialists, are primed to excel. Range has challenged the status quo, reshaped career paths and changed lives. Read it to view the world differently. Shortlisted for the Financial Times/McKinsey Business Book of the Year Award &#39;I loved Range&#39; – Malcolm Gladwell, author of Outliers &#39;Fascinating . . . if you&#39;re a generalist who has ever felt overshadowed by your specialist colleagues, this book is for you&#39; – Bill Gates, founder of Microsoft">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=oEGCDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Range</div>
+                        <div class="book-author">by David Epstein</div>
+                        <div class="book-meta">📅 2019 • 🏢 Pan Macmillan • 📄 414 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">'A goldmine of surprising insights. Makes you smarter with every page' - James Clear, author of Atomic Habits The essential guide to improving your performance, and a powerful argument for how to succeed in any field: develop broad interests and skills while everyone around you is rushing to special...</div>
+                <div class="book-categories"><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2019-06-16</span><span class="category-tag">Ability</span><span class="category-tag">Self Help</span><span class="category-tag">New York Times reviewed</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The first dual biography of Katherine and Juana, based on a comprehensive re-evaluation of the sources">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=TjNvPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Sister Queens</div>
+                        <div class="book-author">by Julia Fox</div>
+                        <div class="book-meta">📅 2012 • 🏢 Clipper Large Print </div>
+                    </div>
+                </div>
+                <div class="book-description">The first dual biography of Katherine and Juana, based on a comprehensive re-evaluation of the sources</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">Great Britain</span><span class="category-tag">nyt:e-book-nonfiction=2014-07-13</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="#1 NEW YORK TIMES BESTSELLER • A bold work from the author of The Black Swan that challenges many of our long-held beliefs about risk and reward, politics and religion, finance and personal responsibility In his most provocative and practical book yet, one of the foremost thinkers of our time redefines what it means to understand the world, succeed in a profession, contribute to a fair and just society, detect nonsense, and influence others. Citing examples ranging from Hammurabi to Seneca, Antaeus the Giant to Donald Trump, Nassim Nicholas Taleb shows how the willingness to accept one’s own risks is an essential attribute of heroes, saints, and flourishing people in all walks of life. As always both accessible and iconoclastic, Taleb challenges long-held beliefs about the values of those who spearhead military interventions, make financial investments, and propagate religious faiths. Among his insights: • For social justice, focus on symmetry and risk sharing. You cannot make profits and transfer the risks to others, as bankers and large corporations do. You cannot get rich without owning your own risk and paying for your own losses. Forcing skin in the game corrects this asymmetry better than thousands of laws and regulations. • Ethical rules aren’t universal. You’re part of a group larger than you, but it’s still smaller than humanity in general. • Minorities, not majorities, run the world. The world is not run by consensus but by stubborn minorities imposing their tastes and ethics on others. • You can be an intellectual yet still be an idiot. “Educated philistines” have been wrong on everything from Stalinism to Iraq to low-carb diets. • Beware of complicated solutions (that someone was paid to find). A simple barbell can build muscle better than expensive new machines. • True religion is commitment, not just faith. How much you believe in something is manifested only by what you’re willing to risk for it. The phrase “skin in the game” is one we have often heard but rarely stopped to truly dissect. It is the backbone of risk management, but it’s also an astonishingly rich worldview that, as Taleb shows in this book, applies to all aspects of our lives. As Taleb says, “The symmetry of skin in the game is a simple rule that’s necessary for fairness and justice, and the ultimate BS-buster,” and “Never trust anyone who doesn’t have skin in the game. Without it, fools and crooks will benefit, and their mistakes will never come back to haunt them.”">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=4dQ0DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Skin in the Game</div>
+                        <div class="book-author">by Nassim Nicholas Taleb</div>
+                        <div class="book-meta">📅 2018 • 🏢 Random House • 📄 305 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">#1 NEW YORK TIMES BESTSELLER • A bold work from the author of The Black Swan that challenges many of our long-held beliefs about risk and reward, politics and religion, finance and personal responsibility In his most provocative and practical book yet, one of the foremost thinkers of our time redefi...</div>
+                <div class="book-categories"><span class="category-tag">Philosophy</span><span class="category-tag">Complexity (philosophy)</span><span class="category-tag">Risk, sociological aspects</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="*THE NO.1 NEW YORK TIMES BESTSELLER* For the first time in seven years, Allie Brosh, the creator of the immensely popular blog &#39;Hyperbole and a Half&#39; and #1 New York Times bestselling author, returns with her new collection. Solutions and Other Problems includes humorous stories from Allie Brosh&#39;s childhood; the adventures of her very bad animals; merciless dissection of her own character flaws; incisive essays on grief, loneliness, and powerlessness; as well as reflections on the absurdity of modern life. This full-colour, beautifully illustrated edition features all-new material with more than 1,600 pieces of art. Solutions and Other Problems marks the return of a beloved American humourist who has &quot;the observational skills of a scientist, the creativity of an artist, and the wit of a comedian&quot; (Bill Gates). Praise for Allie Brosh&#39;s Hyperbole and a Half: &#39;A hilarious collection&#39; Mashable &#39;Will certainly help you, should you perhaps decide to indulge in a spot of &quot;self-gifting&quot; in this instance, survive Christmas with your more crazed relatives&#39; Rachel Cooke, Observer &#39;It&#39;s impossible not to warm to cartoonist and blogger Allie. If she doesn&#39;t get to you with her funny childhood anecdotes (eating an entire birthday cake) then her honest reflections on depression will&#39; Grazia">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=bgnLDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Solutions and Other Problems</div>
+                        <div class="book-author">by Allie Brosh</div>
+                        <div class="book-meta">📅 2020 • 🏢 Random House • 📄 521 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">*THE NO.1 NEW YORK TIMES BESTSELLER* For the first time in seven years, Allie Brosh, the creator of the immensely popular blog 'Hyperbole and a Half' and #1 New York Times bestselling author, returns with her new collection. Solutions and Other Problems includes humorous stories from Allie Brosh's c...</div>
+                <div class="book-categories"><span class="category-tag">Humor</span><span class="category-tag">Comics and graphic novels, nonfiction, biography and memoir</span><span class="category-tag">Comic books, strips</span><span class="category-tag">nyt:advice-how-to-and-miscellaneous=2020-10-11</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The shocking true story of a Hamas insider who rejected his violent destiny—and is now risking everything to expose closely guarded secrets and show the world a way to peace. Son of Hamas is now available with an all-new chapter about events since the book’s release such as the revelation of Mosab’s Israeli intelligence handler’s true identity, and Homeland Security’s effort to deport the author. Since he was a small boy, Mosab Hassan Yousef has had an inside view of the deadly terrorist group Hamas. The oldest son of Sheikh Hassan Yousef, a founding member of Hamas and its most popular leader, young Mosab assisted his father for years in his political activities while being groomed to assume his legacy, politics, status . . . and power. But everything changed when Mosab turned away from terror and violence, and embraced instead the teachings of another famous Middle East leader. In Son of Hamas, Mosab reveals new information about the world’s most dangerous terrorist organization and unveils the truth about his own role, his agonizing separation from family and homeland, the dangerous decision to make his newfound faith public, and his belief that the Christian mandate to “love your enemies” is the only way to peace in the Middle East.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Inf5EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Son of Hamas: A Gripping Account of Terror, Betrayal, Political Unthinkable Choices</div>
+                        <div class="book-author">by Mosab Hassan Yousef & Ron Brackin</div>
+                        <div class="book-meta">📅 2023 • 🏢 Jaico Publishing House • 📄 307 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The shocking true story of a Hamas insider who rejected his violent destiny—and is now risking everything to expose closely guarded secrets and show the world a way to peace. Son of Hamas is now available with an all-new chapter about events since the book’s release such as the revelation of Mosab’s...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">nyt:hardcover-nonfiction=2010-03-21</span><span class="category-tag">Politics</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Wyoming Game Warden Joe Pickett investigates a mysterious death at a secret remote high-tech facility in this riveting new novel from #1 New York Times bestseller C.J. Box. When a prominent University of Wyoming professor goes missing, authorities are stumped. That is, until Joe Pickett makes two surprising discoveries while hunting down a wounded elk on his district as an epic spring storm descends upon him. First, he finds the professor’s vehicle parked on a remote mountainside. Then Joe finds the professor’s frozen and mutilated body. When he attempts to learn more, his investigation is obstructed by federal agents, extremists, and Governor Colter Allen. Nate Romanowski is rebuilding his falconry company—and financing this through crypto mining with the assistance of Geronimo Jones. He’s then approached by a shadowy group of local militant activists that is gaining in power and influence, and demanding that Wyoming join other western states and secede from the union—by force, if necessary. They ask Nate to throw in with them, but he’s wary. Should he trust them, or is he being set up? As a storm of peril gathers around them, Joe and Nate confront it in different ways—and maybe, for the first time, on opposite sides.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Xt9xEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Storm Watch</div>
+                        <div class="book-author">by C. J. Box</div>
+                        <div class="book-meta">📅 2023 • 🏢 Penguin • 📄 369 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Wyoming Game Warden Joe Pickett investigates a mysterious death at a secret remote high-tech facility in this riveting new novel from #1 New York Times bestseller C.J. Box. When a prominent University of Wyoming professor goes missing, authorities are stumped. That is, until Joe Pickett makes two su...</div>
+                <div class="book-categories"><span class="category-tag">nyt:hardcover-fiction=2023-03-19</span><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">collectionid:nyt2020s</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="“Masterful. The Anthropocene Reviewed is a beautiful, timely book about the human condition—and a timeless reminder to pay attention to your attention.” —Adam Grant, #1 bestselling author of Think Again and host of the podcast Re:Thinking Instant #1 bestseller! A deeply moving collection of personal essays from John Green, the author of The Fault in Our Stars and Turtles All the Way Down. “Gloriously personal and life-affirming. The perfect book for right now.” —People “Essential to the human conversation.” —Library Journal, starred review The Anthropocene is the current geologic age, in which humans have profoundly reshaped the planet and its biodiversity. In this remarkable symphony of essays, bestselling author John Green reviews different facets of the human-centered planet on a five-star scale—from the QWERTY keyboard and sunsets to Canada geese and Penguins of Madagascar. Funny, complex, and rich with detail, the reviews chart the contradictions of contemporary humanity. John Green’s gift for storytelling shines throughout this masterful collection. The Anthropocene Reviewed is an open-hearted exploration of the paths we forge and an unironic celebration of falling in love with the world.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=ZPD4DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Anthropocene Reviewed</div>
+                        <div class="book-author">by John Green</div>
+                        <div class="book-meta">📅 2021 • 🏢 Penguin • 📄 305 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">“Masterful. The Anthropocene Reviewed is a beautiful, timely book about the human condition—and a timeless reminder to pay attention to your attention.” —Adam Grant, #1 bestselling author of Think Again and host of the podcast Re:Thinking Instant #1 bestseller! A deeply moving collection of personal...</div>
+                <div class="book-categories"><span class="category-tag">Culture</span><span class="category-tag">Miscellanea Reviews</span><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2021-06-06</span><span class="category-tag">Human ecology</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Una novela preciosa, tremendamente humana y emocionante, que describe las peripecias de una niña alemana de nueve años desde que es dada en adopción por su madre hasta el final de la II Guerra Mundial. UNO DE LOS 30 MEJORES NOVELAS HISTÓRICAS DE TODOS LOS TIEMPOS SEGÚN ELLE Érase una vez un pueblo donde las noches eran largas y la muerte contaba su propia historia. En el pueblo vivía una niña que quería leer, un hombre que tocaba el acordeón y un joven judío que escribía bellos cuentos para escapar del horror de la guerra. Al cabo de un tiempo, la niña se convirtió en una ladrona que robaba libros y regalaba palabras. Con estas palabras se escribió una historia hermosa y cruel que ahora ya es una novela inolvidable. La crítica ha dicho... «Un libro imprescindible y, desde luego, una de las novelas históricas más recomendadas si te gusta la buena literatura». Begoña Alonso, Elle « La ladrona de libros deslumbra por sus extraordinarios personajes, su capacidad de emocionar sin clichés y, ante todo, por su omnipresente reflexión sobre el valor de las palabras.» Ricard Ruiz Garzón, El Periódico de Catalunya «La esperanza de Liesel es inexpugnable... Los lectores jóvenes necesitan este tipo de alternativas a la rigidez ideológica, así como exploraciones sobre la importancia de las historias. Y, pensándolo bien, también los adultos.» The New York Times «Elegante, filosófica, conmovedora, bella e importante.» Kirkus Reviews «Merece estar junto al Diario de Ana Frank en nuestra biblioteca.» USA Today «Una narrativa extraordinaria.» SLJ «Zusak no endulza nada, pero logra que un tema aparentemente triste resulte tolerable tal como lo hizo Kurt Vonnegut en Matadero cinco: con un humor sombrío, reconfortante.» Time Magazine «Un gran logro. [...] Un libro desafiante en extensión y tema.» Publishers Weekly «Uno de los libros más esperados en años.» The Wall Street Journal">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8153054-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Book Thief</div>
+                        <div class="book-author">by Markus Zusak</div>
+                        <div class="book-meta">📅 1998 • 🏢 POCKET </div>
+                    </div>
+                </div>
+                <div class="book-description">Una novela preciosa, tremendamente humana y emocionante, que describe las peripecias de una niña alemana de nueve años desde que es dada en adopción por su madre hasta el final de la II Guerra Mundial. UNO DE LOS 30 MEJORES NOVELAS HISTÓRICAS DE TODOS LOS TIEMPOS SEGÚN ELLE Érase una vez un pueblo d...</div>
+                <div class="book-categories"><span class="category-tag">Books and reading</span><span class="category-tag">New York Times reviewed</span><span class="category-tag">nyt:young-adult-paperback-monthly=2022-09-04</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="From the New York Times bestselling author of Start With Why and Leaders Eat Last, a bold framework for leadership in today’s ever-changing world. How do we win a game that has no end? Finite games, like football or chess, have known players, fixed rules and a clear endpoint. The winners and losers are easily identified. Infinite games, games with no finish line, like business or politics, or life itself, have players who come and go. The rules of an infinite game are changeable while infinite games have no defined endpoint. There are no winners or losers—only ahead and behind. The question is, how do we play to succeed in the game we’re in? In this revelatory book, Simon Sinek offers a framework for leading with an infinite mindset. On one hand, none of us can resist the fleeting thrills of a promotion earned or a tournament won, yet these rewards fade quickly. In pursuit of a Just Cause, we will commit to a vision of a future world so appealing that we will build it week after week, month after month, year after year. Although we do not know the exact form this world will take, working toward it gives our work and our life meaning. Leaders who embrace an infinite mindset build stronger, more innovative, more inspiring organizations. Ultimately, they are the ones who lead us into the future.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=GVtJDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Infinite Game</div>
+                        <div class="book-author">by Simon Sinek</div>
+                        <div class="book-meta">📅 2019 • 🏢 Penguin • 📄 274 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">From the New York Times bestselling author of Start With Why and Leaders Eat Last, a bold framework for leadership in today’s ever-changing world. How do we win a game that has no end? Finite games, like football or chess, have known players, fixed rules and a clear endpoint. The winners and losers ...</div>
+                <div class="book-categories"><span class="category-tag">Leadership</span><span class="category-tag">nyt:advice-how-to-and-miscellaneous=2019-11-03</span><span class="category-tag">Communication in management</span><span class="category-tag">Business and Economics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The New York Times bestseller—for fans of All the Light We Cannot See and The Tattooist of Auschwitz! “An irresistible tale which showcases the transformative power of literacy, reminding us of the hope and sanctuary our neighborhood bookstores offer during the perilous trials of war and unrest.”—KIM MICHELE RICHARDSON, author of The Book Woman of Troublesome Creek August 1939: London prepares for war as Hitler’s forces sweep across Europe. Grace Bennett has always dreamed of moving to the city, but the bunkers and drawn curtains that she finds on her arrival are not what she expected. And she certainly never imagined she’d wind up working at Primrose Hill, a dusty old bookshop nestled in the heart of London. Through blackouts and air raids as the Blitz intensifies, Grace discovers the power of storytelling to unite her community in ways she never dreamed—a force that triumphs over even the darkest nights of the war. “A gorgeously written story of love, friendship, and survival set against the backdrop of WWII-era London.”—JILLIAN CANTOR, author of In Another Time and Half Life “A love letter to the power of books to unite us, to hold the world together when it’s falling apart around our ears. This fresh take on what London endured during WWII should catapult Madeline Martin to the top tier of historical fiction novelists.”—KAREN ROBARDS, author of The Black Swan of Paris Don&#39;t miss Madeline Martin&#39;s next heartwarming historical novel, The Booklover&#39;s Library! Also by Madeline Martin: The Librarian Spy The Keeper of Hidden Books">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=5vzgDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Last Bookshop in London</div>
+                        <div class="book-author">by Madeline Martin</div>
+                        <div class="book-meta">📅 2021 • 🏢 Harlequin • 📄 315 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The New York Times bestseller—for fans of All the Light We Cannot See and The Tattooist of Auschwitz! “An irresistible tale which showcases the transformative power of literacy, reminding us of the hope and sanctuary our neighborhood bookstores offer during the perilous trials of war and unrest.”—KI...</div>
+                <div class="book-categories"><span class="category-tag">London (england), fiction</span><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">Booksellers and bookselling, fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The Instant New York Times Bestseller and TikTok Sensation! As seen on THE VIEW! A BuzzFeed Best Summer Read of 2021 When a fake relationship between scientists meets the irresistible force of attraction, it throws one woman&#39;s carefully calculated theories on love into chaos. As a third-year Ph.D. candidate, Olive Smith doesn&#39;t believe in lasting romantic relationships—but her best friend does, and that&#39;s what got her into this situation. Convincing Anh that Olive is dating and well on her way to a happily ever after was always going to take more than hand-wavy Jedi mind tricks: Scientists require proof. So, like any self-respecting biologist, Olive panics and kisses the first man she sees. That man is none other than Adam Carlsen, a young hotshot professor—and well-known ass. Which is why Olive is positively floored when Stanford&#39;s reigning lab tyrant agrees to keep her charade a secret and be her fake boyfriend. But when a big science conference goes haywire, putting Olive&#39;s career on the Bunsen burner, Adam surprises her again with his unyielding support and even more unyielding...six-pack abs. Suddenly their little experiment feels dangerously close to combustion. And Olive discovers that the only thing more complicated than a hypothesis on love is putting her own heart under the microscope.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=J4QUEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Love Hypothesis</div>
+                        <div class="book-author">by Ali Hazelwood</div>
+                        <div class="book-meta">📅 2021 • 🏢 Penguin • 📄 401 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">The Instant New York Times Bestseller and TikTok Sensation! As seen on THE VIEW! A BuzzFeed Best Summer Read of 2021 When a fake relationship between scientists meets the irresistible force of attraction, it throws one woman's carefully calculated theories on love into chaos. As a third-year Ph.D. c...</div>
+                <div class="book-categories"><span class="category-tag">Romantic fiction</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">Fiction</span><span class="category-tag">rom-com</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="INSTANT NEW YORK TIMES BESTSELLER | GOOD MORNING AMERICA BOOK CLUB PICK “Rosie Walsh’s The Love of My Life is my favorite kind of thriller—gripping, heartbreaking and impossible to put down.”—Laura Dave “A dazzling supernova of a book, it picks you up on line one and doesn&#39;t let you go until the very end. Each chapter is filled with heart-breaking twists and revelations, and it is brimming with human warmth and intelligence.” —Lisa Jewell “Combining the gripping pace of a psychological thriller with the tenderness and sorrow of a love story gone wrong, this one’s a winner.” –People I have held you at night for ten years and I didn&#39;t even know your name. We have a child together. A dog, a house. Who are you? From the New York Times bestselling author of Ghosted comes an up-all-night page-turner that has “cleverly integrated twists that not even jaded readers will be able to predict…&quot;* Emma loves her husband Leo and their young daughter Ruby: she’d do anything for them. But almost everything she&#39;s told them about herself is a lie. And she might just have got away with it, if it weren’t for her husband’s job. Leo is an obituary writer; Emma a well-known marine biologist. When she suffers a serious illness, Leo copes by doing what he knows best – researching and writing about his wife’s life. But as he starts to unravel the truth, he discovers the woman he loves doesn’t really exist. Even her name isn’t real. When the very darkest moments of Emma’s past finally emerge, she must somehow prove to Leo that she really is the woman he always thought she was . . . But first, she must tell him about the other love of her life. *Publishers Weekly starred review">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=aJqOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Love of My Life</div>
+                        <div class="book-author">by Rosie Walsh</div>
+                        <div class="book-meta">📅 2022 • 🏢 National Geographic </div>
+                    </div>
+                </div>
+                <div class="book-description">INSTANT NEW YORK TIMES BESTSELLER | GOOD MORNING AMERICA BOOK CLUB PICK “Rosie Walsh’s The Love of My Life is my favorite kind of thriller—gripping, heartbreaking and impossible to put down.”—Laura Dave “A dazzling supernova of a book, it picks you up on line one and doesn't let you go until the ver...</div>
+                <div class="book-categories"><span class="category-tag">nyt:hardcover-fiction=2022-03-20</span><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A FINANCIAL TIMES BEST BOOK OF THE YEAR 2022: BUSINESS A DAILY UK NEWS BEST BOOK OF 2022: BUSINESS Everybody has regrets. They’re a fundamental part of our lives. In The Power of Regret, Pink explains how we can enlist our regrets to make smarter decisions, perform better and deepen our sense of meaning and purpose. Drawing on the largest sampling of attitudes about regret ever conducted from his own World Regret Survey, Pink identifies the four core regrets that most people have. With his signature blend of big ideas and practical takeaways, captivating stories and crisp humour, he argues that by understanding what people regret the most, we can understand what they value the most. We can transform our regrets into a positive force for working smarter and living better.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=TsU6EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Power of Regret</div>
+                        <div class="book-author">by Daniel H. Pink</div>
+                        <div class="book-meta">📅 2022 • 🏢 Canongate • 📄 247 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">A FINANCIAL TIMES BEST BOOK OF THE YEAR 2022: BUSINESS A DAILY UK NEWS BEST BOOK OF 2022: BUSINESS Everybody has regrets. They’re a fundamental part of our lives. In The Power of Regret, Pink explains how we can enlist our regrets to make smarter decisions, perform better and deepen our sense of mea...</div>
+                <div class="book-categories"><span class="category-tag">Business and Economics</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2022-02-20</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="#1 New York Times Bestseller What would happen if we called on God for help and God actually appeared? In Mitch Albom’s profound new novel of hope and faith, a group of shipwrecked passengers pull a strange man from the sea. He claims to be “the Lord.” And he says he can only save them if they all believe in him. Adrift in a raft after a deadly ship explosion, ten people struggle for survival at sea. Three days pass. Short on water, food and hope, they spot a man floating in the waves. They pull him in. “Thank the Lord we found you,” a passenger says. “I am the Lord,” the man whispers. So begins Mitch Albom’s most beguiling novel yet. Albom has written of heaven in the celebrated number one bestsellers The Five People You Meet in Heaven and The First Phone Call from Heaven. Now, for the first time in his fiction, he ponders what we would do if, after crying out for divine help, God actually appeared before us? In The Stranger in the Lifeboat, Albom keeps us guessing until the end: Is this strange man really who he claims to be? What actually happened to cause the explosion? Are the survivors in heaven, or are they in hell? The story is narrated by Benji, one of the passengers, who recounts the events in a notebook that is discovered—a year later—when the empty life raft washes up on the island of Montserrat. It falls to the island’s chief inspector, Jarty LeFleur, a man battling his own demons, to solve the mystery of what really happened. A fast-paced, compelling novel that makes you ponder your deepest beliefs, The Stranger in the Lifeboat suggests that answers to our prayers may be found where we least expect them.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=_0k5EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Stranger in the Lifeboat</div>
+                        <div class="book-author">by Mitch Albom</div>
+                        <div class="book-meta">📅 2021 • 🏢 HarperCollins • 📄 222 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">#1 New York Times Bestseller What would happen if we called on God for help and God actually appeared? In Mitch Albom’s profound new novel of hope and faith, a group of shipwrecked passengers pull a strange man from the sea. He claims to be “the Lord.” And he says he can only save them if they all b...</div>
+                <div class="book-categories"><span class="category-tag">Fiction, religious</span><span class="category-tag">Fiction, family life, general</span><span class="category-tag">Fiction, visionary and metaphysical</span><span class="category-tag">nyt:combined-print-and-e-book-fiction=2021-11-21</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="ALEX VOLKOV e un demon binecuvântat cu o față de înger și blestemat cu un trecut de care nu poate scăpa. Poartă povara unei tragedii care îl bântuie încă din copilărie. Forța care îl mână în viață este dorința aprigă de a se răzbuna și de a avea succes, iar asta nu lasă loc pentru iubire. Însă, atunci când e silit să aibă grijă de sora celui mai bun prieten al său, Alex începe să simtă o emoție nouă. În armura lui înghețată apare o fisură. Inima lui împietrită începe să se topească. E cuprins de un foc care amenință să-i năruie lumea. AVA CHEN e un spirit liber, dar încătușat de coșmaruri născute dintr-o copilărie pe care nu și-o amintește. Și totuși, în ciuda trecutului său misterios și apăsător, Ava vede mereu frumusețea din ceilalți… inclusiv cea din inima unui bărbat închistat într-o carapace glacială. Un bărbat pe care n-ar trebui să-l dorească. Cel mai bun prieten al fratelui său. Vecinul ei. Salvatorul și totodată pieirea ei. Iubirea lor n-ar fi trebuit să se înfiripe, dar când începe să înflorească, descătușează secrete care i-ar putea distruge pe amândoi… și tot ceea ce le este mai drag. „Zile întregi am fost hipnotizată de acest roman. Îi dau opt milioane de stele, nu cinci.” —Ali Hazelwood, autoarea romanului Ipoteza iubirii">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=tVm0EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Twisted Love</div>
+                        <div class="book-author">by Ana Huang</div>
+                        <div class="book-meta">📅 2023 • 🏢 Editura Epica • 📄 400 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">ALEX VOLKOV e un demon binecuvântat cu o față de înger și blestemat cu un trecut de care nu poate scăpa. Poartă povara unei tragedii care îl bântuie încă din copilărie. Forța care îl mână în viață este dorința aprigă de a se răzbuna și de a avea succes, iar asta nu lasă loc pentru iubire. Însă, atun...</div>
+                <div class="book-categories"><span class="category-tag">Fiction, romance, contemporary</span><span class="category-tag">Fiction, romance, new adult</span><span class="category-tag">Fiction, romance, multicultural and interracial</span><span class="category-tag">nyt:combined-print-and-e-book-fiction=2023-07-02</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="New York Times and Wall Street Journal bestseller A step-by-step plan clinically proven to break the cycle of worry and fear that drives anxiety and addictive habits We are living through one of the most anxious periods any of us can remember. Whether facing issues as public as a pandemic or as personal as having kids at home and fighting the urge to reach for the wine bottle every night, we are feeling overwhelmed and out of control. But in this timely book, Judson Brewer explains how to uproot anxiety at its source using brain-based techniques and small hacks accessible to anyone. We think of anxiety as everything from mild unease to full-blown panic. But it&#39;s also what drives the addictive behaviors and bad habits we use to cope (e.g. stress eating, procrastination, doom scrolling and social media). Plus, anxiety lives in a part of the brain that resists rational thought. So we get stuck in anxiety habit loops that we can&#39;t think our way out of or use willpower to overcome. Dr. Brewer teaches us to map our brains to discover our triggers, defuse them with the simple but powerful practice of curiosity, and to train our brains using mindfulness and other practices that his lab has proven can work. Distilling more than 20 years of research and hands-on work with thousands of patients, including Olympic athletes and coaches, and leaders in government and business, Dr. Brewer has created a clear, solution-oriented program that anyone can use to feel better - no matter how anxious they feel.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=GxACEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Unwinding Anxiety</div>
+                        <div class="book-author">by Judson Brewer, MD, PhD</div>
+                        <div class="book-meta">📅 2021 • 🏢 Penguin • 📄 305 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">New York Times and Wall Street Journal bestseller A step-by-step plan clinically proven to break the cycle of worry and fear that drives anxiety and addictive habits We are living through one of the most anxious periods any of us can remember. Whether facing issues as public as a pandemic or as pers...</div>
+                <div class="book-categories"><span class="category-tag">Change (psychology)</span><span class="category-tag">Self Help</span><span class="category-tag">Anxiety</span><span class="category-tag">Habit</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Lowen Ashleigh recibe un encargo que le cambiará la vida: Jeremy, el flamante marido de Verity Crawford, una de las autoras más importantes del momento, la contrata para terminar la serie de libros en la que trabajaba su mujer antes de sufrir un grave accidente que la ha dejado en coma. Cuando Lowen se instala en la mansión del matrimonio para poder trabajar con los materiales de Verity, descubre una autobiografía escondida en la que Verity hace confesiones escalofriantes. Lowen decide ocultarle el manuscrito a Jeremy, pero a medida que sus sentimientos por él comienzan a intensificarse, se da cuenta que ella podría beneficiarse si Jeremy leyera las palabras de su mujer.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=aUnVDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Verity. La sombra de un engaño</div>
+                        <div class="book-author">by Colleen Hoover</div>
+                        <div class="book-meta">📅 2020 • 🏢 Editorial Planeta • 📄 304 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Lowen Ashleigh recibe un encargo que le cambiará la vida: Jeremy, el flamante marido de Verity Crawford, una de las autoras más importantes del momento, la contrata para terminar la serie de libros en la que trabajaba su mujer antes de sufrir un grave accidente que la ha dejado en coma. Cuando Lowen...</div>
+                <div class="book-categories"><span class="category-tag">Family secrets in fiction</span><span class="category-tag">Man-woman relationships, fiction</span><span class="category-tag">Fiction, romance, contemporary, suspense</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Winner of the Gold Dagger for Best Crime Novel from the Crime Writers’ Association (UK) Winner for Best International Crime Fiction from Australian Crime Writers Association An Instant New York Times Bestseller “A vibrant, engrossing, unputdownable thriller that packs a serious emotional punch. One of those rare books that surprise you along the way and then linger in your mind long after you have finished it.” —Kristin Hannah, #1 New York Times bestselling author of The Nightingale and The Four Winds Right. Wrong. Life is lived somewhere in between. Duchess Day Radley is a thirteen-year-old self-proclaimed outlaw. Rules are for other people. She is the fierce protector of her five-year-old brother, Robin, and the parent to her mother, Star, a single mom incapable of taking care of herself, let alone her two kids. Walk has never left the coastal California town where he and Star grew up. He may have become the chief of police, but he’s still trying to heal the old wound of having given the testimony that sent his best friend, Vincent King, to prison decades before. And he&#39;s in overdrive protecting Duchess and her brother. Now, thirty years later, Vincent is being released. And Duchess and Walk must face the trouble that comes with his return. We Begin at the End is an extraordinary novel about two kinds of families—the ones we are born into and the ones we create.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=CZ_mDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">We Begin at the End</div>
+                        <div class="book-author">by Chris Whitaker</div>
+                        <div class="book-meta">📅 2021 • 🏢 Henry Holt and Company • 📄 348 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Winner of the Gold Dagger for Best Crime Novel from the Crime Writers’ Association (UK) Winner for Best International Crime Fiction from Australian Crime Writers Association An Instant New York Times Bestseller “A vibrant, engrossing, unputdownable thriller that packs a serious emotional punch. One ...</div>
+                <div class="book-categories"><span class="category-tag">New York Times reviewed</span><span class="category-tag">Fiction, mystery and detective, police procedural</span><span class="category-tag">English literature</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Ben Horowitz, a leading venture capitalist, modern management expert, and New York Times bestselling author, combines lessons both from history and from modern organizational practice with practical and often surprising advice to help executives build cultures that can weather both good and bad times. Ben Horowitz has long been fascinated by history, and particularly by how people behave differently than you’d expect. The time and circumstances in which they were raised often shapes them—yet a few leaders have managed to shape their times. In What You Do Is Who You Are, he turns his attention to a question crucial to every organization: how do you create and sustain the culture you want? To Horowitz, culture is how a company makes decisions. It is the set of assumptions employees use to resolve everyday problems: should I stay at the Red Roof Inn, or the Four Seasons? Should we discuss the color of this product for five minutes or thirty hours? If culture is not purposeful, it will be an accident or a mistake. What You Do Is Who You Are explains how to make your culture purposeful by spotlighting four models of leadership and culture-building—the leader of the only successful slave revolt, Haiti’s Toussaint Louverture; the Samurai, who ruled Japan for seven hundred years and shaped modern Japanese culture; Genghis Khan, who built the world’s largest empire; and Shaka Senghor, a man convicted of murder who ran the most formidable prison gang in the yard and ultimately transformed prison culture. Horowitz connects these leadership examples to modern case-studies, including how Louverture’s cultural techniques were applied (or should have been) by Reed Hastings at Netflix, Travis Kalanick at Uber, and Hillary Clinton, and how Genghis Khan’s vision of cultural inclusiveness has parallels in the work of Don Thompson, the first African-American CEO of McDonalds, and of Maggie Wilderotter, the CEO who led Frontier Communications. Horowitz then offers guidance to help any company understand its own strategy and build a successful culture. What You Do Is Who You Are is a journey through culture, from ancient to modern. Along the way, it answers a question fundamental to any organization: who are we? How do people talk about us when we’re not around? How do we treat our customers? Are we there for people in a pinch? Can we be trusted? Who you are is not the values you list on the wall. It’s not what you say in company-wide meeting. It’s not your marketing campaign. It’s not even what you believe. Who you are is what you do. This book aims to help you do the things you need to become the kind of leader you want to be—and others want to follow.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Pp-IDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">What You Do Is Who You Are</div>
+                        <div class="book-author">by Ben Horowitz</div>
+                        <div class="book-meta">📅 2019 • 🏢 HarperCollins • 📄 235 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Ben Horowitz, a leading venture capitalist, modern management expert, and New York Times bestselling author, combines lessons both from history and from modern organizational practice with practical and often surprising advice to help executives build cultures that can weather both good and bad time...</div>
+                <div class="book-categories"><span class="category-tag">nyt:advice-how-to-and-miscellaneous=2019-11-17</span><span class="category-tag">Leadership</span><span class="category-tag">New business enterprises</span><span class="category-tag">Business and Economics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="No description available.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/10585083-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">You'll Never Believe What Happened to Lacey</div>
+                        <div class="book-author">by Amber Ruffin & Lacey Lamar</div>
+                        <div class="book-meta">📅 2021 • 🏢 Grand Central </div>
+                    </div>
+                </div>
+                <div class="book-description">No description available.</div>
+                <div class="book-categories"><span class="category-tag">nyt:combined-print-and-e-book-nonfiction=2021-01-31</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">Racism</span><span class="category-tag">Humor, form, essays</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="New York Times bestselling author Ruth Ware proves that she is the “new Agatha Christie” (Air Mail) with this adrenaline-fueled thriller about a woman in a race to clear her name and find her husband’s murderer. Hired by companies to break into buildings and hack security systems, Jack and her husband, Gabe, are the best penetration specialists in the business. But after a routine assignment goes horribly wrong, Jack arrives home to find her husband dead. To add to her despair, the police are closing in on their suspect—her. Suddenly on the run and quickly running out of options, Jack must decide who she can trust as she circles closer to the real killer in this unputdownable and heart-pounding mystery that combines Mr. and Mrs. Smith with The Fugitive from an author whose “propulsive prose keeps readers on the hook and refuses to let anyone off until all has been revealed” (Shelf Awareness).">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=s1GUEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Zero Days</div>
+                        <div class="book-author">by Ruth Ware</div>
+                        <div class="book-meta">📅 2023 • 🏢 Simon and Schuster • 📄 480 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">New York Times bestselling author Ruth Ware proves that she is the “new Agatha Christie” (Air Mail) with this adrenaline-fueled thriller about a woman in a race to clear her name and find her husband’s murderer. Hired by companies to break into buildings and hack security systems, Jack and her husba...</div>
+                <div class="book-categories"><span class="category-tag">nyt:combined-print-and-e-book-fiction=2023-07-09</span><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 15:58:02 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

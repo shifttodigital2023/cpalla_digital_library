@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biography - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Biography</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 56 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="&quot;Exhilarating…Profoundly moving, occasionally angry, and often hilarious...A Heartbreaking Work of Staggering Genius is, finally, a finite book of jest, which is why it succeeds so brilliantly&quot; (The New York Times Book Review). A Heartbreaking Work of Staggering Genius is the unique, moving memoir of a college senior who, in the space of five weeks, loses both of his parents to cancer and inherits his eight-year-old brother. In his distinctive style unlike any other memoir, Egger&#39;s story is an exhilarating debut that manages to be simultaneously hilarious and wildly inventive, as well as a deeply heartfelt story of the love that holds a family together.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=OSfpEJpJzrIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">A Heartbreaking Work Of Staggering Genius</div>
+                        <div class="book-author">by Dave Eggers</div>
+                        <div class="book-meta">📅 2013 • 🏢 Simon and Schuster • 📄 440 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">"Exhilarating…Profoundly moving, occasionally angry, and often hilarious...A Heartbreaking Work of Staggering Genius is, finally, a finite book of jest, which is why it succeeds so brilliantly" (The New York Times Book Review). A Heartbreaking Work of Staggering Genius is the unique, moving memoir o...</div>
+                <div class="book-categories"><span class="category-tag">Bildungsromans</span><span class="category-tag">American Authors</span><span class="category-tag">Death</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A revelatory memoir about a young woman whose life was stolen when she was kidnapped in 1991 and remained an object of captivity for 18 years.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=GG-C13nO3wsC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">A Stolen Life</div>
+                        <div class="book-author">by Jaycee Dugard</div>
+                        <div class="book-meta">📅 2012 • 🏢 Simon and Schuster • 📄 293 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A revelatory memoir about a young woman whose life was stolen when she was kidnapped in 1991 and remained an object of captivity for 18 years.</div>
+                <div class="book-categories"><span class="category-tag">Kidnapping</span><span class="category-tag">Kidnapping victims</span><span class="category-tag">Biography</span><span class="category-tag">Sexually abused children</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The bestselling, much-loved classic account of an English couple escaping to enjoy the fruits of French rural summer living - an irresistible feast of humour and heart. Peter Mayle and his wife did what most of us only imagine doing when they made their long-cherished dream of a life abroad a reality: throwing caution to the wind, they bought a glorious two hundred year-old farmhouse in the Lubéron Valley and began a new life. In a year that begins with a marathon lunch and continues with a host of gastronomic delights, they also survive the unexpected and often hilarious curiosities of rural life. From mastering the local accent and enduring invasion by bumbling builders, to discovering the finer points of boules and goat-racing, all the earthy pleasures of Provençal life are conjured up in this enchanting portrait. &#39;One of the most successful travel books of all time... Mayle created a new travel genre&#39; Guardian &#39;Delightful&#39; Washington Post &#39;Engaging, funny and richly appreciative&#39; New York Times Book Review &#39;Stylish, witty, delightfully readable&#39; Sunday Times &#39;I really loved this book&#39; Julia Child">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=dy4GLtsjvLMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">A Year in Provence</div>
+                        <div class="book-author">by Peter Mayle</div>
+                        <div class="book-meta">📅 2000 • 🏢 Penguin UK • 📄 247 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The bestselling, much-loved classic account of an English couple escaping to enjoy the fruits of French rural summer living - an irresistible feast of humour and heart. Peter Mayle and his wife did what most of us only imagine doing when they made their long-cherished dream of a life abroad a realit...</div>
+                <div class="book-categories"><span class="category-tag">Homes and haunts</span><span class="category-tag">Social life and customs</span><span class="category-tag">Biography</span><span class="category-tag">Nonfiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Un libro que ha cautivado y conmovido a crítica y público. Henry Marsh, el eminente neurocirujano británico expone a ojos del mundo la esencia de una de las especialidades médicas más difíciles, delicadas y fascinantes que existen. El resultado es este volumen que poco tiempo después de su publicación se encaramó a las listas de más vendidos del Sunday Times y el New York Times. Escogido «Mejor Libro del Año» por el Financial Times y The Economist, obtuvo los premios PEN Ackerley y South Bank Sky Arts y fue finalista del Costa Book Award, el Guardian First Book Award y el Samuel Johnson de no ficción. A los mandos de un microscopio ultrapotente y un catéter de alta precisión, el doctor Marsh se abre camino por los intersticios del cerebro. Con frecuencia, de su pericia y de su pulso dependen que un paciente recupere la visión o acabe en una silla de ruedas. Hay días en los que salva vidas, pero también hay jornadas nefastas en las que un pequeño error o una cadena de infortunios lo hacen sentirse el ser más desdichado sobre la faz de la Tierra. Mucho más cercano a una confesión personal que a una autobiografía complaciente con el autor, este libro -cuyo título se inspira en el juramento hipocrático- supone un auténtico alarde de valentía y de honestidad intelectual, un relato vibrante y luminoso que logra remover nuestros sentimientos más profundos y ensanchar nuestro umbral de sabiduría y compasión. ENGLISH DESCRIPTION Named a Notable Book of the Year by The New York Times Book Review and The Washington Post What is it like to be a brain surgeon? How does it feel to hold someone’s life in your hands, to cut into the stuff that creates thought, feeling and reason? How do you live with the consequences of performing a potentially lifesaving operation when it all goes wrong? With astonishing compassion and candor, leading neurosurgeon Henry Marsh reveals the fierce joy of operating, the profoundly moving triumphs, the harrowing disasters, the haunting regrets and the moments of black humor that characterize a brain surgeon’s life. Do No Harm provides unforgettable insight into the countless human dramas that take place in a busy modern hospital. Above all, it is a lesson in the need for hope when faced with life’s most difficult decisions.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=qHaREAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Ante todo no hagas daño / Do No Harm: Stories of Life. Death, and Brain Surgery</div>
+                        <div class="book-author">by Henry Marsh</div>
+                        <div class="book-meta">📅 2020 • 🏢 National Geographic </div>
+                    </div>
+                </div>
+                <div class="book-description">Un libro que ha cautivado y conmovido a crítica y público. Henry Marsh, el eminente neurocirujano británico expone a ojos del mundo la esencia de una de las especialidades médicas más difíciles, delicadas y fascinantes que existen. El resultado es este volumen que poco tiempo después de su publicaci...</div>
+                <div class="book-categories"><span class="category-tag">Nervous system</span><span class="category-tag">Anecdotes</span><span class="category-tag">Neurosurgeons</span><span class="category-tag">Neurosurgery</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Abducted from Africa, sold in America. &quot;A deeply affecting record of an extraordinary life&quot;- Daily Telegraph A major literary event: a newly published work from the author of the American classic Their Eyes Were Watching God, with a foreword from Pulitzer Prize-winning author Alice Walker.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=UqG_xgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Barracoon</div>
+                        <div class="book-author">by Zora Neale Hurston</div>
+                        <div class="book-meta">📅 2020 • 🏢 HarperCollins • 📄 208 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Abducted from Africa, sold in America. "A deeply affecting record of an extraordinary life"- Daily Telegraph A major literary event: a newly published work from the author of the American classic Their Eyes Were Watching God, with a foreword from Pulitzer Prize-winning author Alice Walker.</div>
+                <div class="book-categories"><span class="category-tag">West Africans</span><span class="category-tag">Biography</span><span class="category-tag">Slaves</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER An adrenaline-fuelled exposé of life inside the tech bubble, Chaos Monkeys lays bare the secrets, power plays and lifestyle excesses of the visionaries, grunts, sociopaths, opportunists and money cowboys who are revolutionising our world. Written by startup CEO and industry provocateur Antonio García Martínez, this is Liar’s Poker meets The Social Network. Computer engineers use ‘chaos monkey’ software to wreak havoc and test system robustness. Similarly, tech entrepreneurs like Antonio García Martínez are society’s chaos monkeys – their innovations disrupt every aspect of our lives, from transportation (Uber) and holidays (Airbnb) to television (Netflix) and dating (Tinder) – all in search of the perfect business miracle. Describing himself as ‘high-strung, fast-talking, and wired on a combination of caffeine, fear, and greed at all times’, García Martínez left Wall Street to make his fortune in Silicon Valley, becoming CEO of his own startup, before bailing and being poached by Facebook’s nascent advertising team. Here he turned users’ data into profit for COO Sheryl Sandberg and chairman and CEO Mark ‘Zuck’ Zuckerberg. Forced out of Facebook in the wake of a bitter internal product war, García Martínez took his unique brand of entrepreneurial hyperactivity to rivals Twitter. Along the way, he got into a lot of trouble with a lot of people, brewed illegal beer on the Facebook campus (accidentally flooding Zuckerberg&#39;s desk), lived on a yacht, raced sport cars on the highway, and enthusiastically pursued the lifestyle of an overpaid Silicon Valley mercenary. In Chaos Monkeys he tells you HOW – and HOW NOT – to make a fortune through startups and digital marketing. Highly entertaining and always offering genuine insight, García Martínez unravels the chaotic evolution of social media and online marketing. From startups and credit derivatives to Big Brother and data tracking, social media monetisation and digital ‘privacy’, he shares both his scathing observations and outrageous antics, taking us on a subversive and very funny tour of the fascinatingly insular and unbelievably wealthy tech industry.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Xe7RCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Chaos Monkeys</div>
+                        <div class="book-author">by Antonio Garcia Martinez</div>
+                        <div class="book-meta">📅 2016 • 🏢 Random House • 📄 574 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER An adrenaline-fuelled exposé of life inside the tech bubble, Chaos Monkeys lays bare the secrets, power plays and lifestyle excesses of the visionaries, grunts, sociopaths, opportunists and money cowboys who are revolutionising our world. Written by startup CEO and industry...</div>
+                <div class="book-categories"><span class="category-tag">Internet industry</span><span class="category-tag">Social media</span><span class="category-tag">Internet marketing</span><span class="category-tag">Management</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Today, as liberty and truth are increasingly challenged, the figures of Churchill and Orwell loom large. Exemplars of Britishness, they preserved individual freedom and democracy for the world through their far-sighted vision and inspired action, and cast a long shadow across our culture and politics. In Churchill & Orwell, the Pulitzer Prize-winning author Thomas E. Ricks masterfully argues that these extraordinary men are as important today as they ever were. Churchill and Orwell stood in political opposition to each other, but were both committed to the preservation of freedom. However, in the late 1930s they occupied a lonely position: democracy was much discredited, and authoritarian rulers, fascist and communist, were everywhere in the ascent. Unlike others, they had the wisdom to see that the most salient issue was human liberty – and that any government that denies its people basic rights is a totalitarian menace to be resisted. Churchill and Orwell proved their age’s necessary men, and this book reveals how they rose from a precarious position to triumph over the enemies of freedom. Churchill may have played the larger role in Hitler’s defeat, but Orwell’s reckoning with the threat of authoritarian rule in 1984 and Animal Farm defined the stakes of the Cold War and continues to inspire to this day. Their lives are an eloquent testament to the power of moral conviction, and to the courage it takes to stay true to it.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=tOOxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Churchill and Orwell</div>
+                        <div class="book-author">by Thomas E. Ricks</div>
+                        <div class="book-meta">📅 2017 • 🏢 Prelude • 📄 291 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Today, as liberty and truth are increasingly challenged, the figures of Churchill and Orwell loom large. Exemplars of Britishness, they preserved individual freedom and democracy for the world through their far-sighted vision and inspired action, and cast a long shadow across our culture and politic...</div>
+                <div class="book-categories"><span class="category-tag">Politics and government</span><span class="category-tag">English Authors</span><span class="category-tag">Communism</span><span class="category-tag">World politics</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Her palace shimmered with onyx and gold but was richer still in political and sexual intrigue. Above all else, Cleopatra was a shrewd strategist and an ingenious negotiator. She was married twice, each time to a brother. She waged a brutal civil war against the first and poisoned the second; incest and assassination were family specialties. She had children by Julius Caesar and Mark Antony, two of the most prominent Romans of the day. With Antony she would attempt to forge a new empire, in an alliance that spelled both their ends. Famous long before she was notorious, Cleopatra has gone down in history for all the wrong reasons. Her supple personality and the drama of her circumstances have been lost. In a masterly return to the classical sources, Stacy Schiff boldly separates fact from fiction to rescue the magnetic queen whose death ushered in a new world order.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=XQNfzgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Cleopatra</div>
+                        <div class="book-author">by Stacy Schiff</div>
+                        <div class="book-meta">📅 2011 • 🏢 Back Bay • 📄 432 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Her palace shimmered with onyx and gold but was richer still in political and sexual intrigue. Above all else, Cleopatra was a shrewd strategist and an ingenious negotiator. She was married twice, each time to a brother. She waged a brutal civil war against the first and poisoned the second; incest ...</div>
+                <div class="book-categories"><span class="category-tag">Cleopatra, queen of egypt, -30 b.c.</span><span class="category-tag">Biography</span><span class="category-tag">Kings and rulers</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="An international bestseller which has sold over a million copies in the UK, Dreams From My Father is a refreshing, revealing portrait of a young man asking big questions about identity and belonging. The son of a Black African father and a white American mother, Barack Obama recounts an emotional odyssey, retracing the migration of his mother&#39;s family from Kansas to Hawai&#39;i, then to his childhood home in Indonesia. Finally he travels to Kenya, where he confronts the bitter truth of his father&#39;s life and at last reconciles his divided inheritance. Written nearly fifteen years before becoming president, Dreams from My Father is an unforgettable read. It illuminates not only Obama&#39;s journey, but also our universal desire to understand our history and what makes us who we are.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Rpk81dM767kC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Dreams From My Father</div>
+                        <div class="book-author">by Barack Obama</div>
+                        <div class="book-meta">📅 2008 • 🏢 Canongate • 📄 465 pages <span class="rating">⭐⭐⭐⭐ 4.5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">An international bestseller which has sold over a million copies in the UK, Dreams From My Father is a refreshing, revealing portrait of a young man asking big questions about identity and belonging. The son of a Black African father and a white American mother, Barack Obama recounts an emotional od...</div>
+                <div class="book-categories"><span class="category-tag">United states, race relations</span><span class="category-tag">Racially mixed people</span><span class="category-tag">Racism</span><span class="category-tag">Obama, barack, 1961-</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Winner of the Pulitzer Prize for Biography Louisa May Alcott is known universally. Yet during Louisa&#39;s youth, the famous Alcott was her father, Bronson—an eminent teacher and a friend of Emerson and Thoreau. He desired perfection, for the world and from his family. Louisa challenged him with her mercurial moods and yearnings for money and fame. The other prize she deeply coveted—her father&#39;s understanding—seemed hardest to win. This story of Bronson and Louisa&#39;s tense yet loving relationship adds dimensions to Louisa&#39;s life, her work, and the relationships of fathers and daughters.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=9A7W4RKHLXYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Eden's Outcasts: The Story of Louisa May Alcott and Her Father</div>
+                        <div class="book-author">by John Matteson</div>
+                        <div class="book-meta">📅 2010 • 🏢 W. W. Norton & Company • 📄 512 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Winner of the Pulitzer Prize for Biography Louisa May Alcott is known universally. Yet during Louisa's youth, the famous Alcott was her father, Bronson—an eminent teacher and a friend of Emerson and Thoreau. He desired perfection, for the world and from his family. Louisa challenged him with her mer...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">American Authors</span><span class="category-tag">Biography</span><span class="category-tag">Family relationships</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A celebration of our female friendships, of our messy years, and of growing up together. Glittering with wit, heart, and humour, it’s a book to share with every woman you’ve ever been lucky enough to call a friend. “Nearly everything I know about love, I&#39;ve learnt from my long-term friendships with women.” I know that love can be loud and jubilant. It can be dancing in the swampy mud and the pouring rain at a festival and shouting “YOU ARE AMAZING” over the band. It’s laughing until you wheeze. It’s walking along the street together on a Saturday night and feeling an entire city is yours. I also know that love is a pretty quiet thing. It’s lying on the sofa together drinking coffee, talking about where you’re going to go that morning to drink more coffee. It’s folding down pages of books you think they’d find interesting. I know that love happens under the splendour of fireworks and sunsets, but also happens when you’re lying on blow-up airbeds in a childhood bedroom, sitting in A&E or in the queue for a passport. ***** WHAT READERS ARE SAYING: ‘A book every girl in her 20s needs to read’ ‘I’ll never stop recommending this book’ ‘This is my comfort book! I LOOOOVE THIS BOOK TO MY CORE’ ‘I wish I could read it for the first time again’ A Sunday Times bestseller, September 2022 TikTok Book Awards Winner, August 2023">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=IGkwDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Everything I Know About Love</div>
+                        <div class="book-author">by Dolly Alderton</div>
+                        <div class="book-meta">📅 2018 • 🏢 Penguin UK • 📄 289 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A celebration of our female friendships, of our messy years, and of growing up together. Glittering with wit, heart, and humour, it’s a book to share with every woman you’ve ever been lucky enough to call a friend. “Nearly everything I know about love, I've learnt from my long-term friendships with ...</div>
+                <div class="book-categories"><span class="category-tag">Man-woman relationships</span><span class="category-tag">New York Times bestseller</span><span class="category-tag">nyt:paperback-nonfiction=2023-04-09</span><span class="category-tag">Friendship</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="New 25th Anniversary Edition __________ &#39;I am still haunted by Mah&#39;s memoir . . . Riveting. A marvel of memory. Poignant proof of the human will to endure&#39; Amy Tan, bestselling author of The Joy Luck Club 1940s, Shanghai. As the civil war rages on and China falls under communist rule, young Adeline lives in constant fear. Not of the war, but of her family: blamed for the death of her mother, she is rejected by her father and abused by her cruel stepmother. With the help of her aunt, Adeline escapes to the United States where she finds love, happiness and success. But will that be enough to quell a lifelong yearning for acceptance, or will she return to the family that rejected her years ago Falling Leaves Return to their Roots is both the enthralling story of a Chinese family in a time of political upheaval, and a moving account of one girl&#39;s unrelenting will to survive. __________ &#39;Falling Leaves is a terrible and riveting family history . . . It is also a story about endurance and the cost it can exact. Gripping&#39; Daily Telegraph &#39;An illuminating account of the destructive nature of family relationships set against a backdrop of China in change&#39; Mail on Sunday &#39;An act, not of vengeance or bitterness, but of catharsis&#39; Sunday Telegraph">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=7HgpFaOcz2YC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Falling Leaves Return to Their Roots</div>
+                        <div class="book-author">by Adeline Yen Mah</div>
+                        <div class="book-meta">📅 1998 • 🏢 Penguin UK • 📄 293 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">New 25th Anniversary Edition __________ 'I am still haunted by Mah's memoir . . . Riveting. A marvel of memory. Poignant proof of the human will to endure' Amy Tan, bestselling author of The Joy Luck Club 1940s, Shanghai. As the civil war rages on and China falls under communist rule, young Adeline ...</div>
+                <div class="book-categories"><span class="category-tag">California</span><span class="category-tag">Biography</span><span class="category-tag">China</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER • Finalist for the PEN/USA Award in Creative Nonfiction, the Thurber Prize for American Humor, and the Audie Award in Biography/Memoir This Random House Reader’s Circle edition includes a reading group guide and a conversation between Firoozeh Dumas and Khaled Hosseini, author of The Kite Runner! “Remarkable . . . told with wry humor shorn of sentimentality . . . In the end, what sticks with the reader is an exuberant immigrant embrace of America.”—San Francisco Chronicle In 1972, when she was seven, Firoozeh Dumas and her family moved from Iran to Southern California, arriving with no firsthand knowledge of this country beyond her father’s glowing memories of his graduate school years here. More family soon followed, and the clan has been here ever since. Funny in Farsi chronicles the American journey of Dumas’s wonderfully engaging family: her engineer father, a sweetly quixotic dreamer who first sought riches on Bowling for Dollars and in Las Vegas, and later lost his job during the Iranian revolution; her elegant mother, who never fully mastered English (nor cared to); her uncle, who combated the effects of American fast food with an army of miraculous American weight-loss gadgets; and Firoozeh herself, who as a girl changed her name to Julie, and who encountered a second wave of culture shock when she met and married a Frenchman, becoming part of a one-couple melting pot. In a series of deftly drawn scenes, we watch the family grapple with American English (hot dogs and hush puppies?—a complete mystery), American traditions (Thanksgiving turkey?—an even greater mystery, since it tastes like nothing), and American culture (Firoozeh’s parents laugh uproariously at Bob Hope on television, although they don’t get the jokes even when she translates them into Farsi). Above all, this is an unforgettable story of identity, discovery, and the power of family love. It is a book that will leave us all laughing—without an accent. Praise for Funny in Farsi “Heartfelt and hilarious—in any language.”—Glamour “A joyful success.”—Newsday “What’s charming beyond the humor of this memoir is that it remains affectionate even in the weakest, most tenuous moments for the culture. It’s the brilliance of true sophistication at work.”—Los Angeles Times Book Review “Often hilarious, always interesting . . . Like the movie My Big Fat Greek Wedding, this book describes with humor the intersection and overlapping of two cultures.”—The Providence Journal “A humorous and introspective chronicle of a life filled with love—of family, country, and heritage.”—Jimmy Carter “Delightfully refreshing.”—Milwaukee Journal Sentinel “[Funny in Farsi] brings us closer to discovering what it means to be an American.”—San Jose Mercury News">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=cYZ_MRMaHGMC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Funny in Farsi</div>
+                        <div class="book-author">by Firoozeh Dumas</div>
+                        <div class="book-meta">📅 2007 • 🏢 Random House • 📄 210 pages <span class="rating">⭐⭐⭐ 3.5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER • Finalist for the PEN/USA Award in Creative Nonfiction, the Thurber Prize for American Humor, and the Audie Award in Biography/Memoir This Random House Reader’s Circle edition includes a reading group guide and a conversation between Firoozeh Dumas and Khaled Hosseini, aut...</div>
+                <div class="book-categories"><span class="category-tag">Social life and customs</span><span class="category-tag">Family</span><span class="category-tag">Iranian American women</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="This is a children&#39;s book biography of Grace Hopper, who played a prominent role in the early days of computers.--">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/9261051-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Grace Hopper</div>
+                        <div class="book-author">by Laurie Wallmark</div>
+                        <div class="book-meta">📅 2017 • 🏢 Sterling Publishing Co., </div>
+                    </div>
+                </div>
+                <div class="book-description">This is a children's book biography of Grace Hopper, who played a prominent role in the early days of computers.--</div>
+                <div class="book-categories"><span class="category-tag">Juvenile literature</span><span class="category-tag">Computer engineers</span><span class="category-tag">Admirals</span><span class="category-tag">Women admirals</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Winner of the Pulitzer Prize In this groundbreaking biography of the Japanese emperor Hirohito, Herbert P. Bix offers the first complete, unvarnished look at the enigmatic leader whose sixty-three-year reign ushered Japan into the modern world. Never before has the full life of this controversial figure been revealed with such clarity and vividness. Bix shows what it was like to be trained from birth for a lone position at the apex of the nation&#39;s political hierarchy and as a revered symbol of divine status. Influenced by an unusual combination of the Japanese imperial tradition and a modern scientific worldview, the young emperor gradually evolves into his preeminent role, aligning himself with the growing ultranationalist movement, perpetuating a cult of religious emperor worship, resisting attempts to curb his power, and all the while burnishing his image as a reluctant, passive monarch. Here we see Hirohito as he truly was: a man of strong will and real authority. Supported by a vast array of previously untapped primary documents, Hirohito and the Making of Modern Japan is perhaps most illuminating in lifting the veil on the mythology surrounding the emperor&#39;s impact on the world stage. Focusing closely on Hirohito&#39;s interactions with his advisers and successive Japanese governments, Bix sheds new light on the causes of the China War in 1937 and the start of the Asia-Pacific War in 1941. And while conventional wisdom has had it that the nation&#39;s increasing foreign aggression was driven and maintained not by the emperor but by an elite group of Japanese militarists, the reality, as witnessed here, is quite different. Bix documents in detail the strong, decisive role Hirohito played in wartime operations, from the takeover of Manchuria in 1931 through the attack on Pearl Harbor and ultimately the fateful decision in 1945 to accede to an unconditional surrender. In fact, the emperor stubbornly prolonged the war effort and then used the horrifying bombings of Hiroshima and Nagasaki, together with the Soviet entrance into the war, as his exit strategy from a no-win situation. From the moment of capitulation, we see how American and Japanese leaders moved to justify the retention of Hirohito as emperor by whitewashing his wartime role and reshaping the historical consciousness of the Japanese people. The key to this strategy was Hirohito&#39;s alliance with General MacArthur, who helped him maintain his stature and shed his militaristic image, while MacArthur used the emperor as a figurehead to assist him in converting Japan into a peaceful nation. Their partnership ensured that the emperor&#39;s image would loom large over the postwar years and later decades, as Japan began to make its way in the modern age and struggled -- as it still does -- to come to terms with its past. Until the very end of a career that embodied the conflicting aims of Japan&#39;s development as a nation, Hirohito remained preoccupied with politics and with his place in history. Hirohito and the Making of Modern Japan provides the definitive account of his rich life and legacy. Meticulously researched and utterly engaging, this book is proof that the history of twentieth-century Japan cannot be understood apart from the life of its most remarkable and enduring leader.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=zjmVltzm1kYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Hirohito And The Making Of Modern Japan</div>
+                        <div class="book-author">by Herbert P. Bix</div>
+                        <div class="book-meta">📅 2009 • 🏢 Harper Collins • 📄 832 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Winner of the Pulitzer Prize In this groundbreaking biography of the Japanese emperor Hirohito, Herbert P. Bix offers the first complete, unvarnished look at the enigmatic leader whose sixty-three-year reign ushered Japan into the modern world. Never before has the full life of this controversial fi...</div>
+                <div class="book-categories"><span class="category-tag">Histoire</span><span class="category-tag">Politische Reform</span><span class="category-tag">Empereurs</span><span class="category-tag">Emperadores</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The internationally bestselling true story of the remarkable ten-year-old Yemeni girl who dared to defy her country&#39;s most archaic traditions by fighting for a divorce I&#39;m a simple village girl whose family had to move to the capital, and I have always obeyed the orders of the men in my family. Since forever, I have learned to say yes to everything. Today, I have decided to say no. Uplifting and impossible to put down, this is a true story of the ten-year old girl who won a divorce from the man she was forced to marry, courageously defying both Yemeni customs and her own family. Nujood&#39;s childhood came to an abrupt end when her father arranged for her to be married to a man three times her age. With harrowing directness, Nujood tells of abuse at her husband&#39;s hands, beginning with the very first night of her married life, and ending the day she slipped away during an errand. Instead of going to the market to buy bread, she took a taxi to the court building. That was the beginning of her odyssey. With the help of a woman lawyer, Chadha Nasser, NGO&#39;s and the local press, Nujood finally obtained her freedom, an extraordinary achievement in Yemen, where there is a conspiracy of silence about the fact that almost half the girls are married under the legal age. Since her victory, Nujood has given other young girls the courage to stand up to their society&#39;s customs. Written with childlike simplicity and penetrating honesty, I Am Nujood is at once shocking and inspiring, disturbing and redemptive.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=mwuFzNo_g_8C&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">I Am Nujood, Age 10 and Divorced</div>
+                        <div class="book-author">by Nujood Ali & Delphine Minoui</div>
+                        <div class="book-meta">📅 2010 • 🏢 Random House Australia • 📄 194 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The internationally bestselling true story of the remarkable ten-year-old Yemeni girl who dared to defy her country's most archaic traditions by fighting for a divorce I'm a simple village girl whose family had to move to the capital, and I have always obeyed the orders of the men in my family. Sinc...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A classic from the New York Times bestselling author of A Walk in the Woods and The Body. After living in Britain for two decades, Bill Bryson recently moved back to the United States with his English wife and four children (he had read somewhere that nearly 3 million Americans believed they had been abducted by aliens—as he later put it, &quot;it was clear my people needed me&quot;). They were greeted by a new and improved America that boasts microwave pancakes, twenty-four-hour dental-floss hotlines, and the staunch conviction that ice is not a luxury item. Delivering the brilliant comic musings that are a Bryson hallmark, I&#39;m a Stranger Here Myself recounts his sometimes disconcerting reunion with the land of his birth. The result is a book filled with hysterical scenes of one man&#39;s attempt to reacquaint himself with his own country, but it is also an extended if at times bemused love letter to the homeland he has returned to after twenty years away.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=xb4wSmJLnhAC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">I'm a Stranger Here Myself</div>
+                        <div class="book-author">by Bill Bryson</div>
+                        <div class="book-meta">📅 1999 • 🏢 Crown • 📄 308 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A classic from the New York Times bestselling author of A Walk in the Woods and The Body. After living in Britain for two decades, Bill Bryson recently moved back to the United States with his English wife and four children (he had read somewhere that nearly 3 million Americans believed they had bee...</div>
+                <div class="book-categories"><span class="category-tag">Large type books</span><span class="category-tag">Social life and customs</span><span class="category-tag">New York Times reviewed</span><span class="category-tag">Anecdotes</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="“The most interesting book ever written about Google” (The Washington Post) delivers the inside story behind the most successful and admired technology company of our time, now updated with a new Afterword. Google is arguably the most important company in the world today, with such pervasive influence that its name is a verb. The company founded by two Stanford graduate students—Larry Page and Sergey Brin—has become a tech giant known the world over. Since starting with its search engine, Google has moved into mobile phones, computer operating systems, power utilities, self-driving cars, all while remaining the most powerful company in the advertising business. Granted unprecedented access to the company, Levy disclosed that the key to Google’s success in all these businesses lay in its engineering mindset and adoption of certain internet values such as speed, openness, experimentation, and risk-taking. Levy discloses details behind Google’s relationship with China, including how Brin disagreed with his colleagues on the China strategy—and why its social networking initiative failed; the first time Google tried chasing a successful competitor. He examines Google’s rocky relationship with government regulators, particularly in the EU, and how it has responded when employees left the company for smaller, nimbler start-ups. In the Plex is the “most authoritative…and in many ways the most entertaining” (James Gleick, The New York Book Review) account of Google to date and offers “an instructive primer on how the minds behind the world’s most influential internet company function” (Richard Waters, The Wall Street Journal).">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8001223-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">In the Plex</div>
+                        <div class="book-author">by Steven Levy</div>
+                        <div class="book-meta">📅 2011 • 🏢 Simon & Schuster </div>
+                    </div>
+                </div>
+                <div class="book-description">“The most interesting book ever written about Google” (The Washington Post) delivers the inside story behind the most successful and admired technology company of our time, now updated with a new Afterword. Google is arguably the most important company in the world today, with such pervasive influen...</div>
+                <div class="book-categories"><span class="category-tag">Google</span><span class="category-tag">Biography</span><span class="category-tag">Internet industry</span><span class="category-tag">Google (Firm)</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="No description available.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/11011479-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Instrumental</div>
+                        <div class="book-author">by James Rhodes</div>
+                        <div class="book-meta">📅 2015 • 🏢 imusti </div>
+                    </div>
+                </div>
+                <div class="book-description">No description available.</div>
+                <div class="book-categories"><span class="category-tag">Great britain, biography</span><span class="category-tag">Pianists, biography</span><span class="category-tag">Biography</span><span class="category-tag">Education</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="For fans of Ada Twist: Scientist comes a fascinating picture book biography of a pioneering female scientist--who loved reptiles! Back in the days of long skirts and afternoon teas, young Joan Procter entertained the most unusual party guests: slithery and scaly ones, who turned over teacups and crawled past the crumpets.... While other girls played with dolls, Joan preferred the company of reptiles. She carried her favorite lizard with her everywhere--she even brought a crocodile to school! When Joan grew older, she became the Curator of Reptiles at the British Museum. She went on to design the Reptile House at the London Zoo, including a home for the rumored-to-be-vicious komodo dragons. There, just like when she was a little girl, Joan hosted children&#39;s tea parties--with her komodo dragon as the guest of honor. With a lively text and vibrant illustrations, scientist and writer Patricia Valdez and illustrator Felicita Sala bring to life Joan Procter&#39;s inspiring story of passion and determination. A Chicago Public Library Best Book of the Year selection">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8827345-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Joan Procter, dragon doctor</div>
+                        <div class="book-author">by Patricia Valdez</div>
+                        <div class="book-meta">📅 2018 • 🏢 Random House Children's </div>
+                    </div>
+                </div>
+                <div class="book-description">For fans of Ada Twist: Scientist comes a fascinating picture book biography of a pioneering female scientist--who loved reptiles! Back in the days of long skirts and afternoon teas, young Joan Procter entertained the most unusual party guests: slithery and scaly ones, who turned over teacups and cra...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">London Zoo (London, England)</span><span class="category-tag">Juvenile Nonfiction</span><span class="category-tag">Zoo keepers</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Julie & Julia, the bestselling memoir that&#39;s &quot;irresistible....A kind of Bridget Jones meets The French Chef&quot; (Philadelphia Inquirer), is now a major motion picture. Julie Powell, nearing thirty and trapped in a dead-end secretarial job, resolves to reclaim her life by cooking in the span of a single year, every one of the 524 recipes in Julia Child&#39;s legendary Mastering the Art of French Cooking. Her unexpected reward: not just a newfound respect for calves&#39; livers and aspic, but a new life-lived with gusto. The film is written and directed by Nora Ephron and stars Amy Adams as Julie and Meryl Streep as Julia.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=j16zOAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Julie & Julia, 365 days, 524 recipes, 1 tiny apartment kitchen [[Paperback] 2005]</div>
+                        <div class="book-author">by Julie Powell</div>
+                        <div class="book-meta">📅 2005 • 🏢 Little Brown </div>
+                    </div>
+                </div>
+                <div class="book-description">Julie & Julia, the bestselling memoir that's "irresistible....A kind of Bridget Jones meets The French Chef" (Philadelphia Inquirer), is now a major motion picture. Julie Powell, nearing thirty and trapped in a dead-end secretarial job, resolves to reclaim her life by cooking in the span of a single...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The bestselling memoir that&#39;s &quot;irresistible....A kind of Bridget Jones meets The French Chef&quot; (Philadelphia Inquirer) that inspired Julie & Julia, the major motion picture directed by Nora Ephron, starring Amy Adams as Julie and Meryl Streep as Julia. Nearing 30 and trapped in a dead-end secretarial job, Julie Powell reclaims her life by cooking every single recipe in Julia Child&#39;s legendary Mastering the Art of French Cooking in the span of one year. It&#39;s a hysterical, inconceivable redemptive journey -- life rediscovered through aspics, calves&#39; brains and cré me brûlée.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=YV0IskcivVIC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Julie and Julia</div>
+                        <div class="book-author">by Julie Powell</div>
+                        <div class="book-meta">📅 2005 • 🏢 Little, Brown • 📄 208 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">The bestselling memoir that's "irresistible....A kind of Bridget Jones meets The French Chef" (Philadelphia Inquirer) that inspired Julie & Julia, the major motion picture directed by Nora Ephron, starring Amy Adams as Julie and Meryl Streep as Julia. Nearing 30 and trapped in a dead-end secretarial...</div>
+                <div class="book-categories"><span class="category-tag">French Cookery</span><span class="category-tag">Anecdotes</span><span class="category-tag">blog</span><span class="category-tag">cooking</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NATIONAL BOOK CRITICS CIRCLE AWARD WINNER • NATIONAL BESTSELLER • Geobiologist Hope Jahren has spent her life studying trees, flowers, seeds, and soil. Lab Girl is her revelatory treatise on plant life—but it is also a celebration of the lifelong curiosity, humility, and passion that drive every scientist. &quot;Does for botany what Oliver Sacks’s essays did for neurology, what Stephen Jay Gould’s writings did for paleontology.” —The New York Times In these pages, Hope takes us back to her Minnesota childhood, where she spent hours in unfettered play in her father’s college laboratory. She tells us how she found a sanctuary in science, learning to perform lab work “with both the heart and the hands.” She introduces us to Bill, her brilliant, eccentric lab manager. And she extends the mantle of scientist to each one of her readers, inviting us to join her in observing and protecting our environment. Warm, luminous, compulsively readable, Lab Girl vividly demonstrates the mountains that we can move when love and work come together.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=16TSCQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Lab Girl</div>
+                        <div class="book-author">by Hope Jahren</div>
+                        <div class="book-meta">📅 2016 • 🏢 Vintage • 📄 281 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">NATIONAL BOOK CRITICS CIRCLE AWARD WINNER • NATIONAL BESTSELLER • Geobiologist Hope Jahren has spent her life studying trees, flowers, seeds, and soil. Lab Girl is her revelatory treatise on plant life—but it is also a celebration of the lifelong curiosity, humility, and passion that drive every sci...</div>
+                <div class="book-categories"><span class="category-tag">Biographies</span><span class="category-tag">Anecdotes</span><span class="category-tag">Biologists</span><span class="category-tag">Biology</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="From the time he was three or four years old, John Elder Robison realised that he was different from other people. He was unable to make eye contact or connect with other children, and by the time he was a teenager his odd habits - an inclination to blurt out non-sequiturs, obsessively dismantle radios or dig five-foot holes (and stick his younger brother in them) - had earned him the label &#39;social deviant&#39;. It didn&#39;t help that his mother conversed with light fixtures and his father spent evenings pickling himself in sherry. Look Me in the Eye is his story of growing up with Asperger&#39;s syndrome – a form of autism – at a time when the diagnosis simply didn&#39;t exist. Along the way it also tells the story of two brothers born eight years apart yet devoted to each other: the author and his younger brother Chris, who would grow up to become bestselling author Augusten Burroughs. This book is a rare fusion of inspiration, dark comedy and insight into the workings of the human mind. For someone who has struggled all his life to connect with other people, Robison proves to be an extraordinary storyteller.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=sgMvDdQbbw8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Look Me in the Eye</div>
+                        <div class="book-author">by John Elder Robison</div>
+                        <div class="book-meta">📅 2010 • 🏢 Random House • 📄 306 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">From the time he was three or four years old, John Elder Robison realised that he was different from other people. He was unable to make eye contact or connect with other children, and by the time he was a teenager his odd habits - an inclination to blurt out non-sequiturs, obsessively dismantle rad...</div>
+                <div class="book-categories"><span class="category-tag">Mental health</span><span class="category-tag">Biography</span><span class="category-tag">Asperger's syndrome</span><span class="category-tag">Nonfiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NOW A NETFLIX SERIES STARRING MARGARET QUALLEY & ANDY MACDOWELL. BARACK OBAMA&#39;S SUMMER READING PICK, 2019. BBC RADIO 4 BOOK OF THE WEEK. Educated meets Nickel and Dimed in Stephanie Land&#39;s memoir about working as a maid. A beautiful and gritty exploration of poverty in the western world. Includes a foreword by international bestelling author Barbara Ehrenreich. &#39;My daughter learned to walk in a homeless shelter.&#39; As a struggling single mum, determined to keep a roof over her daughter&#39;s head, Stephanie Land worked for years as a maid, working long hours in order to provide for her small family. In Maid, she reveals the dark truth of what it takes to survive and thrive in today&#39;s inequitable society. As she worked hard to climb her way out of poverty as a single parent, scrubbing the toilets of the wealthy, navigating domestic labour jobs as a cleaner whilst also juggling higher education, assisted housing, and a tangled web of government assistance, Stephanie wrote. She wrote the true stories that weren&#39;t being told. The stories of the overworked and underpaid. Written in honest, heart-rending prose and with great insight, Maid explores the underbelly of the upper-middle classes and the reality of what it&#39;s like to be in service to them. &#39;I&#39;d become a nameless ghost,&#39; Stephanie writes. With this book, she gives voice to the &#39;servant&#39; worker, those who fight daily to scramble and scrape by for their own lives and the lives of their children.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8356732-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Maid</div>
+                        <div class="book-author">by Stephanie Land & Barbara Ehrenreich & Molly Parker Myers & Mireia Bofill Abelló & Rafaela Pimentel Lara & Rafaela Pimentel Lara & Rafaela Pimentel Lara & Rafaela Pimentel Lara</div>
+                        <div class="book-meta">📅 2019 • 🏢 Thorndike Press Large Print </div>
+                    </div>
+                </div>
+                <div class="book-description">NOW A NETFLIX SERIES STARRING MARGARET QUALLEY & ANDY MACDOWELL. BARACK OBAMA'S SUMMER READING PICK, 2019. BBC RADIO 4 BOOK OF THE WEEK. Educated meets Nickel and Dimed in Stephanie Land's memoir about working as a maid. A beautiful and gritty exploration of poverty in the western world. Includes a ...</div>
+                <div class="book-categories"><span class="category-tag">Single mothers</span><span class="category-tag">Working class, united states</span><span class="category-tag">rags-to-riches</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="An extensively revised and updated edition of the bestselling biography of Harper Lee, reframed from the perspective of the recent publication of Lee&#39;s Go Set a Watchman To Kill a Mockingbird—the twentieth century&#39;s most widely read American novel—has sold thirty million copies and still sells a million yearly. In this in-depth biography, first published in 2006, Charles J. Shields brings to life the woman who gave us two of American literature&#39;s most unforgettable characters, Atticus Finch and his daughter, Scout. Years after its initial publication—with revisions throughout the book and a new epilogue—Shields finishes the story of Harper Lee&#39;s life, up to its end. There&#39;s her former agent getting her to transfer the copyright for To Kill a Mockingbird to him, the death of Lee&#39;s dear sister Alice, a fuller portrait of Lee’s editor, Tay Hohoff, and—most vitally—the release of Lee&#39;s long-buried first novel and the ensuing public devouring of what has truly become the book of the year, if not the decade: Lee&#39;s Go Set a Watchman.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=cTmnCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Mockingbird</div>
+                        <div class="book-author">by Charles J. Shields</div>
+                        <div class="book-meta">📅 2016 • 🏢 Macmillan + ORM • 📄 379 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">An extensively revised and updated edition of the bestselling biography of Harper Lee, reframed from the perspective of the recent publication of Lee's Go Set a Watchman To Kill a Mockingbird—the twentieth century's most widely read American novel—has sold thirty million copies and still sells a mil...</div>
+                <div class="book-categories"><span class="category-tag">Class of 1970</span><span class="category-tag">Biography</span><span class="category-tag">Whitman College</span><span class="category-tag">Memorial bookplates</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER • 20th Anniversary Edition, with a new foreword by the author • “[A] masterpiece . . . an astonishing book that will leave you questioning your own life and political views.”—USA Today “If any one person can be given credit for transforming the medical establishment’s thinking about health care for the destitute, it is Paul Farmer. . . . [Mountains Beyond Mountains] inspires, discomforts, and provokes.”—The New York Times (Best Books of the Year) In medical school, Paul Farmer found his life’s calling: to cure infectious diseases and to bring the lifesaving tools of modern medicine to those who need them most. Tracy Kidder’s magnificent account shows how one person can make a difference in solving global health problems through a clear-eyed understanding of the interaction of politics, wealth, social systems, and disease. Profound and powerful, Mountains Beyond Mountains takes us from Harvard to Haiti, Peru, Cuba, and Russia as Farmer changes people’s minds through his dedication to the philosophy that “the only real nation is humanity.” WINNER OF THE LETTRE ULYSSES AWARD FOR THE ART OF REPORTAGE">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=nEjXAmEBAi8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Mountains Beyond Mountains</div>
+                        <div class="book-author">by Tracy Kidder</div>
+                        <div class="book-meta">📅 2003 • 🏢 Random House Trade Paperbacks • 📄 353 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER • 20th Anniversary Edition, with a new foreword by the author • “[A] masterpiece . . . an astonishing book that will leave you questioning your own life and political views.”—USA Today “If any one person can be given credit for transforming the medical establishment’s think...</div>
+                <div class="book-categories"><span class="category-tag">Right to health care</span><span class="category-tag">Human rights</span><span class="category-tag">Physicians</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;A unique insight into human consciousness and its possibilities&#39; The Times &#39;Incredible&#39; New Scientist &#39;This book is important for everyone . . . I love this book&#39; Oprah Winfrey On the morning of the 10th December 1996, Jill Bolte Taylor, a thirty-seven-year-old Harvard-trained brain scientist experienced a massive stroke when a blood vessel exploded in the left side of her brain. A neuroanatomist by profession, she observed her own mind completely deteriorate to the point that she lost the ability to walk, talk, read, write, or recall any of her life, all within the space of four hours. As the damaged left side of her brain - the rational, logical, detail and time-oriented side - swung in an out of function, Taylor alternated between two distinct and opposite realities: the euphoric Nirvana of the intuitive and emotional right brain, in which she felt a sense of complete well-being and peace; and the logical left brain, that realized Jill was having a stroke and enabled her to seek help before she was lost completely. In My Stroke of Insight: A Brain Scientist&#39;s Personal Journey, Taylor brings to light a new perspective on the brain and its capacity for recovery that she gained through the intimate experience of awakening her own injured mind. The journey to recovery took eight years for Jill to feel completely healed. Using her knowledge of how the brain works, her respect for the cells composing her human form, and an amazing mother, Taylor completely repaired her mind and recalibrated her understanding of the world according to the insight gained from her right brain that December morning.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=oGIleQI257AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">My Stroke of Insight</div>
+                        <div class="book-author">by Jill Bolte Taylor</div>
+                        <div class="book-meta">📅 2009 • 🏢 Hachette UK • 📄 221 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">'A unique insight into human consciousness and its possibilities' The Times 'Incredible' New Scientist 'This book is important for everyone . . . I love this book' Oprah Winfrey On the morning of the 10th December 1996, Jill Bolte Taylor, a thirty-seven-year-old Harvard-trained brain scientist exper...</div>
+                <div class="book-categories"><span class="category-tag">Cerebrovascular disease</span><span class="category-tag">Health</span><span class="category-tag">Patients</span><span class="category-tag">Science</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="#1 NEW YORK TIMES BESTSELLER • Includes two new essays! NAMED ONE OF THE TEN BEST BOOKS OF THE YEAR BY MICHIKO KAKUTANI, THE NEW YORK TIMES • NAMED ONE OF THE BEST BOOKS OF THE YEAR BY BUZZFEED, THE GLOBE AND MAIL, AND LIBRARY JOURNAL For readers of Nora Ephron, Tina Fey, and David Sedaris, this hilarious, wise, and fiercely candid collection of personal essays establishes Lena Dunham—the acclaimed creator, producer, and star of HBO’s Girls—as one of the most original young talents writing today. In Not That Kind of Girl, Dunham illuminates the experiences that are part of making one’s way in the world: falling in love, feeling alone, being ten pounds overweight despite eating only health food, having to prove yourself in a room full of men twice your age, finding true love, and most of all, having the guts to believe that your story is one that deserves to be told. “Take My Virginity (No Really, Take It)” is the account of Dunham’s first time, and how her expectations of sex didn’t quite live up to the actual event (“No floodgate had been opened, no vault of true womanhood unlocked”); “Girls & Jerks” explores her former attraction to less-than-nice guys—guys who had perfected the “dynamic of disrespect” she found so intriguing; “Is This Even Real?” is a meditation on her lifelong obsession with death and dying—what she calls her “genetically predestined morbidity.” And in “I Didn’t F*** Them, but They Yelled at Me,” she imagines the tell-all she will write when she is eighty and past caring, able to reflect honestly on the sexism and condescension she has encountered in Hollywood, where women are “treated like the paper thingies that protect glasses in hotel bathrooms—necessary but infinitely disposable.” Exuberant, moving, and keenly observed, Not That Kind of Girl is a series of dispatches from the frontlines of the struggle that is growing up. “I’m already predicting my future shame at thinking I had anything to offer you,” Dunham writes. “But if I can take what I’ve learned and make one menial job easier for you, or prevent you from having the kind of sex where you feel you must keep your sneakers on in case you want to run away during the act, then every misstep of mine will have been worthwhile.” Praise for Not That Kind of Girl “The gifted Ms. Dunham not only writes with observant precision, but also brings a measure of perspective, nostalgia and an older person’s sort of wisdom to her portrait of her (not all that much) younger self and her world. . . . As acute and heartfelt as it is funny.”—Michiko Kakutani, The New York Times “It’s not Lena Dunham’s candor that makes me gasp. Rather, it’s her writing—which is full of surprises where you least expect them. A fine, subversive book.”—David Sedaris “This book should be required reading for anyone who thinks they understand the experience of being a young woman in our culture. I thought I knew the author rather well, and I found many (not altogether welcome) surprises.”—Carroll Dunham “Witty, illuminating, maddening, bracingly bleak . . . [Dunham] is a genuine artist, and a disturber of the order.”—The Atlantic">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=dVDVAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Not That Kind of Girl</div>
+                        <div class="book-author">by Lena Dunham</div>
+                        <div class="book-meta">📅 2014 • 🏢 Random House • 📄 290 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">#1 NEW YORK TIMES BESTSELLER • Includes two new essays! NAMED ONE OF THE TEN BEST BOOKS OF THE YEAR BY MICHIKO KAKUTANI, THE NEW YORK TIMES • NAMED ONE OF THE BEST BOOKS OF THE YEAR BY BUZZFEED, THE GLOBE AND MAIL, AND LIBRARY JOURNAL For readers of Nora Ephron, Tina Fey, and David Sedaris, this hil...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Un autorretrato de insólita emotividad al tiempo que exquisita recreación de la sensibilidad de las mujeres de nuestra época. «Aquí está todo lo que debe tener un libro: oído, perspectiva, cabeza, corazón y una humanidad sin límites.» The New York Times Cualquier libro de Isabel Allende es un acontecimiento. Paula lo es especialmente porque se trata del más conmovedor, más personal y más íntimo de todos los que ha publicado hasta la fecha. Cuando la gran autora chilena se encontraba en España con ocasión de la presentación de El plan infinito, su hija entró en estado de coma. Junto al lecho de Paula, mientras seguía con angustia la evolución de su enfermedad, Isabel Allende comenzó a redactar en un cuaderno una historia de su familia y de sí misma con el propósito de regalársela a su hija una vez superara el dramático trance. Sin embargo, éste se prolongó durante meses y los apuntes de la autora acabaron convirtiéndose en este libro apasionante y revelador. Isabel Allende ejerce aquí su prodigioso talento narrativo para recuperar y asumir sus propias vivencias como mujer y como escritora, así como las de su familia y las de la historia reciente de su país. Autorretrato de insólita emotividad al tiempo que exquisita recreación de la sensibilidad de las mujeres de nuestra época, Paula perdura en el ánimo del lector con la intensidad de una experiencia indeleble.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=po5IAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Paula</div>
+                        <div class="book-author">by Isabel Allende</div>
+                        <div class="book-meta">📅 2014 • 🏢 PLAZA & JANÉS • 📄 333 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Un autorretrato de insólita emotividad al tiempo que exquisita recreación de la sensibilidad de las mujeres de nuestra época. «Aquí está todo lo que debe tener un libro: oído, perspectiva, cabeza, corazón y una humanidad sin límites.» The New York Times Cualquier libro de Isabel Allende es un aconte...</div>
+                <div class="book-categories"><span class="category-tag">Chilean Authors</span><span class="category-tag">Spanish language books</span><span class="category-tag">Biography</span><span class="category-tag">Family relationships</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Elizabeth Wurtzel&#39;s New York Times best-selling memoir, with a new afterword &quot;Sparkling, luminescent prose . . . A powerful portrait of one girl&#39;s journey through the purgatory of depression and back.&quot; —New York Times &quot;A book that became a cultural touchstone.&quot; —New Yorker Elizabeth Wurtzel writes with her finger on the faint pulse of an overdiagnosed generation whose ruling icons are Kurt Cobain, Xanax, and pierced tongues. Her famous memoir of her bouts with depression and skirmishes with drugs, Prozac Nation is a witty and sharp account of the psychopharmacology of an era for readers of Girl, Interrupted and Sylvia Plath’s The Bell Jar.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=jJ7iBAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Prozac Nation</div>
+                        <div class="book-author">by Elizabeth Wurtzel</div>
+                        <div class="book-meta">📅 2014 • 🏢 HarperCollins • 📄 379 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Elizabeth Wurtzel's New York Times best-selling memoir, with a new afterword "Sparkling, luminescent prose . . . A powerful portrait of one girl's journey through the purgatory of depression and back." —New York Times "A book that became a cultural touchstone." —New Yorker Elizabeth Wurtzel writes w...</div>
+                <div class="book-categories"><span class="category-tag">Young women</span><span class="category-tag">Women, united states, biography</span><span class="category-tag">Mental health</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="#1 NEW YORK TIMES BESTSELLER • We all have dreams—things we fantasize about doing and generally never get around to. This is the story of Azar Nafisi’s dream and of the nightmare that made it come true. A KIRKUS REVIEWS BEST NONFICTION BOOK OF THE CENTURY For two years before she left Iran in 1997, Nafisi gathered seven young women at her house every Thursday morning to read and discuss forbidden works of Western literature. They were all former students whom she had taught at university. Some came from conservative and religious families, others were progressive and secular; several had spent time in jail. They were shy and uncomfortable at first, unaccustomed to being asked to speak their minds, but soon they began to open up and to speak more freely, not only about the novels they were reading but also about themselves, their dreams and disappointments. Their stories intertwined with those they were reading—Pride and Prejudice, Washington Square, Daisy Miller and Lolita—their Lolita, as they imagined her in Tehran. Nafisi’s account flashes back to the early days of the revolution, when she first started teaching at the University of Tehran amid the swirl of protests and demonstrations. In those frenetic days, the students took control of the university, expelled faculty members and purged the curriculum. When a radical Islamist in Nafisi’s class questioned her decision to teach The Great Gatsby, which he saw as an immoral work that preached falsehoods of “the Great Satan,” she decided to let him put Gatsby on trial and stood as the sole witness for the defense. Azar Nafisi’s luminous tale offers a fascinating portrait of the Iran-Iraq war viewed from Tehran and gives us a rare glimpse, from the inside, of women’s lives in revolutionary Iran. It is a work of great passion and poetic beauty, written with a startlingly original voice.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=BAPYyCrqReUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Reading Lolita in Tehran</div>
+                        <div class="book-author">by Azar Nafisi</div>
+                        <div class="book-meta">📅 2003 • 🏢 Random House • 📄 386 pages <span class="rating">⭐⭐⭐ 3</span></div>
+                    </div>
+                </div>
+                <div class="book-description">#1 NEW YORK TIMES BESTSELLER • We all have dreams—things we fantasize about doing and generally never get around to. This is the story of Azar Nafisi’s dream and of the nightmare that made it come true. A KIRKUS REVIEWS BEST NONFICTION BOOK OF THE CENTURY For two years before she left Iran in 1997, ...</div>
+                <div class="book-categories"><span class="category-tag">Sociology</span><span class="category-tag">Femmes</span><span class="category-tag">Profesores de inglés</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Robert Kennedy has been viewed as hero and villain. Thomas&#39;s achievement is to portray RFK as a human being--an extraordinarily complex man who was at once kind and cruel, devious and honest, fearful and brave.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=bRNCz4Ajbs8C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Robert Kennedy</div>
+                        <div class="book-author">by Evan Thomas</div>
+                        <div class="book-meta">📅 2002 • 🏢 Simon and Schuster • 📄 512 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Robert Kennedy has been viewed as hero and villain. Thomas's achievement is to portray RFK as a human being--an extraordinarily complex man who was at once kind and cruel, devious and honest, fearful and brave.</div>
+                <div class="book-categories"><span class="category-tag">Legislators</span><span class="category-tag">Biography</span><span class="category-tag">Kennedy, Robert F., 1925-1968</span><span class="category-tag">United States</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A critically acclaimed #1 New York Times best-seller with more than one million copies in print! Now a major motion picture. Gritty with pain, betrayal, and brutality, this incredible true story also shines with an unexpected, life-changing love. Meet Denver, raised under plantation-style slavery in Louisiana until he escaped the “Man” in the 1960’s by hopping a train. Untrusting, uneducated, and violent, he spends 18 years on the streets of Dallas and Fort Worth. Meet Ron Hall, a self-made millionaire in the world of high-priced deals—an international arts dealer who moves between upscale New York galleries and celebrities. It seems unlikely that these two men would meet under normal circumstances, but when Deborah Hall, Ron&#39;s wife, meets Denver, she sees him through God&#39;s eyes of compassion. When Deborah is diagnosed with cancer, she charges Ron with the mission of helping Denver. From this request, an extraordinary friendship forms between Denver and Ron, changing them both forever. A tale told in two unique voices, Same Kind of Different as Me weaves two completely different life experiences into one common journey. There is pain and laughter, doubt and tears, and in the end a triumphal story that readers will never forget. Continue this story of friendship in What Difference Do It Make?: Stories of Hope and Healing, available now. Same Kind of Different as Me also is available in Spanish.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=SRFbLHcl808C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Same Kind of Different As Me</div>
+                        <div class="book-author">by Ron Hall & Denver Moore</div>
+                        <div class="book-meta">📅 2008 • 🏢 Thomas Nelson • 📄 254 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A critically acclaimed #1 New York Times best-seller with more than one million copies in print! Now a major motion picture. Gritty with pain, betrayal, and brutality, this incredible true story also shines with an unexpected, life-changing love. Meet Denver, raised under plantation-style slavery in...</div>
+                <div class="book-categories"><span class="category-tag">Whites</span><span class="category-tag">Homeless men</span><span class="category-tag">African Americans</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In this groundbreaking book, renowned magic expert Kalush and bestselling writer Sloman team up to expose Harry Houdinis secret life as a spy, and the stunning plot to murder the magician and destroy his legacy. Photos throughout.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/1384854-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Secret Life of Houdini</div>
+                        <div class="book-author">by William Kalush & Larry Sloman</div>
+                        <div class="book-meta">📅 2007 • 🏢 Atria </div>
+                    </div>
+                </div>
+                <div class="book-description">In this groundbreaking book, renowned magic expert Kalush and bestselling writer Sloman team up to expose Harry Houdinis secret life as a spy, and the stunning plot to murder the magician and destroy his legacy. Photos throughout.</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">Houdini, harry, 1874-1926</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A beautiful gift edition of this instant classic exclusively for graduates, with a special letter from Eric Metaxas to those entering the next phase of life’s journey. What makes a great woman great? In Seven Women, New York Times bestselling author Eric Metaxas provides an answer by telling the captivating stories of seven women who changed the course of history and impacted the world in astonishing ways. Teenaged Joan of Arc heard God’s command and led the French army to a mighty victory over the British. Susanna Wesley, the mother of nineteen children, gave the world its most significant evangelist and its greatest hymn-writer, her sons John and Charles. Corrie ten Boom risked her life to hide Dutch Jews from the Nazis in World War II and somehow survived the horrors of a concentration camp, but her greatest feat was her forgiveness of her tormentors years later. And Rosa Parks’s God-given sense of justice and unshakable dignity helped launch the twentieth century’s greatest social movement. Seven Women reveals how the extraordinary women profiled here achieved their greatness, inspiring readers to lives propelled by a call beyond themselves.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=m-Q3CwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Seven Women</div>
+                        <div class="book-author">by Eric Metaxas</div>
+                        <div class="book-meta">📅 2016 • 🏢 Thomas Nelson • 📄 223 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">A beautiful gift edition of this instant classic exclusively for graduates, with a special letter from Eric Metaxas to those entering the next phase of life’s journey. What makes a great woman great? In Seven Women, New York Times bestselling author Eric Metaxas provides an answer by telling the cap...</div>
+                <div class="book-categories"><span class="category-tag">Men, religious life</span><span class="category-tag">Biography</span><span class="category-tag">Women, religious life</span><span class="category-tag">Success, religious aspects</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="*CATCH THE TV ADAPTATION OF SHRILL ON BBC3 NOW* &#39;Women are told, from birth, that it&#39;s our job to be small: physically small, small in our presence, and small in our impact on the world. We&#39;re supposed to spend our lives passive, quiet and hungry. I want to obliterate that expectation...&#39; Guardian columnist Lindy West wasn&#39;t always loud. It&#39;s difficult to believe she was once a nerdy, overweight teen who wanted nothing more than to be invisible. Fortunately for women everywhere, along the road she found her voice - and how she found it! That cripplingly shy girl who refused to make a sound, somehow grew up to be one of the loudest, shrillest, most fearless feminazis on the internet, making a living standing up for what&#39;s right instead of what&#39;s cool. In Shrill, Lindy recounts how she went from being the butt of people&#39;s jokes, to telling her own brand of jokes - ones that carry with them with a serious message and aren&#39;t at someone else&#39;s expense. She reveals the obstacles and stereotyping she&#39;s had to overcome to make herself heard, in a society that doesn&#39;t think women (especially fat women and feminists) are or can be funny. She also tackles some of the most burning issues of popular culture today, taking a frank and provocative look at racism, oppression, fat-shaming, twitter-trolling and even rape culture, unpicking the bullshit and calling out unpalatable truths with conviction, intelligence and a large dose of her trademark black humour. &#39;Lindy West is an essential (and hilarious) voice for women. Her talent and bravery have made the Internet a place I actually want to be.&#39; Lena Dunham">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=L2A9CgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Shrill</div>
+                        <div class="book-author">by Lindy West</div>
+                        <div class="book-meta">📅 2016 • 🏢 Hachette UK • 📄 212 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">*CATCH THE TV ADAPTATION OF SHRILL ON BBC3 NOW* 'Women are told, from birth, that it's our job to be small: physically small, small in our presence, and small in our impact on the world. We're supposed to spend our lives passive, quiet and hungry. I want to obliterate that expectation...' Guardian c...</div>
+                <div class="book-categories"><span class="category-tag">Humor</span><span class="category-tag">Biography</span><span class="category-tag">Feminists</span><span class="category-tag">Women journalists</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The first dual biography of Katherine and Juana, based on a comprehensive re-evaluation of the sources">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=TjNvPAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Sister Queens</div>
+                        <div class="book-author">by Julia Fox</div>
+                        <div class="book-meta">📅 2012 • 🏢 Clipper Large Print </div>
+                    </div>
+                </div>
+                <div class="book-description">The first dual biography of Katherine and Juana, based on a comprehensive re-evaluation of the sources</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">Great Britain</span><span class="category-tag">nyt:e-book-nonfiction=2014-07-13</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The shocking true story of a Hamas insider who rejected his violent destiny—and is now risking everything to expose closely guarded secrets and show the world a way to peace. Son of Hamas is now available with an all-new chapter about events since the book’s release such as the revelation of Mosab’s Israeli intelligence handler’s true identity, and Homeland Security’s effort to deport the author. Since he was a small boy, Mosab Hassan Yousef has had an inside view of the deadly terrorist group Hamas. The oldest son of Sheikh Hassan Yousef, a founding member of Hamas and its most popular leader, young Mosab assisted his father for years in his political activities while being groomed to assume his legacy, politics, status . . . and power. But everything changed when Mosab turned away from terror and violence, and embraced instead the teachings of another famous Middle East leader. In Son of Hamas, Mosab reveals new information about the world’s most dangerous terrorist organization and unveils the truth about his own role, his agonizing separation from family and homeland, the dangerous decision to make his newfound faith public, and his belief that the Christian mandate to “love your enemies” is the only way to peace in the Middle East.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Inf5EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Son of Hamas: A Gripping Account of Terror, Betrayal, Political Unthinkable Choices</div>
+                        <div class="book-author">by Mosab Hassan Yousef & Ron Brackin</div>
+                        <div class="book-meta">📅 2023 • 🏢 Jaico Publishing House • 📄 307 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The shocking true story of a Hamas insider who rejected his violent destiny—and is now risking everything to expose closely guarded secrets and show the world a way to peace. Son of Hamas is now available with an all-new chapter about events since the book’s release such as the revelation of Mosab’s...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">nyt:hardcover-nonfiction=2010-03-21</span><span class="category-tag">Politics</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The #1 New York Times bestseller and National Book Award finalist that &quot;breaks new ground for graphic novels&quot; (Francois Mouly, art editor, The New Yorker). David Small, a best-selling and highly regarded children&#39;s book illustrator, comes forward with this unflinching graphic memoir. Remarkable and intensely dramatic, Stitches tells the story of a fourteen-year-old boy who awakes one day from a supposedly harmless operation to discover that he has been transformed into a virtual mute—a vocal cord removed, his throat slashed and stitched together like a bloody boot. From horror to hope, Small proceeds to graphically portray an almost unbelievable descent into adolescent hell and the difficult road to physical, emotional, and artistic recovery. A National Book Award finalist; winner of the ALA&#39;s Alex Award; a #1 New York Times graphic bestseller; Publishers Weekly and Washington Post Top Ten Books of the Year, Los Angeles Times Favorite Book, ALA Great Graphic Novels, Booklist Editors Choice Award, Huffington Post Great Books of 2009, Kirkus Reviews Best of 2009, Village Voice Best Graphic Novel, finalist for two 2010 Will Eisner Comic Industry Awards (Best Writer/Artist: Nonfiction; Best Reality-Based Work).">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=IjqzDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Stitches: A Memoir</div>
+                        <div class="book-author">by David Small</div>
+                        <div class="book-meta">📅 2010 • 🏢 W. W. Norton & Company • 📄 331 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The #1 New York Times bestseller and National Book Award finalist that "breaks new ground for graphic novels" (Francois Mouly, art editor, The New Yorker). David Small, a best-selling and highly regarded children's book illustrator, comes forward with this unflinching graphic memoir. Remarkable and ...</div>
+                <div class="book-categories"><span class="category-tag">Illustrations</span><span class="category-tag">Biography</span><span class="category-tag">Authorship</span><span class="category-tag">Artists</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Presents an overview of the presidency of Abraham Lincoln, explaining the genius of his political savvy, and describes the context in which he assigned a cadre of his fiercest rivals as his closest cabinet advisors.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Cg0bDAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Team of Rivals</div>
+                        <div class="book-author">by Doris Kearns Goodwin</div>
+                        <div class="book-meta">📅 2012 • 🏢 Simon and Schuster • 📄 944 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Presents an overview of the presidency of Abraham Lincoln, explaining the genius of his political savvy, and describes the context in which he assigned a cadre of his fiercest rivals as his closest cabinet advisors.</div>
+                <div class="book-categories"><span class="category-tag">1864 presidential election</span><span class="category-tag">Thirteenth Amendment</span><span class="category-tag">secretary of war</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&quot;Describes what lives were like for a group of military wives, including Annie Glenn, Rene Carpenter, Betty Grissom and Louise Shepherd, who were thrust into the spotlight when their husbands became Mercury Seven astronauts and made them stars. 200,000 first printing.&quot;">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=YrBYnwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Astronaut Wives Club</div>
+                        <div class="book-author">by Lily Koppel</div>
+                        <div class="book-meta">📅 2013 • 🏢 Grand Central Pub • 📄 288 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">"Describes what lives were like for a group of military wives, including Annie Glenn, Rene Carpenter, Betty Grissom and Louise Shepherd, who were thrust into the spotlight when their husbands became Mercury Seven astronauts and made them stars. 200,000 first printing."</div>
+                <div class="book-categories"><span class="category-tag">Social life and customs</span><span class="category-tag">Women--Texas--Houston--Social life and customs--20th century.</span><span class="category-tag">Astronautics--United States--History.</span><span class="category-tag">Astronauts' spouses--Texas--Houston--Biography.</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Capturing the harsh realities of life in modern-day Afghanistan and plight of Afghan women, the Norwegian journalist provides a portrait of a committed Muslim man, a bookseller, and his family living in post-Taliban Kabul, Afghanistan. Reader&#39;s Guide included. Reprint. 25,000 first printing.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/190006-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Bookseller of Kabul</div>
+                        <div class="book-author">by Asne Seierstad & Ingrid Christophersen</div>
+                        <div class="book-meta">📅 2008 • 🏢 Paw Prints </div>
+                    </div>
+                </div>
+                <div class="book-description">Capturing the harsh realities of life in modern-day Afghanistan and plight of Afghan women, the Norwegian journalist provides a portrait of a committed Muslim man, a bookseller, and his family living in post-Taliban Kabul, Afghanistan. Reader's Guide included. Reprint. 25,000 first printing.</div>
+                <div class="book-categories"><span class="category-tag">Social life and customs</span><span class="category-tag">Biography</span><span class="category-tag">Booksellers and bookselling</span><span class="category-tag">Description and travel</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Love, Nina meets Black Books: a wry and hilarious account of life in Scotland&#39;s biggest second-hand bookshop and the band of eccentrics and book-obsessives who work there &#39;The Diary Of A Bookseller is warm (unlike Bythell&#39;s freezing-cold shop) and funny, and deserves to become one of those bestsellers that irritate him so much.&#39; (Mail on Sunday) &#39;Utterly compelling and Bythell has a Bennett-like eye for the amusing eccentricities of ordinary people ... I urge you to buy this book and please, even at the risk of being insulted or moaned at, buy it from a real live bookseller.&#39; (Charlotte Heathcote Sunday Express) Shaun Bythell owns The Bookshop, Wigtown - Scotland&#39;s largest second-hand bookshop. It contains 100,000 books, spread over a mile of shelving, with twisting corridors and roaring fires, and all set in a beautiful, rural town by the edge of the sea. A book-lover&#39;s paradise? Well, almost ... In these wry and hilarious diaries, Shaun provides an inside look at the trials and tribulations of life in the book trade, from struggles with eccentric customers to wrangles with his own staff, who include the ski-suit-wearing, bin-foraging Nicky. He takes us with him on buying trips to old estates and auction houses, recommends books (both lost classics and new discoveries), introduces us to the thrill of the unexpected find, and evokes the rhythms and charms of small-town life, always with a sharp and sympathetic eye.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/10453111-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The diary of a bookseller</div>
+                        <div class="book-author">by Shaun Bythell</div>
+                        <div class="book-meta">📅 2017 • 🏢 Melville House </div>
+                    </div>
+                </div>
+                <div class="book-description">Love, Nina meets Black Books: a wry and hilarious account of life in Scotland's biggest second-hand bookshop and the band of eccentrics and book-obsessives who work there 'The Diary Of A Bookseller is warm (unlike Bythell's freezing-cold shop) and funny, and deserves to become one of those bestselle...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">Biography</span><span class="category-tag">Book Shop (Wigtown, Scotland)</span><span class="category-tag">Booksellers and bookselling, biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="In this Pulitzer Prize-winning classic, a convicted killer becomes the first prisoner to be executed in the United States. The Executioner&#39;s Song follows the true story of cold-blooded murderer Gary Gilmore, who, after being tried and convicted, insisted on being executed for his crimes. To do so, he fought a system intent on keeping him alive long after it sentenced him to death. Norman Mailer tells Gilmore&#39;s story with impressive authority and compassion. The Executioner&#39;s Song is a trip down the wrong side of the tracks, right into the heart of American loneliness and violence–it is impossible to put down and difficult to forget.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=WRE2AQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Executioner's Song</div>
+                        <div class="book-author">by Norman Mailer</div>
+                        <div class="book-meta">📅 2012 • 🏢 Hachette UK • 📄 978 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">In this Pulitzer Prize-winning classic, a convicted killer becomes the first prisoner to be executed in the United States. The Executioner's Song follows the true story of cold-blooded murderer Gary Gilmore, who, after being tried and convicted, insisted on being executed for his crimes. To do so, h...</div>
+                <div class="book-categories"><span class="category-tag">Murderers</span><span class="category-tag">Death row inmates</span><span class="category-tag">Biography</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The New York Times bestseller, now available in paperback—an incredible true story of the top-secret World War II town of Oak Ridge, Tennessee, and the young women brought there unknowingly to help build the atomic bomb. “The best kind of nonfiction: marvelously reported, fluidly written, and a remarkable story...As meticulous and brilliant as it is compulsively readable.” —Karen Abbott, author of Sin in the Second City At the height of World War II, Oak Ridge, Tennessee, was home to 75,000 residents, and consumed more electricity than New York City, yet it was shrouded in such secrecy that it did not appear on any map. Thousands of civilians, many of them young women from small towns across the U.S., were recruited to this secret city, enticed by the promise of solid wages and war-ending work. What were they actually doing there? Very few knew. The purpose of this mysterious government project was kept a secret from the outside world and from the majority of the residents themselves. Some wondered why, despite the constant work and round-the-clock activity in this makeshift town, did no tangible product of any kind ever seem to leave its guarded gates? The women who kept this town running would find out at the end of the war, when Oak Ridge’s secret was revealed and changed the world forever. Drawing from the voices and experiences of the women who lived and worked in Oak Ridge, The Girls of Atomic City rescues a remarkable, forgotten chapter of World War II from obscurity. Denise Kiernan captures the spirit of the times through these women: their pluck, their desire to contribute, and their enduring courage. “A phenomenal story,” and Publishers Weekly called it an “intimate and revealing glimpse into one of the most important scientific developments in history.” “Kiernan has amassed a deep reservoir of intimate details of what life was like for women living in the secret city...Rosie, it turns out, did much more than drive rivets.” —The Washington Post">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=PBMMaKVos4oC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Girls of Atomic City</div>
+                        <div class="book-author">by Denise Kiernan</div>
+                        <div class="book-meta">📅 2013 • 🏢 Simon and Schuster • 📄 416 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">The New York Times bestseller, now available in paperback—an incredible true story of the top-secret World War II town of Oak Ridge, Tennessee, and the young women brought there unknowingly to help build the atomic bomb. “The best kind of nonfiction: marvelously reported, fluidly written, and a rema...</div>
+                <div class="book-categories"><span class="category-tag">Social life and customs</span><span class="category-tag">World War, 1939-1945</span><span class="category-tag">Official secrets</span><span class="category-tag">Uranium enrichment</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Biography detailing the comic effects on Jacobs&#39; life that occur when he attempts to read the Encyclopaedia Britannica volumes A to Z.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=n6szDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Know-It-All</div>
+                        <div class="book-author">by A. J. Jacobs</div>
+                        <div class="book-meta">📅 2005 • 🏢 Simon and Schuster • 📄 400 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Biography detailing the comic effects on Jacobs' life that occur when he attempts to read the Encyclopaedia Britannica volumes A to Z.</div>
+                <div class="book-categories"><span class="category-tag">Learning and scholarship</span><span class="category-tag">Reading Level-Grade 9</span><span class="category-tag">History</span><span class="category-tag">Encyclopaedia Britannica</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="An inspiring true story about losing your place, finding your purpose, and building a community one book at a time. Wendy Welch and her husband had always dreamed of owning a bookstore, so when they left their high-octane jobs for a simpler life in an Appalachian coal town, they seized an unexpected opportunity to pursue thier dream. The only problems? A declining U.S. economy, a small town with no industry, and the advent of the e-book. They also had no idea how to run a bookstore. Against all odds, but with optimism, the help of their Virginian mountain community, and an abiding love for books, they succeeded in establishing more than a thriving business - they built a community. The Little Bookstore of Big Stone Gap is the little bookstore that could: how two people, two cats, two dogs, and thirty-eight thousand books helped a small town find its heart. It is a story about people and books, and how together they create community.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8149770-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The little bookstore of Big Stone Gap</div>
+                        <div class="book-author">by Wendy Welch</div>
+                        <div class="book-meta">📅 2012 • 🏢 Center Point Large Print </div>
+                    </div>
+                </div>
+                <div class="book-description">An inspiring true story about losing your place, finding your purpose, and building a community one book at a time. Wendy Welch and her husband had always dreamed of owning a bookstore, so when they left their high-octane jobs for a simpler life in an Appalachian coal town, they seized an unexpected...</div>
+                <div class="book-categories"><span class="category-tag">Book collectors</span><span class="category-tag">Bookstores</span><span class="category-tag">Married people</span><span class="category-tag">Employment</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The Orientalist unravels the mysterious life of a man born on the border between West and East, a Jewish man with a passion for the Arab world. Tom Reiss first came across the man who called himself &#39;Kurban Said&#39; when he went to the ex-USSR to research the oil business on the Caspian Sea, and discovered a novel instead. Written on the eve of the Second World War, Ali and Nino is a captivating love story set in the glamorous city of Baku, Azerbaijan&#39;s capital. The novel&#39;s depiction of a lost cosmopolitan society is enthralling, but equally intriguing is the identity of the man who wrote it. Who was its supposed author? And why was he so forgotten that no one could agree on the simplest facts about him? For five years, Reiss tracked Lev Nussimbaum, alias Kurban Said, from a wealthy Jewish childhood in Baku, to a romantic adolescence in Persia on the run from the Bolsheviks, and an exile in Berlin as bestselling author and self-proclaimed Muslim prince. The result is a thoroughly unexpected picture of the twentieth-century - of the origins of our ideas about race and religious self-definition, and of the roots of modern fanaticism.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=3MyPti17CyoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Orientalist</div>
+                        <div class="book-author">by Tom Reiss</div>
+                        <div class="book-meta">📅 2010 • 🏢 Random House • 📄 476 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The Orientalist unravels the mysterious life of a man born on the border between West and East, a Jewish man with a passion for the Arab world. Tom Reiss first came across the man who called himself 'Kurban Said' when he went to the ex-USSR to research the oil business on the Caspian Sea, and discov...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">Nonfiction</span><span class="category-tag">History</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="THE SUNDAY TIMES BESTSELLER ‘It is good to meet the real Jane Austen at last’ Independent on Sunday &#39;Brilliantly illuminating ... by focusing, chapter by chapter, on one thread or another of Austen’s experience, Byrne allows us to grasp the richness of her inner life’ Guardian">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=0Odhy7xlzwAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Real Jane Austen: A Life in Small Things</div>
+                        <div class="book-author">by Paula Byrne</div>
+                        <div class="book-meta">📅 2013 • 🏢 HarperCollins UK • 📄 353 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">THE SUNDAY TIMES BESTSELLER ‘It is good to meet the real Jane Austen at last’ Independent on Sunday 'Brilliantly illuminating ... by focusing, chapter by chapter, on one thread or another of Austen’s experience, Byrne allows us to grasp the richness of her inner life’ Guardian</div>
+                <div class="book-categories"><span class="category-tag">English Women novelists</span><span class="category-tag">Authors, biography</span><span class="category-tag">New York Times reviewed</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="About the Book : - The first full biography of Paul Dirac, the greatest British physicist since Newton - and one of the strangest geniuses of the twentieth century, who may have suffered from autism. Paul Dirac was a pioneer of quantum mechanics and was regarded as an equal by Albert Einstein. He predicted, purely from what he saw in his equations, the existence of antimatter. The youngest person ever to win the Nobel Prize for Physics, he was also pathologically reticent, strangely literal-minded and almost completely unable to communicate or empathise. His silences were legendary and when he spoke, he betrayed no emotion. Through his greatest period of productivity, his postcards home contained only remarks about the weather. He is said to have cried only once, when his friend Einstein died. Based on a previously undiscovered archive of family papers in Florida, Graham Farmelo celebrates Dirac&#39;s massive scientific achievement while drawing a compassionate portrait of his life and the people around him. Dirac had a traumatic relationship with his family: his brother committed suicide, and he hated his father to the end of his life. His political allegiances were radical. His best friend was the Russian physicist Peter Kapitza, and even at the height of the purges Dirac holidayed in the Soviet Union. Yet Farmelo also reveals a man who, while seemingly lacking in emotion, could manage to love and father a family. He catches Dirac&#39;s absolute belief in the beauty of mathematics with warmth and sympathy. And Farmelo shows that Dirac&#39;s eccentricities may well have stemmed from undiagnosed autism. About the Author : - Graham Farmelo is Senior Research Fellow at the Science Museum, London, and Adjunct Professor of Physics at Northeastern University, Boston, USA. Formerly a theoretical physicist, he is now an international consultant in science communication. He edited the best-selling It Must be Beautiful: Great Equations of Modern Science in 2002. He lives in London.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=LuGBGwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Strangest Man</div>
+                        <div class="book-author">by Graham Farmelo</div>
+                        <div class="book-meta">📅 2009 • 🏢 Faber & Faber Non Fiction </div>
+                    </div>
+                </div>
+                <div class="book-description">About the Book : - The first full biography of Paul Dirac, the greatest British physicist since Newton - and one of the strangest geniuses of the twentieth century, who may have suffered from autism. Paul Dirac was a pioneer of quantum mechanics and was regarded as an equal by Albert Einstein. He pr...</div>
+                <div class="book-categories"><span class="category-tag">physics</span><span class="category-tag">Biography</span><span class="category-tag">quantum physics</span><span class="category-tag">Quantum theory</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Now an AMC+ series starring Ben Whishaw The acclaimed multimillion-copy bestseller, This Is Going to Hurt is Adam Kay’s equally &quot;blisteringly funny&quot; (Boston Globe) and “heartbreaking” (New Yorker) secret diaries of his years as a young doctor. Welcome to 97-hour weeks. Welcome to life and death decisions. Welcome to a constant tsunami of bodily fluids. Welcome to earning less than the hospital parking meter. Wave goodbye to your friends and relationships. Welcome to the life of a first-year doctor. Scribbled in secret after endless days, sleepless nights, and missed weekends, comedian and former medical resident Adam Kay’s This Is Going to Hurt provides a no-holds-barred account of his time on the front lines of medicine. Hilarious, horrifying, and heartbreaking by turns, this is everything you wanted to know—and more than a few things you didn’t—about life on and off the hospital ward. And yes, it may leave a scar.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=2yc3EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">This Is Going to Hurt</div>
+                        <div class="book-author">by Adam Kay</div>
+                        <div class="book-meta">📅 2022 • 🏢 HarperCollins • 📄 353 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Now an AMC+ series starring Ben Whishaw The acclaimed multimillion-copy bestseller, This Is Going to Hurt is Adam Kay’s equally "blisteringly funny" (Boston Globe) and “heartbreaking” (New Yorker) secret diaries of his years as a young doctor. Welcome to 97-hour weeks. Welcome to life and death deci...</div>
+                <div class="book-categories"><span class="category-tag">Great britain, biography</span><span class="category-tag">Anecdotes</span><span class="category-tag">Physician and patient</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Every cell in my body is filled with the code of generations of trauma, of death, of birth, of migration, of history that I cannot understand. . . . I want to have words for what my bones know. By the age of thirty, Stephanie Foo was successful on paper: she had her dream job as an award-winning radio producer at This American Life and a loving boyfriend. But behind her office door, she was having panic attacks and sobbing at her desk every morning. After years of questioning what was wrong with herself, she was diagnosed with complex PTSD - a condition that occurs when trauma happens continuously, over the course of years. Both of Foo&#39;s parents abandoned her when she was a teenager, after years of physical and verbal abuse and neglect. She thought she&#39;d moved on, but her new diagnosis illuminated the way her past continued to threaten her health, relationships, and career. She found limited resources to help her, so Foo set out to heal herself, and to map her experiences onto the scarce literature about C-PTSD. In this deeply personal and thoroughly researched account, Foo interviews scientists and psychologists and tries a variety of innovative therapies. She returns to her hometown in California to investigate the effects of immigrant trauma on the community, and she uncovers family secrets in the country of her birth, Malaysia, to learn how trauma can be inherited through generations. Ultimately, she discovers that you don&#39;t move on from trauma - but you can learn to move with it. Powerful, enlightening and hopeful, What My Bones Know is a brave narrative that reckons with the hold of the past over the present, the mind over the body - and examines one woman&#39;s ability to reclaim agency from her trauma.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=MjFNEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">What My Bones Know</div>
+                        <div class="book-author">by Stephanie Foo</div>
+                        <div class="book-meta">📅 2022 • 🏢 Atlantic • 📄 338 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Every cell in my body is filled with the code of generations of trauma, of death, of birth, of migration, of history that I cannot understand. . . . I want to have words for what my bones know. By the age of thirty, Stephanie Foo was successful on paper: she had her dream job as an award-winning rad...</div>
+                <div class="book-categories"><span class="category-tag">Mental health</span><span class="category-tag">Internal medicine</span><span class="category-tag">Biography</span><span class="category-tag">Patients</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="**THE MILLION COPY BESTSELLER** &#39;Rattling. Heartbreaking. Beautiful,&#39; Atul Gawande, bestselling author of Being Mortal What makes life worth living in the face of death? At the age of thirty-six, on the verge of completing a decade&#39;s training as a neurosurgeon, Paul Kalanithi was diagnosed with inoperable lung cancer. One day he was a doctor treating the dying, the next he was a patient struggling to live. When Breath Becomes Air chronicles Kalanithi&#39;s transformation from a medical student asking what makes a virtuous and meaningful life into a neurosurgeon working in the core of human identity - the brain - and finally into a patient and a new father. Paul Kalanithi died while working on this profoundly moving book, yet his words live on as a guide to us all. When Breath Becomes Air is a life-affirming reflection on facing our mortality and on the relationship between doctor and patient, from a gifted writer who became both. &#39;A vital book about dying. Awe-inspiring and exquisite. Obligatory reading for the living&#39; Nigella Lawson">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=mtGpCgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">When Breath Becomes Air</div>
+                        <div class="book-author">by Paul Kalanithi</div>
+                        <div class="book-meta">📅 2016 • 🏢 Random House • 📄 260 pages <span class="rating">⭐⭐⭐⭐ 4.5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">**THE MILLION COPY BESTSELLER** 'Rattling. Heartbreaking. Beautiful,' Atul Gawande, bestselling author of Being Mortal What makes life worth living in the face of death? At the age of thirty-six, on the verge of completing a decade's training as a neurosurgeon, Paul Kalanithi was diagnosed with inop...</div>
+                <div class="book-categories"><span class="category-tag">Cancer</span><span class="category-tag">philosophy</span><span class="category-tag">Neurosurgeons</span><span class="category-tag">Lungs</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&quot;Thoughtfully traces [Mara Wilson&#39;s] journey from child actress to Hollywood dropout...Who is she now? She&#39;s a writer.&quot; —NPR&#39;s &quot;Guide To 2016’s Great Reads&quot; “Growing up, I wanted to be Mara Wilson. Where Am I Now? is a delight.” —Ilana Glazer, cocreator and star of Broad City Named a best book of the month by GoodReads and Entertainment Weekly A former child actor best known for her starring roles in Matilda and Mrs. Doubtfire, Mara Wilson has always felt a little young and out of place: as the only kid on a film set full of adults, the first daughter in a house full of boys, a Valley girl in New York and a neurotic in California, and a grown-up the world still remembers as a little girl. Tackling everything from what she learned about sex on the set of Melrose Place, to discovering in adolescence that she was no longer “cute” enough for Hollywood, these essays chart her journey from accidental fame to relative (but happy) obscurity. They also illuminate universal struggles, like navigating love and loss, and figuring out who you are and where you belong. Candid, insightful, moving, and hilarious, Where Am I Now? introduces Mara Wilson as a brilliant new chronicler of the experience that is growing up female.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=yKOoCwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Where Am I Now?</div>
+                        <div class="book-author">by Mara Wilson</div>
+                        <div class="book-meta">📅 2016 • 🏢 Penguin • 📄 274 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">"Thoughtfully traces [Mara Wilson's] journey from child actress to Hollywood dropout...Who is she now? She's a writer." —NPR's "Guide To 2016’s Great Reads" “Growing up, I wanted to be Mara Wilson. Where Am I Now? is a delight.” —Ilana Glazer, cocreator and star of Broad City Named a best book of th...</div>
+                <div class="book-categories"><span class="category-tag">Actors</span><span class="category-tag">Biography</span><span class="category-tag">Actors, biography</span><span class="category-tag">BIOGRAPHY and AUTOBIOGRAPHY</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="THE NO. 1 BESTSELLING, LIFE-CHANGING PHENOMENON – SUNDAY TIMES and NEW YORK TIMES BESTSELLER &#39;A beautiful, gentle exploration of the dark season of life and the light of spring that eventually follows&#39; RAYNOR WINN &#39;My favourite book of the last five years&#39; CAITLIN MORAN Wintering is a poignant and comforting meditation on the fallow periods of life, times when we must retreat to care for and repair ourselves. Katherine May thoughtfully shows us how to come through these times with the wisdom of knowing that, like the seasons, our winters and summers are the ebb and flow of life. A moving personal narrative interwoven with lessons from literature, mythology and the natural world, May&#39;s story offers instruction on the transformative power of rest and retreat. Illumination emerges from many sources: solstice celebrations and dormice hibernation, C.S. Lewis and Sylvia Plath, swimming in icy waters and sailing arctic seas. Ultimately, Wintering invites us to change how we relate to our own fallow times. May models an active acceptance of sadness and finds nourishment in deep retreat, joy in the hushed beauty of winter, and encouragement in understanding life as cyclical, not linear. A secular mystic, May forms a guiding philosophy for transforming the hardships that arise before the ushering in of a new season. &#39;Every bit as beautiful and healing as the season itself&#39; ELIZABETH GILBERT &#39;Absolutely beautiful&#39; CHERYL STRAYED Number 1 Sunday Times bestseller, November 2024">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=pBWYDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Wintering</div>
+                        <div class="book-author">by Katherine May</div>
+                        <div class="book-meta">📅 2020 • 🏢 Random House • 📄 171 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">THE NO. 1 BESTSELLING, LIFE-CHANGING PHENOMENON – SUNDAY TIMES and NEW YORK TIMES BESTSELLER 'A beautiful, gentle exploration of the dark season of life and the light of spring that eventually follows' RAYNOR WINN 'My favourite book of the last five years' CAITLIN MORAN Wintering is a poignant and c...</div>
+                <div class="book-categories"><span class="category-tag">Self-actualization (psychology)</span><span class="category-tag">Self-realization</span><span class="category-tag">Outdoor life</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 15:58:02 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

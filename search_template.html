@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .instructions h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .search-form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        .search-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search Results</h1>
+        
+        <div class="search-info">
+            <p><strong>No search results page found for your search term.</strong></p>
+            <p>The search functionality requires generating a results page first.</p>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Generate Search Results:</h3>
+            <ol>
+                <li>Open a terminal/command prompt</li>
+                <li>Navigate to your digital library project directory</li>
+                <li>Run the following command:</li>
+            </ol>
+            <div class="code-block">python src/search_handler.py "your search term"</div>
+            <p>Replace "your search term" with what you want to search for.</p>
+            <p><strong>Example:</strong></p>
+            <div class="code-block">python src/search_handler.py "science"</div>
+        </div>
+
+        <div class="search-form">
+            <h3>Try a New Search:</h3>
+            <input type="text" class="search-input" id="newSearchInput" placeholder="Enter search term...">
+            <button class="search-btn" onclick="newSearch()">Search</button>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="library_navigator.html" class="back-btn">← Back to Library Navigator</a>
+        </div>
+    </div>
+
+    <script>
+        function newSearch() {
+            const searchTerm = document.getElementById('newSearchInput').value.trim();
+            if (searchTerm) {
+                const safeTerm = searchTerm.replace(/[^\w\s-]/g, '').replace(/[-\s]+/g, '_');
+                window.location.href = `library_search_${safeTerm}.html`;
+            }
+        }
+
+        // Allow Enter key to trigger search
+        document.getElementById('newSearchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                newSearch();
+            }
+        });
+
+        // Extract search term from URL if possible
+        window.onload = function() {
+            const urlParts = window.location.pathname.split('/');
+            const fileName = urlParts[urlParts.length - 1];
+            if (fileName.startsWith('library_search_')) {
+                const searchTerm = fileName.replace('library_search_', '').replace('.html', '').replace(/_/g, ' ');
+                document.querySelector('.search-info p').innerHTML = 
+                    `<strong>No search results found for: "${searchTerm}"</strong><br>The search functionality requires generating a results page first.`;
+            }
+        };
+    </script>
+</body>
+</html>

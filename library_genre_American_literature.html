@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>American literature - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .modal-cover {
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .modal-cover-placeholder {
+            width: 120px;
+            height: 180px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+        
+        .modal-book-info {
+            flex: 1;
+        }
+        
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .modal-author {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .modal-meta {
+            font-size: 1.1em;
+            opacity: 0.8;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .modal-description {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .modal-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .modal-category-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #e9ecef;
+        }
+        
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+        
+        .close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .modal-cover, .modal-cover-placeholder {
+                width: 100px;
+                height: 150px;
+                align-self: center;
+            }
+            
+            .modal-title {
+                font-size: 1.6em;
+            }
+            
+            .modal-author {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>American literature</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 14 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card" data-full-description="Trapped by their pasts, is there hope for a future? When Secret Service operative Andrew Darlington is brought in to support a US Marshal case involving counterfeiters in rural Indiana, he thinks it&#39;s simply the next rung on his climb to the top of his career. But liars can only climb so high--and Andrew is keeping a dangerous secret he doesn&#39;t ever want to get out. When he clashes with the criminal family that took over the town of Landkreis and killed the Marshal he was sent to assist, his past life is in danger of being exposed. Widow Lightning Lu Thorne has only one goal: escape the clutches of the Thorne family with her son. Her decision to be an informant and testify against the Thornes looked like the perfect answer. Until the Marshal ended up dead. Now the tether keeping her tied to her felonious family is tightening, and a forced marriage to someone else in the Thornes&#39; clutches threatens to kill any hope of escape. Andrew and Lu find themselves on the same team--unwillingly. They each believe the other to be the enemy to their future plans. And even if they could learn to work together, the secrets they hold could shatter all hopes and dreams. Despite the encouragement of the local preacher, they&#39;re not even sure God can be trusted--much less other humans. Can either of them escape their past--and the family that is willing to kill their own when they smell betrayal? On the heels of her smashing debut, this second entry in Crystal Caudill&#39;s historical series maintains the excitement that readers of Michelle Griep, Liz Tolsma, and Elizabeth Camden will love.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=DzlVzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Counterfeit Hope</div>
+                        <div class="book-author">by Crystal Caudill</div>
+                        <div class="book-meta">📅 2023 • 🏢 Kregel Publications </div>
+                    </div>
+                </div>
+                <div class="book-description">Trapped by their pasts, is there hope for a future? When Secret Service operative Andrew Darlington is brought in to support a US Marshal case involving counterfeiters in rural Indiana, he thinks it's simply the next rung on his climb to the top of his career. But liars can only climb so high--and A...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">American literature</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;Beautiful prose, even-handed magic and all the pains and triumphs of intergenerational bonds&#39; KILEY REID, author of Such A Fun Age and Come and Get It &#39;Undeniably beautiful&#39; Sunday Times Flor has a gift: she can predict, to the day, when someone will die. So when she decides to throw her own living wake, her sisters are concerned. What has she foreseen? Planning the celebration brings further complications for the Marte family, because Flor isn’t the only person with secrets: her sisters are hiding things, too. And the next generation, cousins Ona and Yadi, face tumult of their own. Family Lore traces the intertwining stories of five women: sisters and cousins, mothers and daughters, aunts and nieces, to ask the ultimate question – what does it take to live a good life, for yourself and those you love?">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=rOyiEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Family Lore</div>
+                        <div class="book-author">by Elizabeth Acevedo</div>
+                        <div class="book-meta">📅 2023 • 🏢 Canongate • 📄 379 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">'Beautiful prose, even-handed magic and all the pains and triumphs of intergenerational bonds' KILEY REID, author of Such A Fun Age and Come and Get It 'Undeniably beautiful' Sunday Times Flor has a gift: she can predict, to the day, when someone will die. So when she decides to throw her own living...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">American literature</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Trabajo, trabajo y más trabajo. Linus Baker podría ser una persona cualquiera, en un lugar cualquiera, viviendo una vida cualquiera. Él estaba convencido de esto y, si tú lo hubieras conocido, tampoco habrías dudado en asegurar que pertenecía al montón, ni más, ni menos. Y así era, hasta el día en que la Altísima Dirección llama a este funcionario del Departamento Encargado de los Jóvenes Mágicos para supervisar un orfanato del que apenas hay registros. Con esta nueva tarea entre manos, Linus viajará a la isla de Marsyas, donde deberá supervisar a seis huérfanos catalogados como peligrosos (hablamos del futuro Anticristo, entre otros) y a su enigmático tutor. Ahí, deberá dejar de lado sus miedos y prejuicios, que no son pocos, para darse cuenta de que lo que realmente tiene que hacer no es aquello a lo que fue enviado. Porque en Marsyas, Linus descubrirá que el camino a la felicidad es distinto para cada uno de nosotros, y que si te atreves a recorrerlo, llegarás al lugar donde te encontrarás a ti mismo. Un libro que llenará tu corazón.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=4x1_EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">La casa en el mar más azul (Edición mexicana)</div>
+                        <div class="book-author">by TJ Klune</div>
+                        <div class="book-meta">📅 2022 • 🏢 Crossbooks México • 📄 489 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Trabajo, trabajo y más trabajo. Linus Baker podría ser una persona cualquiera, en un lugar cualquiera, viviendo una vida cualquiera. Él estaba convencido de esto y, si tú lo hubieras conocido, tampoco habrías dudado en asegurar que pertenecía al montón, ni más, ni menos. Y así era, hasta el día en q...</div>
+                <div class="book-categories"><span class="category-tag">American literature</span><span class="category-tag">LGBTQ science fiction and fantasy</span><span class="category-tag">Fiction</span><span class="category-tag">New York Times bestseller</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="No description available.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/12728372-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Mustique Island</div>
+                        <div class="book-author">by Sarah McCoy</div>
+                        <div class="book-meta">📅 2022 • 🏢 HarperCollins </div>
+                    </div>
+                </div>
+                <div class="book-description">No description available.</div>
+                <div class="book-categories"><span class="category-tag">American literature</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Colleen Hoover te romperá el corazón. El gran fenómeno internacional. Una novela sobre segundas oportunidades por la autora de Romper el círculo. A Morgan Grant y su hija de dieciséis años, Clara, nada les gustaría más que no parecerse. Morgan está decidida a evitar que su hija cometa los mismos errores que ella, pues al quedarse embarazada y casarse demasiado joven, tuvo que dejar en el aire sus propios sueños. Por suerte, Clara no quiere seguir sus pasos: su predecible madre no tiene un hueso de espontaneidad en el cuerpo. Con personalidades tan contrarias les resulta cada vez más difícil coexistir. La única persona que puede traer paz al hogar es Chris, marido, padre y el ancla de la familia. Pero esa paz se rompe cuando se ve envuelto en un trágico y extraño accidente con desgarradoras consecuencias para ellas. Mientras lucha por reconstruir todo lo que se derrumbó, Morgan encuentra consuelo en la última persona que esperaba y Clara se vuelve hacia el único chico que le han prohibido ver. Pero con cada nuevo secreto y malentendido madre e hija se separan cada vez más, lo último que imaginan es que para volver a enamorarse se necesitan la una a la otra.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/8581190-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Regretting You</div>
+                        <div class="book-author">by Colleen Hoover</div>
+                        <div class="book-meta">📅 2019 • 🏢 Amazon </div>
+                    </div>
+                </div>
+                <div class="book-description">Colleen Hoover te romperá el corazón. El gran fenómeno internacional. Una novela sobre segundas oportunidades por la autora de Romper el círculo. A Morgan Grant y su hija de dieciséis años, Clara, nada les gustaría más que no parecerse. Morgan está decidida a evitar que su hija cometa los mismos err...</div>
+                <div class="book-categories"><span class="category-tag">Families</span><span class="category-tag">American literature</span><span class="category-tag">Secrecy</span><span class="category-tag">Mothers and daughters</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="NEW YORK TIMES BESTSELLER • One juror changed the verdict. What if she was wrong? From the Academy Award–winning screenwriter of The Imitation Game and bestselling author of The Last Days of Night. . . . An ID Book Club Selection • In development as a limited series starring and executive produced by Amy Adams “Exhilarating . . . a fiendishly slippery game of cat-and-mouse suspense and a provocative, urgent inquiry into American justice (and injustice) in the twenty-first century.”—A. J. Finn, #1 New York Times bestselling author of The Woman in the Window It’s the most sensational case of the decade. Fifteen-year-old Jessica Silver, heiress to a billion-dollar real estate fortune, vanishes on her way home from school, and her teacher, Bobby Nock, a twenty-five-year-old African American man, is the prime suspect. The subsequent trial taps straight into America’s most pressing preoccupations: race, class, sex, law enforcement, and the lurid sins of the rich and famous. It’s an open-and-shut case for the prosecution, and a quick conviction seems all but guaranteed—until Maya Seale, a young woman on the jury, convinced of Nock’s innocence, persuades the rest of the jurors to return the verdict of not guilty, a controversial decision that will change all their lives forever. Flash forward ten years. A true-crime docuseries reassembles the jury, with particular focus on Maya, now a defense attorney herself. When one of the jurors is found dead in Maya’s hotel room, all evidence points to her as the killer. Now, she must prove her own innocence—by getting to the bottom of a case that is far from closed. As the present-day murder investigation entwines with the story of what really happened during their deliberation, told by each of the jurors in turn, the secrets they have all been keeping threaten to come out—with drastic consequences for all involved.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=rNWfDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Holdout</div>
+                        <div class="book-author">by Graham Moore</div>
+                        <div class="book-meta">📅 2020 • 🏢 Random House • 📄 337 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">NEW YORK TIMES BESTSELLER • One juror changed the verdict. What if she was wrong? From the Academy Award–winning screenwriter of The Imitation Game and bestselling author of The Last Days of Night. . . . An ID Book Club Selection • In development as a limited series starring and executive produced b...</div>
+                <div class="book-categories"><span class="category-tag">Fiction, legal</span><span class="category-tag">American literature</span><span class="category-tag">African americans, fiction</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="The Instant New York Times Bestseller and TikTok Sensation! As seen on THE VIEW! A BuzzFeed Best Summer Read of 2021 When a fake relationship between scientists meets the irresistible force of attraction, it throws one woman&#39;s carefully calculated theories on love into chaos. As a third-year Ph.D. candidate, Olive Smith doesn&#39;t believe in lasting romantic relationships—but her best friend does, and that&#39;s what got her into this situation. Convincing Anh that Olive is dating and well on her way to a happily ever after was always going to take more than hand-wavy Jedi mind tricks: Scientists require proof. So, like any self-respecting biologist, Olive panics and kisses the first man she sees. That man is none other than Adam Carlsen, a young hotshot professor—and well-known ass. Which is why Olive is positively floored when Stanford&#39;s reigning lab tyrant agrees to keep her charade a secret and be her fake boyfriend. But when a big science conference goes haywire, putting Olive&#39;s career on the Bunsen burner, Adam surprises her again with his unyielding support and even more unyielding...six-pack abs. Suddenly their little experiment feels dangerously close to combustion. And Olive discovers that the only thing more complicated than a hypothesis on love is putting her own heart under the microscope.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=J4QUEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Love Hypothesis</div>
+                        <div class="book-author">by Ali Hazelwood</div>
+                        <div class="book-meta">📅 2021 • 🏢 Penguin • 📄 401 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">The Instant New York Times Bestseller and TikTok Sensation! As seen on THE VIEW! A BuzzFeed Best Summer Read of 2021 When a fake relationship between scientists meets the irresistible force of attraction, it throws one woman's carefully calculated theories on love into chaos. As a third-year Ph.D. c...</div>
+                <div class="book-categories"><span class="category-tag">rom-com</span><span class="category-tag">American literature</span><span class="category-tag">Romantic fiction</span><span class="category-tag">romance</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="From one of America’s most beloved storytellers—a profound novel about belief, betrayal, and the transformation of one corner of the country. “Russell Banks’s new novel is eerily timely. Can what’s gone wrong in the past offer keys to the future? The Magic Kingdom confronts our longings for Paradise; also the inner serpents that are to be found in all such enchanted gardens.” —Margaret Atwood, author of The Testaments, via Twitter In 1971, a property speculator named Harley Mann begins recording his life story onto a reel-to-reel machine. Reflecting on his childhood in the early twentieth century, Harley recounts that after his father’s sudden death, his family migrated down to Florida’s swamplands—mere miles away from what would become Disney World—to join a community of Shakers. Led by Elder John, a generous man with a mysterious past, the colony devoted itself to labor, faith, and charity, rejecting all temptations that lay beyond the property. Though this way of life initially saved Harley and his family from complete ruin, when Harley began falling in love with Sadie Pratt, a consumptive patient living on the grounds, his loyalty to the Shakers and their conservative worldview grew strained and, ultimately, broke. As Harley dictates his story across more than half a century—meditating on youth, Florida’s everchanging landscape, and the search for an American utopia—the truth about Sadie, Elder John, and the Shakers comes to light, clarifying the past and present alike. A dazzling tapestry of love and faith, memory and imagination, The Magic Kingdom questions what it means to look back and accept one’s place in history. With an expert eye and stunning vision, Russell Banks delivers a wholly captivating portrait of a man navigating Americana and the passage of time.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=fJiOEAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Magic Kingdom</div>
+                        <div class="book-author">by Russell Banks</div>
+                        <div class="book-meta">📅 2022 • 🏢 National Geographic </div>
+                    </div>
+                </div>
+                <div class="book-description">From one of America’s most beloved storytellers—a profound novel about belief, betrayal, and the transformation of one corner of the country. “Russell Banks’s new novel is eerily timely. Can what’s gone wrong in the past offer keys to the future? The Magic Kingdom confronts our longings for Paradise...</div>
+                <div class="book-categories"><span class="category-tag">Fiction, coming of age</span><span class="category-tag">Fiction, small town and rural</span><span class="category-tag">American literature</span><span class="category-tag">Shakers</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="No description available.">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/10868549-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Secrets of Us</div>
+                        <div class="book-author">by Lucinda Berry</div>
+                        <div class="book-meta">📅 2021 • 🏢 Thomas & Mercer </div>
+                    </div>
+                </div>
+                <div class="book-description">No description available.</div>
+                <div class="book-categories"><span class="category-tag">American literature</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A young artist forges a path of self-discovery in an enriching novel about forgiving the past and embracing second chances, from the bestselling author of An Unfinished Story. Maine, 1969. After losing her parents in a car accident, aspiring artist Annalisa Mancuso lives with her grandmother and their large Italian family in the stifling factory town of Payton Mills. Inspired by her mother, whose own artistic dreams disappeared in a damaged marriage, Annalisa is dedicated only to painting. Closed off to love, and driven as much by her innate talent as she is the disillusionment of her past, Annalisa just wants to come into her own. The first step is leaving Payton Mills and everything it represents. The next, the inspiring opportunities in the city of Portland and a thriving New England art scene where Annalisa hopes to find her voice. But she meets Thomas, an Ivy League student whose attentions--and troubled family--upend her pursuits in ways she never imagined possible. As their relationship deepens, Annalisa must balance her dreams against an unexpected love. Until the unraveling of an unforgivable lie. For Annalisa, opening herself up to life and to love is a risk. It might also be the chance she needs to finally become the person and the artist she&#39;s meant to be.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=DXcMzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Singing Trees</div>
+                        <div class="book-author">by Boo Walker</div>
+                        <div class="book-meta">📅 2021 • 🏢 Lake Union • 📄 430 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">A young artist forges a path of self-discovery in an enriching novel about forgiving the past and embracing second chances, from the bestselling author of An Unfinished Story. Maine, 1969. After losing her parents in a car accident, aspiring artist Annalisa Mancuso lives with her grandmother and the...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">American literature</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="&#39;Clever, dark, and hopeful . . . a love letter to reading and the power childhood stories have over us long after we&#39;ve grown up&#39; V.E. Schwab, author of The Invisible Life of Addie LaRue &#39;A dreamy, inventive novel about how books can not only change lives but save them too&#39; Sarah Addison Allen, author of Other Birds One of the Washington Post&#39;s top ten feel-good novels of the year: a perfect gift for book lovers everywhere! During her lonely childhood, Lucy Hart found solace in Jack Masterson&#39;s Clock Island books. Now a teacher&#39;s aide, she shares her love of reading with Christopher, a former student she&#39;d give anything to adopt - if only she could afford it. Just when Lucy is about to give up, the famously reclusive writer announces that he&#39;s finally written a new book, and he&#39;s holding a contest at his home on the real Clock Island to win the only copy. Winning the most sought-after book in the world could change Lucy and Christopher&#39;s lives. But with wily opponents, the books&#39; distractingly handsome illustrator, and Jack Masterson himself to contend with, that won&#39;t be as easy as she wishes . . . Readers LOVE The Wishing Game! &#39;Do yourself a favor and read this immediately! It will make your heart so happy&#39; ⭐⭐⭐⭐⭐ &#39;It&#39;s books like this that remind me why I fell in love with reading in the first place&#39; ⭐⭐⭐⭐⭐ &#39;One of the best books I&#39;ve ever read&#39; ⭐⭐⭐⭐⭐ &#39;Beautiful, heartbreaking, magical, and hope-instilling&#39; ⭐⭐⭐⭐⭐ &#39;No words to describe this fantastic book&#39; ⭐⭐⭐⭐⭐ &#39;Imaginative, moving and so life-affirming!&#39; ⭐⭐⭐⭐⭐ &#39;What storytelling should be all about&#39; ⭐⭐⭐⭐⭐ &#39;My cheeks hurt from smiling by the end&#39; ⭐⭐⭐⭐⭐ Love The Wishing Game? Discover Meg Shaffer&#39;s gorgeously moving The Lost Story, available to pre-order now!">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=E83UEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Wishing Game</div>
+                        <div class="book-author">by Meg Shaffer</div>
+                        <div class="book-meta">📅 2023 • 🏢 Hachette UK • 📄 323 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">'Clever, dark, and hopeful . . . a love letter to reading and the power childhood stories have over us long after we've grown up' V.E. Schwab, author of The Invisible Life of Addie LaRue 'A dreamy, inventive novel about how books can not only change lives but save them too' Sarah Addison Allen, auth...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">American literature</span><span class="category-tag">Fantasy</span><span class="category-tag">Fiction</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="Runner Up for the Dayton Literary Peace Prize Finalist for the Washington State Book Award Edgar Prize Finalist for Best Debut Novel by an American Author Shortlisted for the Prix Libre Nous, Best Foreign Book in French Translation New York Times, Group Text Pick for April 2021 New York Times Editor&#39;s Choice Pick Named a top beach read of summer by Oprah Daily, Good Housekeeping, The Wall Street Journal, and more “Nail-biting wallop of a debut . . . a thoughtful, unexpectedly optimistic tale.” —The New York Times “If you enjoyed The Searcher by Tana French, read What Comes After by JoAnne Tompkins. . . . a mystery—and a gritty meditation on loss and redemption, drenched in stillness and grief.” —The Washington Post After the shocking death of two teenage boys tears apart a community in the Pacific Northwest, a mysterious pregnant girl emerges out of the woods and into the lives of those same boys’ families—a moving and hopeful novel about forgiveness and human connection. In misty, coastal Washington State, Isaac lives alone with his dog, grieving the recent death of his teenage son, Daniel. Next door, Lorrie, a working single mother, struggles with a heinous act committed by her own teenage son. Separated by only a silvery stretch of trees, the two parents are emotionally stranded, isolated by their great losses—until an unfamiliar sixteen-year-old girl shows up, bridges the gap, and changes everything. Evangeline’s arrival at first feels like a blessing, but she is also clearly hiding something. When Isaac, who has retreated into his Quaker faith, isn’t equipped to handle her alone, Lorrie forges her own relationship with the girl. Soon all three characters are forced to examine what really happened in their overlapping pasts, and what it all possibly means for a shared future. With a propulsive mystery at its core, What Comes After offers an unforgettable story of loss and anger, but also of kindness and hope, courage and forgiveness. It is a deeply moving account of strangers and friends not only helping each other forward after tragedy but inspiring a new kind of family.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=8kz2DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">What Comes After</div>
+                        <div class="book-author">by JoAnne Tompkins</div>
+                        <div class="book-meta">📅 2021 • 🏢 Penguin • 📄 434 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Runner Up for the Dayton Literary Peace Prize Finalist for the Washington State Book Award Edgar Prize Finalist for Best Debut Novel by an American Author Shortlisted for the Prix Libre Nous, Best Foreign Book in French Translation New York Times, Group Text Pick for April 2021 New York Times Editor...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">American literature</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="From three bestselling authors comes an interwoven tale about a trio of World War II nurses stationed in the South Pacific who wage their own battle for freedom and survival. The Philippines, 1941. When U.S. Navy nurse Eleanor Lindstrom, U.S. Army nurse Penny Franklin, and Filipina nurse Lita Capel forge a friendship at the Army Navy Club in Manila, they believe they’re living a paradise assignment. All three are seeking a way to escape their pasts, but soon the beauty and promise of their surroundings give way to the heavy mantle of war. Caught in the crosshairs of a fight between the U.S. military and the Imperial Japanese Army for control of the Philippine Islands, the nurses are forced to serve under combat conditions and, ultimately, endure captivity as the first female prisoners of the Second World War. As their resiliency is tested in the face of squalid living arrangements, food shortages, and the enemy&#39;s blatant disregard for the articles of the Geneva Convention, the women strive to keep their hope— and their fellow inmates—alive, though not without great cost. In this sweeping story based on the true experiences of nurses dubbed &quot;the Angels of Bataan,&quot; three women shift in and out of each other&#39;s lives through the darkest days of the war, buoyed by their unwavering friendship and distant dreams of liberation. &quot;A novel rich in historical detail that immerses readers in the dangers and deprivation WWII nurses suffered in the Pacific, wrapped up with a hopeful ending.&quot; -Booklist">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=I0pnEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">When We Had Wings</div>
+                        <div class="book-author">by Ariel Lawhon & Kristina McMorris & Susan Meissner</div>
+                        <div class="book-meta">📅 2022 • 🏢 Harper Muse • 📄 433 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">From three bestselling authors comes an interwoven tale about a trio of World War II nurses stationed in the South Pacific who wage their own battle for freedom and survival. The Philippines, 1941. When U.S. Navy nurse Eleanor Lindstrom, U.S. Army nurse Penny Franklin, and Filipina nurse Lita Capel ...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">American literature</span></div>
+            </div>
+            
+            <div class="book-card" data-full-description="A vivid, character-driven historical saga set in Greece at the end of WWII and on the verge of the Greek Civil War. Fans of Ariel Lawhon&#39;s books about little-known history will love this sweeping, multigenerational story of familial love and loyalty against all odds. Corfu, 1946: Living in a poor village in northern Greece, 10-year-olds Marco and Katerina are the best of friends. But as their country erupts into war, the two are separated: Katerina&#39;s family flees on foot, desperate to find somewhere safe. Marco is sent to one of Queen Frederica&#39;s children&#39;s villages, her defiant stance against the incoming communists. At their final goodbye, Katerina and Marco promise to find their way back to the village, and to each other. This haunting childhood vow launches events that will take decades to unravel. Where the Wandering Ends beautifully blends real Corfiot history with Greek mythology. Spanning multiple decades, this heart-breaking yet uplifting story reminds us of the tenacity of those who have lost everything and the enduring power of home. Dive into the captivating world of Where the Wandering Ends by Yvette Manessis Corporon, a book that beautifully blends history, mythology, and unforgettable characters. Praised by readers for its lyrical writing and emotional depth, this novel transports you to the heart of Greece and the enduring power of home and friendship. Whether you&#39;re a fan of historical sagas, Greek mythology, or simply love a masterfully told story, this book is a must-read. Get your copy today and embark on an unforgettable journey! &quot;[A] magically crafted story combining history and mythology.&quot; --Heather Morris, New York Times bestselling author.">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=3OFTEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Where the Wandering Ends</div>
+                        <div class="book-author">by Yvette Manessis Corporon</div>
+                        <div class="book-meta">📅 2022 • 🏢 Harper Muse • 📄 401 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">A vivid, character-driven historical saga set in Greece at the end of WWII and on the verge of the Greek Civil War. Fans of Ariel Lawhon's books about little-known history will love this sweeping, multigenerational story of familial love and loyalty against all odds. Corfu, 1946: Living in a poor vi...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">American literature</span></div>
+            </div>
+            
+        </div>
+        
+        <!-- Modal Structure -->
+        <div id="bookModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="modal-header">
+                    <div id="modalCoverContainer"></div>
+                    <div class="modal-book-info">
+                        <div class="modal-title" id="modalTitle"></div>
+                        <div class="modal-author" id="modalAuthor"></div>
+                        <div class="modal-meta" id="modalMeta"></div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-categories" id="modalCategories"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 16:00:49 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('bookModal');
+        const closeBtn = document.querySelector('.close');
+        
+        function openModal(bookCard) {
+            // Extract book data from the card
+            const title = bookCard.querySelector('.book-title').textContent;
+            const author = bookCard.querySelector('.book-author').textContent;
+            const meta = bookCard.querySelector('.book-meta').textContent;
+            // Use full description from data attribute, fallback to display description
+            const fullDescription = bookCard.getAttribute('data-full-description');
+            const description = fullDescription || bookCard.querySelector('.book-description').textContent;
+            const categories = Array.from(bookCard.querySelectorAll('.category-tag')).map(tag => tag.textContent);
+            
+            // Get cover image or create placeholder
+            const coverImg = bookCard.querySelector('.book-cover');
+            const coverPlaceholder = bookCard.querySelector('.book-cover-placeholder');
+            
+            // Populate modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalMeta').textContent = meta;
+            document.getElementById('modalDescription').textContent = description;
+            
+            // Handle cover image
+            const modalCoverContainer = document.getElementById('modalCoverContainer');
+            modalCoverContainer.innerHTML = '';
+            
+            if (coverImg) {
+                const modalCover = document.createElement('img');
+                modalCover.src = coverImg.src;
+                modalCover.alt = coverImg.alt;
+                modalCover.className = 'modal-cover';
+                modalCoverContainer.appendChild(modalCover);
+            } else if (coverPlaceholder) {
+                const modalCoverPlaceholder = document.createElement('div');
+                modalCoverPlaceholder.className = 'modal-cover-placeholder';
+                modalCoverPlaceholder.textContent = coverPlaceholder.textContent;
+                modalCoverContainer.appendChild(modalCoverPlaceholder);
+            }
+            
+            // Handle categories
+            const modalCategories = document.getElementById('modalCategories');
+            modalCategories.innerHTML = '';
+            categories.forEach(category => {
+                const tag = document.createElement('span');
+                tag.className = 'modal-category-tag';
+                tag.textContent = category;
+                modalCategories.appendChild(tag);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // Add click listeners to all book cards
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', function() {
+                openModal(this);
+            });
+        });
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

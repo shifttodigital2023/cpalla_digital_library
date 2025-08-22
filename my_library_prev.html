@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conchi Palla's Library</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .library-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .books-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .book-card {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .book-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .book-author {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        .book-details {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .book-synopsis {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        .book-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .tag {
+            background-color: #e0f7fa;
+            color: #00838f;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .category {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .book-categories {
+            margin-top: 10px;
+        }
+        .confidence-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+        .confidence-high {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .confidence-medium {
+            background-color: #fff9c4;
+            color: #f57f17;
+        }
+        .book-image {
+            max-width: 150px !important;
+            max-height: 150px !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        img {
+            max-width: 150px !important;
+            max-height: 150px !important;
+        }
+        .book-links {
+            margin-top: 8px;
+        }
+        .book-link {
+            color: #2196F3;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .book-link:hover {
+            text-decoration: underline;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #search-input {
+            padding: 8px 15px;
+            width: 300px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+        #search-button {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Digital Library</h1>
+    
+    <div class="library-info">
+        <p>Total Books: 7</p>
+        <p>Generated on: 2025-03-17 22:21:55</p>
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by title, author or tag...">
+        <button id="search-button">Search</button>
+    </div>
+    
+    <div class="books-container" id="books-container">
+        
+        <div class="book-card">
+            
+            <div class="book-title">DOUGLAS ADAMS - The Ultimate Hitchhiker's Guide </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 898</div>
+                <div>Size: 3.24 MB</div>
+                
+                
+                
+                <div>Filename: The Ultimate Hitchhiker's Guide to the Galaxy.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">  
+  
+DOUGLAS  ADAMS     
+  
+THE  ULTIMATE  
+HITCHHIKER'S  GUIDE     
+  
+Complete  &  Unabridged     
+  
+  
+Contents:     
+  
+  
+Introduction:  A  Guide  to  the  Guide     
+The  Hitchhiker's  Guide  ...</div>
+            <div class="book-tags">
+                <span class="tag">Guide</span><span class="tag">Galaxy</span><span class="tag">Ultimate</span><span class="tag">Hitchhiker</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=G2U4EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Lessons in Chemistry" class="book-image">
+            <div class="book-title">Lessons in Chemistry <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Bonnie Garmus</div>
+            <div class="book-details">
+                <div>Pages: 347</div>
+                <div>Size: 1.51 MB</div>
+                <div>Published: 2022-04-05</div>
+                <div>Publisher: Random House</div>
+                <div>ISBN: 9781473594531</div>
+                <div>Filename: Lessons-in-Chemistry_PDFnovel.com.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">The perfect Christmas gift! THE MULTI-AWARD-WINNING MILLION-COPY BESTSELLER, now a major Apple TV series starring Brie Larson. A New York Times Top 100 Best Books of the 21st Century Reader's Pick ____________ 'The most charming, life-enhancing novel I've read in ages' Sunday Times 'Thought-provoking and stylish' Guardian ‘Page-turning’ – Maggie Shipstead, author of Great Circle ___________ Your ability to change everything - including yourself - starts here Chemist Elizabeth Zott is not your average woman. In fact, she would be the first to point out that there is no such thing. But it's the early 1960s and her all-male team at Hastings Research Institute take a very unscientific view of equality. Forced to leave her job at the institute, she soon finds herself the reluctant star of America's most beloved cooking show, Supper at Six. But as her following grows, not everyone is happy. Because as it turns out, Elizabeth Zott isn't just teaching women to cook. She's daring them to change the status quo. One molecule at a time. __________ A Book of the Year for: Guardian, Times, Sunday Times, New York Times, Good Housekeeping, Woman & Home, Stylist, TLS Oprah Daily, Newsweek, Mail on Sunday, Entertainment Weekly, NPR, India Knight, Hay Festival, Waterstones, Amazon, Books are My Bag and many more! Author of the Year at the British Book Awards Author of the Year, Waterstones Winner of the Goodreads Choice Best Debut Novel Award Winner of the Books are My Bag Reader's Choice Award Winner of the Books are My Bag Breakthrough Author Award Shortlisted for the HWA Crown Award Praise for Lessons in Chemistry: ‘Full of humour, heartbreak and characters who feel like real people’ Red Magazine 'Thought-provoking and stylish' Guardian 'Laugh-out-loud funny and brimming with life, generosity and courage' Rachel Joyce, author of The Unlikely Pilgrimage of Harold Fry 'I loved Lessons in Chemistry and am devastated to have finished it!' Nigella Lawson 'A novel that sparks joy with every page' Elizabeth Day, author of Magpie 'Witty and sometimes hilarious ... the Catch-22 of early feminism' Stephen King ‘A beautiful, sharp, funny and dark modern classic. I adored it' Chris Whitaker, author of We Begin at the End Lessons in Chemistry has sold over 6 million copies worldwide across all formats, The Guardian, December 2023 Front cover may vary</div>
+            <div class="book-tags">
+                <span class="tag">PDFnovel</span><span class="tag">Lessons</span><span class="tag">Chemistry</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=ZDTS0AEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of The Temporary Wife" class="book-image">
+            <div class="book-title">The Temporary Wife <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 350</div>
+                <div>Size: 2.86 MB</div>
+                
+                
+                <div>ISBN: 9781464237454</div>
+                <div>Filename: the temporary wife.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Luca Windsor is convinced he hates the secretary his grandmother assigned him, but he knows he can't function without her either. Valentina is highly professional, and always a step ahead of him. Despite his insistence that he'd never want her, he loses his composure the second his grandmother mentions pairing her up with another man. A dance leads to a kiss, and the lines are blurred. Except...Luca has always known he'd end up in an arranged marriage, and he knows Valentina isn't on his grandmother's list (or so our silly hero thinks). He attempts to distance himself from her again, but is unable to, going as far as reinforcing a companywide anti-dating policy to keep her from seeing anyone else. When Valentina experiences a personal crisis, he demands the ultimate price for help he'd, unbeknownst to her, already given her: her hand in marriage. The two start a marriage of convenience, and along the way, they learn they're better suited than they ever thought possible, leading them to rethink the 3-year timeline they put on their marriage.</div>
+            <div class="book-tags">
+                <span class="tag">wife</span><span class="tag">temporary</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=hI6VEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of The Love Hypothesis" class="book-image">
+            <div class="book-title">The Love Hypothesis <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Ali Hazelwood</div>
+            <div class="book-details">
+                <div>Pages: 402</div>
+                <div>Size: 2.07 MB</div>
+                
+                
+                <div>ISBN: 2020057346</div>
+                <div>Filename: The Love Hypothesis by Ali Hazelwood.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">"The reigning queen of STEM romance."—The Washington Post An Indie Next and Library Reads Pick! Rival physicists collide in a vortex of academic feuds and fake dating shenanigans in this delightfully STEMinist romcom from the New York Times bestselling author of The Love Hypothesis and Love on the Brain. The many lives of theoretical physicist Elsie Hannaway have finally caught up with her. By day, she’s an adjunct professor, toiling away at grading labs and teaching thermodynamics in the hopes of landing tenure. By other day, Elsie makes up for her non-existent paycheck by offering her services as a fake girlfriend, tapping into her expertly honed people-pleasing skills to embody whichever version of herself the client needs. Honestly, it’s a pretty sweet gig—until her carefully constructed Elsie-verse comes crashing down. Because Jack Smith, the annoyingly attractive and arrogant older brother of her favorite client, turns out to be the cold-hearted experimental physicist who ruined her mentor’s career and undermined the reputation of theorists everywhere. And he’s the same Jack Smith who rules over the physics department at MIT, standing right between Elsie and her dream job. Elsie is prepared for an all-out war of scholarly sabotage but…those long, penetrating looks? Not having to be anything other than her true self when she’s with him? Will falling into an experimentalist’s orbit finally tempt her to put her most guarded theories on love into practice?</div>
+            <div class="book-tags">
+                <span class="tag">Hazelwood</span><span class="tag">Hypothesis</span><span class="tag">Love</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=Wh69DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Girl in Pieces" class="book-image">
+            <div class="book-title">Girl in Pieces <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Kathleen Glasgow</div>
+            <div class="book-details">
+                <div>Pages: 448</div>
+                <div>Size: 2.06 MB</div>
+                <div>Published: 2016-10-06</div>
+                <div>Publisher: Simon and Schuster</div>
+                <div>ISBN: 9781786071392</div>
+                <div>Filename: Girl in Pieces by Glasgow Kathleen.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Brand new novel from bestselling author Kathleen Glasgow, The Glass Girl, is out this October! Pre-order now. THIS SPECIAL EDITION includes deleted scenes, a playlist and a personal note from the author. While stocks last. Charlie Davis is in pieces. At seventeen, she’s already lost more than most people lose in a lifetime. But she’s learned how to forget it through cutting; the pain washes out the sorrow until there is nothing but calm. She doesn't have to think about her father or what happened under the bridge. Her best friend, Ellis, who is gone forever. Or the mother who has nothing left to give her. Kicked out of a special treatment center when her insurance runs out, Charlie finds herself in the bright and wild landscape of Tucson, Arizona, where she begins the unthinkable: the long journey of putting herself back together. Kathleen Glasgow is also the author of How to Make Friends with the Dark and You'd Be Home Now ‘Girl, Interrupted meets Speak.’ Refinery29 ‘Glasgow’s poetic writing brings Charlie’s mind to life as she tries to find a path to recovery.’ Independent</div>
+            <div class="book-tags">
+                <span class="tag">Kathleen</span><span class="tag">Pieces</span><span class="tag">Girl</span><span class="tag">Glasgow</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Juvenile Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=dgmeCAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Bioinformatics and Functional Genomics" class="book-image">
+            <div class="book-title">Bioinformatics and Functional Genomics <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Jonathan Pevsner</div>
+            <div class="book-details">
+                <div>Pages: 1168</div>
+                <div>Size: 45.35 MB</div>
+                <div>Published: 2015-10-26</div>
+                <div>Publisher: John Wiley & Sons</div>
+                <div>ISBN: 9781118581780</div>
+                <div>Filename: Bioinformaticcs and Functional Genomics.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">The bestselling introduction to bioinformatics and genomics – now in its third edition Widely received in its previous editions, Bioinformatics and Functional Genomics offers the most broad-based introduction to this explosive new discipline. Now in a thoroughly updated and expanded third edition, it continues to be the go-to source for students and professionals involved in biomedical research. This book provides up-to-the-minute coverage of the fields of bioinformatics and genomics. Features new to this edition include: Extensive revisions and a slight reorder of chapters for a more effective organization A brand new chapter on next-generation sequencing An expanded companion website, also updated as and when new information becomes available Greater emphasis on a computational approach, with clear guidance of how software tools work and introductions to the use of command-line tools such as software for next-generation sequence analysis, the R programming language, and NCBI search utilities The book is complemented by lavish illustrations and more than 500 figures and tables - many newly-created for the third edition to enhance clarity and understanding. Each chapter includes learning objectives, a problem set, pitfalls section, boxes explaining key techniques and mathematics/statistics principles, a summary, recommended reading, and a list of freely available software. Readers may visit a related Web page for supplemental information such as PowerPoints and audiovisual files of lectures, and videocasts of how to perform many basic operations: www.wiley.com/go/pevsnerbioinformatics. Bioinformatics and Functional Genomics, Third Edition serves as an excellent single-source textbook for advanced undergraduate and beginning graduate-level courses in the biological sciences and computer sciences. It is also an indispensable resource for biologists in a broad variety of disciplines who use the tools of bioinformatics and genomics to study particular research problems; bioinformaticists and computer scientists who develop computer algorithms and databases; and medical researchers and clinicians who want to understand the genomic basis of viral, bacterial, parasitic, or other diseases.</div>
+            <div class="book-tags">
+                <span class="tag">Genomics</span><span class="tag">Functional</span><span class="tag">Bioinformaticcs</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Science</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=xLQQ0QEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of 101 Essays That Will Change the Way You Think" class="book-image">
+            <div class="book-title">101 Essays That Will Change the Way You Think <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Brianna Wiest</div>
+            <div class="book-details">
+                <div>Pages: 343</div>
+                <div>Size: 1.68 MB</div>
+                <div>Published: 2024-10-20</div>
+                
+                <div>ISBN: 9781949759938</div>
+                <div>Filename: 31-10-2020-084952101 Essays That Will Change The Way You Think - Brianna Wiest.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">This beautiful, exclusive hardcover book is limited edition. Each book includes a gold ribbon bookmark.101 Essays That Will Change The Way You Think, the global bestseller and social media phenomenon, is a collection of author Brianna Wiest?s most beloved pieces of writing. Her meditations include why you should pursue purpose over passion, embrace negative thinking, see the wisdom in daily routine, and become aware of the cognitive biases that are creating the way you see your life.Some of these pieces have never been seen; others have been read by millions of people around the world. Regardless, each will leave you thinking: this idea changed my life.</div>
+            <div class="book-tags">
+                <span class="tag">Essays</span><span class="tag">Change</span><span class="tag">That</span><span class="tag">Wiest</span><span class="tag">Will</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Self-Help</span>
+            </div>
+        </div>
+    
+    </div>
+    
+    <div class="footer">
+        <p>Created with Digital Book Library Generator</p>
+    </div>
+    
+    <script>
+        // Simple search functionality
+        document.getElementById('search-button').addEventListener('click', performSearch);
+        document.getElementById('search-input').addEventListener('keyup', function(event) {
+            if (event.key === "Enter") {
+                performSearch();
+            }
+        });
+        
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const books = document.querySelectorAll('.book-card');
+            
+            books.forEach(book => {
+                const content = book.textContent.toLowerCase();
+                if (content.includes(searchTerm)) {
+                    book.style.display = 'block';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conchi Palla's Library</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .library-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .books-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .book-card {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .book-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .book-author {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        .book-details {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .book-synopsis {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        .book-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .tag {
+            background-color: #e0f7fa;
+            color: #00838f;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .category {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .book-categories {
+            margin-top: 10px;
+        }
+        .confidence-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+        .confidence-high {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+        }
+        .confidence-medium {
+            background-color: #fff9c4;
+            color: #f57f17;
+        }
+        .book-image {
+            max-width: 150px !important;
+            max-height: 150px !important;
+            width: auto !important;
+            height: auto !important;
+            object-fit: contain !important;
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        img {
+            max-width: 150px !important;
+            max-height: 150px !important;
+        }
+        .book-links {
+            margin-top: 8px;
+        }
+        .book-link {
+            color: #2196F3;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .book-link:hover {
+            text-decoration: underline;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #search-input {
+            padding: 8px 15px;
+            width: 300px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+        }
+        #search-button {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Digital Library</h1>
+    
+    <div class="library-info">
+        <p>Total Books: 44</p>
+        <p>Generated on: 2025-03-06 22:46:03</p>
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by title, author or tag...">
+        <button id="search-button">Search</button>
+    </div>
+    
+    <div class="books-container" id="books-container">
+        
+        <div class="book-card">
+            
+            <div class="book-title">Vmls </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 473</div>
+                <div>Size: 7.47 MB</div>
+                
+                
+                <div>ISBN: 9781316518960</div>
+                <div>Filename: vmls.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Introduction to
+Applied Linear Algebra
+Vectors, Matrices, and Least Squares
+Stephen Boyd
+Department of Electrical Engineering
+Stanford University
+Lieven Vandenberghe
+Department of Electrical and Compu...</div>
+            <div class="book-tags">
+                <span class="tag">vmls</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=_7GqngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of Linear Algebra" class="book-image">
+            <div class="book-title">Linear Algebra <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Jim Hefferon, Saint Michael's College, Vermont USA, http://joshua.smcvt.edu/linearalgebra</div>
+            <div class="book-details">
+                <div>Pages: 507</div>
+                <div>Size: 7.17 MB</div>
+                
+                
+                <div>ISBN: 9781493757367</div>
+                <div>Filename: Linear Algebra.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">This book helps students to master the material of a standard US undergraduate first course in Linear Algebra. The material is standard in that the subjects covered are Gaussian reduction, vector spaces, linear maps, determinants, and eigenvalues and eigenvectors. Another standard is book's audience: sophomores or juniors, usually with a background of at least one semester of calculus. The help that it gives to students comes from taking a developmental approach—this book's presentation emphasizes motivation and naturalness, using many examples as well as extensive and careful exercises.Author: Jim Hefferonhttp://joshua.smcvt.edu/linearalgebraLinearPublished, without alternation from the original, under a Creative Commons license CC-BY-SA by Textbook Equity www.textbookequity.com</div>
+            <div class="book-tags">
+                <span class="tag">Algebra</span><span class="tag">Linear</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Mathematics</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Conditional probability and Bayes' theorem - Eli Bendersky's website </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 8</div>
+                <div>Size: 0.71 MB</div>
+                
+                
+                
+                <div>Filename: Conditional probability and Bayes_ theorem - Eli Bendersky_s website.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">07/12/2020, 17:52Conditional probability and Bayes' theorem - Eli Bendersky's website
+Page 1 of 8https://eli.thegreenplace.net/2018/conditional-probability-and-bayes-theorem/Conditional probability an...</div>
+            <div class="book-tags">
+                <span class="tag">website</span><span class="tag">Bayes</span><span class="tag">Conditional</span><span class="tag">probability</span><span class="tag">Bendersky</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Tema 5  Esperanza y momentos </div>
+            <div class="book-author">by Javier Cárcamo[2 mm] Departamento de Matemáticas  Universidad Autónoma de Madrid  javier.carcamo@uam.es[6 mm]</div>
+            <div class="book-details">
+                <div>Pages: 38</div>
+                <div>Size: 2.21 MB</div>
+                
+                
+                
+                <div>Filename: Tema-PREST-5_Esperanza y Momentos.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Probabilidad y Estad  stica
+Grado en Ingenier  a Inform atica
+Tema 5
+Esperanza y momentos
+Javier C arcamo
+Departamento de Matem aticas
+Universidad Aut onoma de Madrid
+javier.carcamo@uam.es
+Jav...</div>
+            <div class="book-tags">
+                <span class="tag">PREST</span><span class="tag">Esperanza</span><span class="tag">Tema</span><span class="tag">Momentos</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">The Complete Guide to Time Series Analysis and Forecasting </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 54</div>
+                <div>Size: 7.33 MB</div>
+                
+                
+                
+                <div>Filename: The Complete Guide to Time Series Analysis and Forecasting.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">18/12/2019, 16:25 The Complete Guide to Time Series Analysis and Forecasting
+Page 1 of 54 https://towardsdatascience.com/the-complete-guide-to-time-series-analysis-and-forecasting-70d476bfe775The Comp...</div>
+            <div class="book-tags">
+                <span class="tag">Complete</span><span class="tag">Forecasting</span><span class="tag">Series</span><span class="tag">Time</span><span class="tag">Guide</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">The Complete Hands-On Machine Learning Crash Course </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 157</div>
+                <div>Size: 20.10 MB</div>
+                
+                
+                
+                <div>Filename: The Complete Hands-On Machine Learning Crash Course.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">29/04/2020, 09:54The Complete Hands-On Machine Learning Crash Course
+Page 1 of 157https://towardsdatascience.com/the-complete-hands-on-machine-learning-crash-course-59e43c8cee52The Complete Hands-OnMa...</div>
+            <div class="book-tags">
+                <span class="tag">Complete</span><span class="tag">Course</span><span class="tag">Learning</span><span class="tag">Hands</span><span class="tag">Crash</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Microsoft PowerPoint - Tema 6_EctrGrado </div>
+            <div class="book-author">by ordenador</div>
+            <div class="book-details">
+                <div>Pages: 41</div>
+                <div>Size: 0.50 MB</div>
+                
+                
+                <div>ISBN: 1002003004</div>
+                <div>Filename: Series temporales.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Tema 6:Modelización  con datos 
+de series temporales
+Universidad  Complutense  de 
+Madrid
+2013
+1...</div>
+            <div class="book-tags">
+                <span class="tag">Series</span><span class="tag">temporales</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=t4XQDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Mathematics for Machine Learning" class="book-image">
+            <div class="book-title">Mathematics for Machine Learning <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Marc Peter Deisenroth, A. Aldo Faisal, Cheng Soon Ong</div>
+            <div class="book-details">
+                <div>Pages: 417</div>
+                <div>Size: 16.30 MB</div>
+                
+                
+                <div>ISBN: 9781108455145</div>
+                <div>Filename: math for M-book.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">The fundamental mathematical tools needed to understand machine learning include linear algebra, analytic geometry, matrix decompositions, vector calculus, optimization, probability and statistics. These topics are traditionally taught in disparate courses, making it hard for data science or computer science students, or professionals, to efficiently learn the mathematics. This self-contained textbook bridges the gap between mathematical and machine learning texts, introducing the mathematical concepts with a minimum of prerequisites. It uses these concepts to derive four central machine learning methods: linear regression, principal component analysis, Gaussian mixture models and support vector machines. For students and others with a mathematical background, these derivations provide a starting point to machine learning texts. For those learning the mathematics for the first time, the methods help build intuition and practical experience with applying mathematical concepts. Every chapter includes worked examples and exercises to test understanding. Programming tutorials are offered on the book's web site.</div>
+            <div class="book-tags">
+                <span class="tag">math</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Computers</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Para Leer El Primero Mchine Learning Yearning </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 118</div>
+                <div>Size: 4.01 MB</div>
+                
+                
+                
+                <div>Filename: Para Leer el primero_Mchine Learning Yearning.pdf</div>
+                
+            </div>
+            <div class="book-synopsis"> 
+...</div>
+            <div class="book-tags">
+                <span class="tag">Leer</span><span class="tag">Mchine</span><span class="tag">Learning</span><span class="tag">Yearning</span><span class="tag">Para</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Generalized Linear Model Course 003 </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 49</div>
+                <div>Size: 0.18 MB</div>
+                
+                
+                
+                <div>Filename: Generalized Linear Model Course_003.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Count Data
+Part III
+Count Data...</div>
+            <div class="book-tags">
+                <span class="tag">Linear</span><span class="tag">Course</span><span class="tag">Model</span><span class="tag">Generalized</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Sum of Exponential Random Variables | by Aerin Kim | Towards Data Science </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 10</div>
+                <div>Size: 0.98 MB</div>
+                
+                
+                
+                <div>Filename: Sum of Exponential Random Variables_deriving PDF of Erlang distribution.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">07/12/2020, 19:55Sum of Exponential Random Variables | by Aerin Kim | Towards Data Science
+Page 1 of 10https://towardsdatascience.com/sum-of-exponential-random-variables-b023b61f0c0f
+506K Followers·Ab...</div>
+            <div class="book-tags">
+                <span class="tag">deriving</span><span class="tag">Exponential</span><span class="tag">Variables</span><span class="tag">Random</span><span class="tag">Erlang</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Linear Algebra Eigen </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 134</div>
+                <div>Size: 5.89 MB</div>
+                
+                
+                
+                <div>Filename: linear_algebra_Eigen.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">The Deep Learning Book Series Linear Algebra
+Ebook Version of the Blog Articles Created From 'The Deep Learning Book' (Goodfellow et al., 2016)Hadrien Jean⥈    ⥈    ⥈...</div>
+            <div class="book-tags">
+                <span class="tag">Eigen</span><span class="tag">linear</span><span class="tag">algebra</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Cme 106 Statistics Cheatsheet </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 9</div>
+                <div>Size: 0.50 MB</div>
+                
+                
+                
+                <div>Filename: CME 106 - Statistics Cheatsheet.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">05/10/2021, 16:46 CME 106 - Statistics Cheatsheet
+https://stanford.edu/~shervine/teaching/cme-106/cheatsheet-statistics 1/9(https://stanford.edu/~shervine/teaching/cme-106/cheatsheet-
+statistics#param...</div>
+            <div class="book-tags">
+                <span class="tag">Cheatsheet</span><span class="tag">Statistics</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Driver.dvi </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 440</div>
+                <div>Size: 10.47 MB</div>
+                
+                
+                <div>ISBN: 9781461471370</div>
+                <div>Filename: ISLR Introduction to Statistics Learning.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Springer Texts in Statistics
+Series Editors:
+G. Casella
+S. Fienberg
+I. Olkin
+For further volumes:
+http://www.springer.com/series/417...</div>
+            <div class="book-tags">
+                <span class="tag">Introduction</span><span class="tag">Statistics</span><span class="tag">Learning</span><span class="tag">ISLR</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Generalized Linear Model Course 002 </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 55</div>
+                <div>Size: 0.19 MB</div>
+                
+                
+                
+                <div>Filename: Generalized Linear Model  Course_002.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Binary Data
+Part II
+Binary Data...</div>
+            <div class="book-tags">
+                <span class="tag">Linear</span><span class="tag">Course</span><span class="tag">Model</span><span class="tag">Generalized</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">https://www.deeplearningbook.org/contents/numerical.html </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 18</div>
+                <div>Size: 1.48 MB</div>
+                
+                
+                <div>ISBN: 201020102010</div>
+                <div>Filename: deeplearningbook.org_numerical computation.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">31/1/21, 19:35
+Page 1 of 18https://www.deeplearningbook.org/contents/numerical.html
+ 
+  
+  
+  
+  Chapter
+ChapterChapter
+ChapterChapter
+ChapterChapterChapter4
+44
+44
+444 
+  
+  
+  
+  Numerical
+NumericalN...</div>
+            <div class="book-tags">
+                <span class="tag">computation</span><span class="tag">numerical</span><span class="tag">deeplearningbook</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">‎www.deeplearningbook.org/contents/ml.html </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 66</div>
+                <div>Size: 3.10 MB</div>
+                
+                
+                
+                <div>Filename: machine learning fundamentals.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">13/11/2019, 17:39
+Page 1 of 66http://www.deeplearningbook.org/contents/ml.html
+ 
+  
+  
+  
+  Chapter
+ChapterChapter
+ChapterChapter
+ChapterChapterChapter5
+55
+55
+555 
+  
+  
+  
+   
+  
+  
+  
+  Mac
+MacMac
+M...</div>
+            <div class="book-tags">
+                <span class="tag">learning</span><span class="tag">machine</span><span class="tag">fundamentals</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Thinkbayes </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 213</div>
+                <div>Size: 2.59 MB</div>
+                
+                
+                
+                <div>Filename: thinkbayes.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Think Bayes
+Bayesian Statistics Made Simple
+Version 1.0.9...</div>
+            <div class="book-tags">
+                <span class="tag">thinkbayes</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=_7GqngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of Linear Algebra" class="book-image">
+            <div class="book-title">Linear Algebra <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Jim Hefferon, Saint Michael's College, Vermont USA, http://joshua.smcvt.edu/linearalgebra</div>
+            <div class="book-details">
+                <div>Pages: 395</div>
+                <div>Size: 1.67 MB</div>
+                
+                
+                <div>ISBN: 9781493757367</div>
+                <div>Filename: Linear Algebra_answers to exercises.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">This book helps students to master the material of a standard US undergraduate first course in Linear Algebra. The material is standard in that the subjects covered are Gaussian reduction, vector spaces, linear maps, determinants, and eigenvalues and eigenvectors. Another standard is book's audience: sophomores or juniors, usually with a background of at least one semester of calculus. The help that it gives to students comes from taking a developmental approach—this book's presentation emphasizes motivation and naturalness, using many examples as well as extensive and careful exercises.Author: Jim Hefferonhttp://joshua.smcvt.edu/linearalgebraLinearPublished, without alternation from the original, under a Creative Commons license CC-BY-SA by Textbook Equity www.textbookequity.com</div>
+            <div class="book-tags">
+                <span class="tag">Algebra</span><span class="tag">Linear</span><span class="tag">answers</span><span class="tag">exercises</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Mathematics</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=qLkuEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Untitled" class="book-image">
+            <div class="book-title">Untitled <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 126</div>
+                <div>Size: 12.86 MB</div>
+                
+                
+                <div>ISBN: 9781507301074</div>
+                <div>Filename: wolfpaulus.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">What do the world’s largest rodent and a highly social cousin of the raccoon have to talk about? Absolutely nothing! But, they do try to help the author with ideas for his next book. Join author Timothy Young and his new characters - a coatimundi and a capybara - in this silly story with a twist ending. You will laugh from start to finish as the plot unfolds and the search for the title lands on Untitled. Will we see these characters again as they walk off into the sunset?</div>
+            <div class="book-tags">
+                <span class="tag">wolfpaulus</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Juvenile Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">‎www.deeplearningbook.org/contents/numerical.html </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 18</div>
+                <div>Size: 0.73 MB</div>
+                
+                
+                <div>ISBN: 050005101520</div>
+                <div>Filename: numerical.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">13/11/2019, 17:37
+Page 1 of 18http://www.deeplearningbook.org/contents/numerical.html
+ 
+  
+  
+  
+  Chapter
+ChapterChapter
+ChapterChapter
+ChapterChapterChapter4
+44
+44
+444 
+  
+  
+  
+  Numerical
+Numerica...</div>
+            <div class="book-tags">
+                <span class="tag">numerical</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=bVWDvQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover of Data Science from Scratch" class="book-image">
+            <div class="book-title">Data Science from Scratch <span class="confidence-badge confidence-high">Verified</span></div>
+            <div class="book-author">by Joel Grus</div>
+            <div class="book-details">
+                <div>Pages: 500</div>
+                <div>Size: 7.05 MB</div>
+                <div>Published: 2019-04-30</div>
+                <div>Publisher: O'Reilly Media</div>
+                <div>ISBN: 9781492041139</div>
+                <div>Filename: [Joel_Grus]_Data_Science_from_Scratch_First_Princ.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">To really learn data science, you should not only master the tools--data science libraries, frameworks, modules, and toolkits--but also understand the ideas and principles underlying them. Updated for Python 3.6, this second edition of Data Science from Scratch shows you how these tools and algorithms work by implementing them from scratch. If you have an aptitude for mathematics and some programming skills, author Joel Grus will help you get comfortable with the math and statistics at the core of data science, and with the hacking skills you need to get started as a data scientist. Packed with new material on deep learning, statistics, and natural language processing, this updated book shows you how to find the gems in today's messy glut of data. Get a crash course in Python Learn the basics of linear algebra, statistics, and probability--and how and when they're used in data science Collect, explore, clean, munge, and manipulate data Dive into the fundamentals of machine learning Implement models such as k-nearest neighbors, Naïve Bayes, linear and logistic regression, decision trees, neural networks, and clustering Explore recommender systems, natural language processing, network analysis, MapReduce, and databases</div>
+            <div class="book-tags">
+                <span class="tag">Princ</span><span class="tag">Scratch</span><span class="tag">Data</span><span class="tag">from</span><span class="tag">Grus</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Computers</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Working with Time Series | Python Data Science Handbook </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 19</div>
+                <div>Size: 0.64 MB</div>
+                
+                
+                <div>ISBN: 0636920034919</div>
+                <div>Filename: Working with Time Series_Python Data Science Handbook.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">16/12/2019, 15:04Working with Time Series | Python Data Science Handbook
+Page 1 of 19https://jakevdp.github.io/PythonDataScienceHandbook/03.11-working-with-time-series.html
+This is an excerpt from the...</div>
+            <div class="book-tags">
+                <span class="tag">with</span><span class="tag">Data</span><span class="tag">Science</span><span class="tag">Python</span><span class="tag">Handbook</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Ml Yearning (andrew Ng) </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 118</div>
+                <div>Size: 4.01 MB</div>
+                
+                
+                
+                <div>Filename: ML Yearning (Andrew Ng).pdf</div>
+                
+            </div>
+            <div class="book-synopsis"> 
+...</div>
+            <div class="book-tags">
+                <span class="tag">Andrew</span><span class="tag">Yearning</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=t4XQDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Mathematics for Machine Learning" class="book-image">
+            <div class="book-title">Mathematics for Machine Learning <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Marc Peter Deisenroth, A. Aldo Faisal, Cheng Soon Ong</div>
+            <div class="book-details">
+                <div>Pages: 417</div>
+                <div>Size: 16.59 MB</div>
+                
+                
+                <div>ISBN: 9781108455145</div>
+                <div>Filename: mml-book.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">The fundamental mathematical tools needed to understand machine learning include linear algebra, analytic geometry, matrix decompositions, vector calculus, optimization, probability and statistics. These topics are traditionally taught in disparate courses, making it hard for data science or computer science students, or professionals, to efficiently learn the mathematics. This self-contained textbook bridges the gap between mathematical and machine learning texts, introducing the mathematical concepts with a minimum of prerequisites. It uses these concepts to derive four central machine learning methods: linear regression, principal component analysis, Gaussian mixture models and support vector machines. For students and others with a mathematical background, these derivations provide a starting point to machine learning texts. For those learning the mathematics for the first time, the methods help build intuition and practical experience with applying mathematical concepts. Every chapter includes worked examples and exercises to test understanding. Programming tutorials are offered on the book's web site.</div>
+            <div class="book-tags">
+                
+            </div>
+            <div class="book-categories">
+                <span class="category">Computers</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=fVhzAwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Social Media Mining: An Introduction" class="book-image">
+            <div class="book-title">Social Media Mining: An Introduction <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Reza Zafarani, Mohammad Ali Abbasi, and Huan Liu</div>
+            <div class="book-details">
+                <div>Pages: 382</div>
+                <div>Size: 4.77 MB</div>
+                
+                
+                <div>ISBN: 9781139916127</div>
+                <div>Filename: Social Media Mining.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">The growth of social media over the last decade has revolutionized the way individuals interact and industries conduct business. Individuals produce data at an unprecedented rate by interacting, sharing, and consuming content through social media. Understanding and processing this new type of data to glean actionable patterns presents challenges and opportunities for interdisciplinary research, novel algorithms and tool development. Social Media Mining integrates social media, social network analysis, and data mining to provide a coherent platform to understand the basics and potentials of social media mining. It introduces the unique problems arising from social media data and presents fundamental concepts, emerging issues, and effective algorithms for network analysis and data mining. Suitable for use in advanced undergraduate and beginning graduate courses as well as professional short courses, the text contains exercises of different degrees of difficulty that improve understanding and help apply concepts, principles and methods for social media mining.</div>
+            <div class="book-tags">
+                <span class="tag">Social</span><span class="tag">Mining</span><span class="tag">Media</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Computers</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Machine Learning For Dummies®, IBM Limited Edition </div>
+            <div class="book-author">by Judith Hurwitz</div>
+            <div class="book-details">
+                <div>Pages: 75</div>
+                <div>Size: 1.78 MB</div>
+                
+                
+                <div>ISBN: 9781119454953</div>
+                <div>Filename: ibm-machine-learning-for-dummies-ibm-limited-edition_IMM14209USEN.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">No description available</div>
+            <div class="book-tags">
+                <span class="tag">learning</span><span class="tag">edition</span><span class="tag">machine</span><span class="tag">dummies</span><span class="tag">limited</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">‎www.deeplearningbook.org/contents/prob.html </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 27</div>
+                <div>Size: 0.99 MB</div>
+                
+                
+                
+                <div>Filename: probability and information theory.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">13/11/2019, 17:36
+Page 1 of 27http://www.deeplearningbook.org/contents/prob.html
+ 
+  
+  
+  
+  Chapter
+ChapterChapter
+ChapterChapter
+ChapterChapterChapter3
+33
+33
+333 
+  
+  
+  
+   
+  
+  
+  
+  Probabilit...</div>
+            <div class="book-tags">
+                <span class="tag">theory</span><span class="tag">information</span><span class="tag">probability</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Variance of the sum of independent random variables - Eli Bendersky's website </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 3</div>
+                <div>Size: 0.16 MB</div>
+                
+                
+                
+                <div>Filename: Variance of the sum of independent random variables - Eli Bendersky_s website.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">07/12/2020, 17:51Variance of the sum of independent random variables - Eli Bendersky's website
+Page 1 of 3https://eli.thegreenplace.net/2009/01/07/variance-of-the-sum-of-independent-variablesVariance ...</div>
+            <div class="book-tags">
+                <span class="tag">Variance</span><span class="tag">random</span><span class="tag">website</span><span class="tag">independent</span><span class="tag">Bendersky</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=HnetDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Hands-On Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems" class="book-image">
+            <div class="book-title">Hands-On Machine Learning with Scikit-Learn and TensorFlow: Concepts, Tools, and Techniques to Build Intelligent Systems <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Aurélien Géron</div>
+            <div class="book-details">
+                <div>Pages: 718</div>
+                <div>Size: 15.42 MB</div>
+                
+                
+                <div>ISBN: 9781491962299</div>
+                <div>Filename: Hands on Machine Learning with Scikit Learn and Tensorflow.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Through a series of recent breakthroughs, deep learning has boosted the entire field of machine learning. Now, even programmers who know close to nothing about this technology can use simple, efficient tools to implement programs capable of learning from data. This practical book shows you how. By using concrete examples, minimal theory, and two production-ready Python frameworks—Scikit-Learn and TensorFlow—author Aurélien Géron helps you gain an intuitive understanding of the concepts and tools for building intelligent systems. You’ll learn a range of techniques, starting with simple linear regression and progressing to deep neural networks. With exercises in each chapter to help you apply what you’ve learned, all you need is programming experience to get started. Explore the machine learning landscape, particularly neural nets Use Scikit-Learn to track an example machine-learning project end-to-end Explore several training models, including support vector machines, decision trees, random forests, and ensemble methods Use the TensorFlow library to build and train neural nets Dive into neural net architectures, including convolutional nets, recurrent nets, and deep reinforcement learning Learn techniques for training and scaling deep neural nets</div>
+            <div class="book-tags">
+                <span class="tag">Learning</span><span class="tag">Hands</span><span class="tag">with</span><span class="tag">Scikit</span><span class="tag">Machine</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Computers</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=qLkuEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Untitled" class="book-image">
+            <div class="book-title">Untitled <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 764</div>
+                <div>Size: 12.85 MB</div>
+                
+                
+                <div>ISBN: 9780387848570</div>
+                <div>Filename: ESLII_print12.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">What do the world’s largest rodent and a highly social cousin of the raccoon have to talk about? Absolutely nothing! But, they do try to help the author with ideas for his next book. Join author Timothy Young and his new characters - a coatimundi and a capybara - in this silly story with a twist ending. You will laugh from start to finish as the plot unfolds and the search for the title lands on Untitled. Will we see these characters again as they walk off into the sunset?</div>
+            <div class="book-tags">
+                <span class="tag">print</span><span class="tag">ESLII</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Juvenile Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Generalized Linear Models Course 001 </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 52</div>
+                <div>Size: 0.24 MB</div>
+                
+                
+                
+                <div>Filename: Generalized Linear Models Course_001.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Introduction to Generalized Linear Models
+Heather Turner
+ESRC National Centre for Research Methods, UK
+and
+Department of Statistics
+University of Warwick, UK
+WU, 2008{04{22-24
+Copyright cHeather Turn...</div>
+            <div class="book-tags">
+                <span class="tag">Linear</span><span class="tag">Course</span><span class="tag">Generalized</span><span class="tag">Models</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=q1ctEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Computer Age Statistical Inference" class="book-image">
+            <div class="book-title">Computer Age Statistical Inference <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 493</div>
+                <div>Size: 8.11 MB</div>
+                
+                
+                <div>ISBN: 9781107149892</div>
+                <div>Filename: ComputEr agE statistiCal infErEnCE.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Now in paperback and fortified with exercises, this brilliant, enjoyable text demystifies data science, statistics and machine learning.</div>
+            <div class="book-tags">
+                <span class="tag">infErEnCE</span><span class="tag">statistiCal</span><span class="tag">ComputEr</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Computers</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Thinkstats2 </div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 264</div>
+                <div>Size: 1.98 MB</div>
+                
+                
+                
+                <div>Filename: thinkstats2.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Think Stats
+Exploratory Data Analysis in Python
+Version 2.0.38...</div>
+            <div class="book-tags">
+                <span class="tag">thinkstats</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">‎web.iitd.ac.in/~sumeet/WaveletTutorial </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 67</div>
+                <div>Size: 1.25 MB</div>
+                
+                
+                
+                <div>Filename: ‎WaveletTutorial.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">THE WAVELET TUTORIAL SECOND EDITION PART I BY ROBI POLIKAR 
+ FUNDAMENTAL CONCEPTS & AN OVERVIEW OF THE WAVELET THEORY  
+  Welcome to this introductory tutorial on wavelet transforms. The wavelet trans...</div>
+            <div class="book-tags">
+                <span class="tag">WaveletTutorial</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=PwnrBwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Reinforcement Learning" class="book-image">
+            <div class="book-title">Reinforcement Learning <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 548</div>
+                <div>Size: 85.29 MB</div>
+                
+                
+                <div>ISBN: 2018023826</div>
+                <div>Filename: Reinforcement Learning.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Reinforcement learning is the learning of a mapping from situations to actions so as to maximize a scalar reward or reinforcement signal. The learner is not told which action to take, as in most forms of machine learning, but instead must discover which actions yield the highest reward by trying them. In the most interesting and challenging cases, actions may affect not only the immediate reward, but also the next situation, and through that all subsequent rewards. These two characteristics -- trial-and-error search and delayed reward -- are the most important distinguishing features of reinforcement learning. Reinforcement learning is both a new and a very old topic in AI. The term appears to have been coined by Minsk (1961), and independently in control theory by Walz and Fu (1965). The earliest machine learning research now viewed as directly relevant was Samuel's (1959) checker player, which used temporal-difference learning to manage delayed reward much as it is used today. Of course learning and reinforcement have been studied in psychology for almost a century, and that work has had a very strong impact on the AI/engineering work. One could in fact consider all of reinforcement learning to be simply the reverse engineering of certain psychological learning processes (e.g. operant conditioning and secondary reinforcement). Reinforcement Learning is an edited volume of original research, comprising seven invited contributions by leading researchers.</div>
+            <div class="book-tags">
+                <span class="tag">Reinforcement</span><span class="tag">Learning</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Computers</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">‎www.ehu.eus/izaballa/Ecu_Dif/Apuntes/matrices </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 22</div>
+                <div>Size: 0.22 MB</div>
+                
+                
+                
+                <div>Filename: Introducción Matrices.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Anexo AIntroducci´ on a las MatricesA.1. Deﬁniciones y teor´ ıa b´ asicasLos elementos de las matrices que aparecen en este curso son n´ umeros o funciones. Losdesignaremos con el apelativo com´ un de...</div>
+            <div class="book-tags">
+                <span class="tag">Introduccio</span><span class="tag">Matrices</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            <img src="https://books.google.com/books/content?id=qLkuEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover of Untitled" class="book-image">
+            <div class="book-title">Untitled <span class="confidence-badge confidence-medium">Likely Match</span></div>
+            <div class="book-author">by Unknown</div>
+            <div class="book-details">
+                <div>Pages: 764</div>
+                <div>Size: 28.76 MB</div>
+                
+                
+                <div>ISBN: 9780387848570</div>
+                <div>Filename: ESLII.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">What do the world’s largest rodent and a highly social cousin of the raccoon have to talk about? Absolutely nothing! But, they do try to help the author with ideas for his next book. Join author Timothy Young and his new characters - a coatimundi and a capybara - in this silly story with a twist ending. You will laugh from start to finish as the plot unfolds and the search for the title lands on Untitled. Will we see these characters again as they walk off into the sunset?</div>
+            <div class="book-tags">
+                <span class="tag">ESLII</span>
+            </div>
+            <div class="book-categories">
+                <span class="category">Juvenile Fiction</span>
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Visualizing matrix multiplication as a linear combination - Eli Bendersky's website </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 3</div>
+                <div>Size: 0.14 MB</div>
+                
+                
+                
+                <div>Filename: Visualizing matrix multiplication as a linear combination - Eli Bendersky_s website.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">07/12/2020, 17:52Visualizing matrix multiplication as a linear combination - Eli Bendersky's website
+Page 1 of 3https://eli.thegreenplace.net/2015/visualizing-matrix-multiplication-as-a-linear-combina...</div>
+            <div class="book-tags">
+                <span class="tag">website</span><span class="tag">combination</span><span class="tag">matrix</span><span class="tag">multiplication</span><span class="tag">Bendersky</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">‎www.ehu.eus/izaballa/Ecu_Dif/Apuntes/matrices </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 22</div>
+                <div>Size: 0.22 MB</div>
+                
+                
+                
+                <div>Filename: Apuntesmatrices.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Anexo AIntroducci´ on a las MatricesA.1. Deﬁniciones y teor´ ıa b´ asicasLos elementos de las matrices que aparecen en este curso son n´ umeros o funciones. Losdesignaremos con el apelativo com´ un de...</div>
+            <div class="book-tags">
+                <span class="tag">Apuntesmatrices</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">Time Series Analysis with Pandas - Kite Blog </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 25</div>
+                <div>Size: 1.46 MB</div>
+                
+                
+                
+                <div>Filename: Time Series Analysis with Pandas_Kite Blog.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">16/12/2019, 15:06Time Series Analysis with Pandas - Kite Blog
+Page 1 of 25https://kite.com/blog/python/pandas-time-series-analysis/Time Series Analysiswith Pandas
+By Parul PandeyAugust 11, 2019Python’...</div>
+            <div class="book-tags">
+                <span class="tag">Kite</span><span class="tag">Blog</span><span class="tag">with</span><span class="tag">Series</span><span class="tag">Pandas</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">https://statswithr.github.io/book/_main </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 195</div>
+                <div>Size: 4.49 MB</div>
+                
+                
+                
+                <div>Filename: Bayesian Inference.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">M AMi`Q/m+iBQM iQ "v2bBM h?BMFBM; *QKTMBQM iQ i?2 aiiBbiB+b rBi? _ *Qm`b2J2`HBb2 *Hv/2 JBM2 *2iBMFv@_mM/2H *QHBM _mM/2H.pB/ "MFb *?`BbiBM2 *?B GBxxv >mM;Gbi #mBHi QM kyky@Rk@Rk...</div>
+            <div class="book-tags">
+                <span class="tag">Inference</span><span class="tag">Bayesian</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">‎cs229.stanford.edu/section/cs229-prob </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 12</div>
+                <div>Size: 0.51 MB</div>
+                
+                
+                
+                <div>Filename: standford_prob_theory_review.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">Review of Probability TheoryArian Maleki and Tom DoStanford UniversityProbability theory is the study of uncertainty. Through this class, we will be relying on conceptsfrom probability theory for deri...</div>
+            <div class="book-tags">
+                <span class="tag">theory</span><span class="tag">standford</span><span class="tag">review</span><span class="tag">prob</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+        <div class="book-card">
+            
+            <div class="book-title">‎www.deeplearningbook.org/contents/linear_algebra.html </div>
+            <div class="book-author">by Conchi Palla</div>
+            <div class="book-details">
+                <div>Pages: 22</div>
+                <div>Size: 0.66 MB</div>
+                
+                
+                
+                <div>Filename: linear_algebra.pdf</div>
+                
+            </div>
+            <div class="book-synopsis">13/11/2019, 17:35
+Page 1 of 22http://www.deeplearningbook.org/contents/linear_algebra.html
+ 
+  
+  
+  
+  Chapter
+ChapterChapter
+ChapterChapter
+ChapterChapterChapter2
+22
+22
+222 
+  
+  
+  
+  Linear
+Linear...</div>
+            <div class="book-tags">
+                <span class="tag">linear</span><span class="tag">algebra</span>
+            </div>
+            <div class="book-categories">
+                
+            </div>
+        </div>
+    
+    </div>
+    
+    <div class="footer">
+        <p>Created with Digital Book Library Generator</p>
+    </div>
+    
+    <script>
+        // Simple search functionality
+        document.getElementById('search-button').addEventListener('click', performSearch);
+        document.getElementById('search-input').addEventListener('keyup', function(event) {
+            if (event.key === "Enter") {
+                performSearch();
+            }
+        });
+        
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const books = document.querySelectorAll('.book-card');
+            
+            books.forEach(book => {
+                const content = book.textContent.toLowerCase();
+                if (content.includes(searchTerm)) {
+                    book.style.display = 'block';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

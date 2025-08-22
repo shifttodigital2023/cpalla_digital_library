@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success in business - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Success in business</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 11 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=kfY_zQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">48 Days</div>
+                        <div class="book-author">by Dan Miller</div>
+                        <div class="book-meta">📅 2020 • 🏢 B&H • 📄 250 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">No description available.</div>
+                <div class="book-categories"><span class="category-tag">Success in business</span><span class="category-tag">Job enrichment</span><span class="category-tag">Job satisfaction</span><span class="category-tag">Job hunting</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=fLC6CgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Born For This</div>
+                        <div class="book-author">by Chris Guillebeau</div>
+                        <div class="book-meta">📅 2016 • 🏢 Pan Macmillan • 📄 256 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">The New York Times bestselling author of The $100 Startup, Chris Guillebeau shows us how to enjoy greater career success and personal fulfilment by finding the work we were born to do, whether within a traditional company or business, or by striking out on our own. Born For This helps you create you...</div>
+                <div class="book-categories"><span class="category-tag">Success in business</span><span class="category-tag">Success</span><span class="category-tag">Business and Economics</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=hx6kmBa5EHMC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Built to Last</div>
+                        <div class="book-author">by James Charles Collins & Jerry I. Porras & Jerry Porras & Jim Collins</div>
+                        <div class="book-meta">📅 2005 • 🏢 Random House • 📄 372 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">This is not a book about charismatic visionary leaders. It is not about visionary product concepts or visionary products or visionary market insights. Nor is it about just having a corporate vision. This is a book about something far more important, endu</div>
+                <div class="book-categories"><span class="category-tag">Business and Management</span><span class="category-tag">Success in business -- United States</span><span class="category-tag">Success in business</span><span class="category-tag">Entrepreneurship</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Mrx8saBxyuAC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Delivering Happiness</div>
+                        <div class="book-author">by Tony Hsieh</div>
+                        <div class="book-meta">📅 2013 • 🏢 Profit Editorial • 📄 222 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Descubra cómo una política de empresa basada en la felicidad de todos sus miembros ayuda a tener una mayor productividad y beneficios a largo plazo. Tony Hsieh comparte diferentes experiencias que ha adquirido tanto en los negocios como personalmente, a lo largo de su vida, desde sus inicios hasta l...</div>
+                <div class="book-categories"><span class="category-tag">nyt:hardcover-advice=2010-06-27</span><span class="category-tag">Schuheinzelhandel</span><span class="category-tag">Leadership</span><span class="category-tag">Success in business</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=mJBaDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Entrepreneur Revolution</div>
+                        <div class="book-author">by Daniel Priestley</div>
+                        <div class="book-meta">📅 2018 • 🏢 John Wiley & Sons • 📄 178 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">A no-nonsense, implementable handbook for taking part in the Entrepreneur Revolution We are living in revolutionary times; times with an impact as significant and far-reaching as the previous Industrial Revolution was to the Agricultural Age. Technological shifts have allowed micro-businesses to com...</div>
+                <div class="book-categories"><span class="category-tag">Small business</span><span class="category-tag">Management</span><span class="category-tag">New business enterprises</span><span class="category-tag">Success in business</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/10126775-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Joy At Work</div>
+                        <div class="book-author">by Marie Kondo & Scott Sonenshein</div>
+                        <div class="book-meta">📅 2020 • 🏢 Little Brown & Company </div>
+                    </div>
+                </div>
+                <div class="book-description">TU LUGAR DE TRABAJO ES MÁS IMPORTANTE QUE NUNCA. APRENDE CON MARIE KONDO A SACARLE EL MÁXIMO PARTIDO Y MEJORAR TU VIDA. El puesto de trabajo es un imán para el desorden y el caos. ¿Quién no se ha sentido agotado por reuniones improductivas, papeles revueltos, interminables correos electrónicos y tar...</div>
+                <div class="book-categories"><span class="category-tag">Work environment</span><span class="category-tag">Success in business</span><span class="category-tag">Orderliness</span><span class="category-tag">Self Help</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=_tc7DAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Making Ideas Happen</div>
+                        <div class="book-author">by Scott Belsky</div>
+                        <div class="book-meta">📅 2016 • 🏢 Noura • 📄 277 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Banyak orang kreatif yang mempunyai banyak ide, tetapi hanya sedikit dari mereka yang bisa mewujudkannya. Banyak orang brilian dalam menciptakan ide baru, tetapi mati langkah ketika harus menjalankannya. Akibatnya, banyak proyek yang menjanjikan inovasi terbaik di masa depan berhenti di tengah jalan...</div>
+                <div class="book-categories"><span class="category-tag">Leadership</span><span class="category-tag">Young Adult Nonfiction</span><span class="category-tag">Success in business</span><span class="category-tag">Innovations</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/7284188-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Show Your Work!</div>
+                        <div class="book-author">by Austin Kleon</div>
+                        <div class="book-meta">📅 2014 • 🏢 Workman </div>
+                    </div>
+                </div>
+                <div class="book-description">In his New York Times bestseller Steal Like an Artist, Austin Kleon showed readers how to unlock their creativity by “stealing” from the community of other movers and shakers. Now, in an even more forward-thinking and necessary book, he shows how to take that critical next step on a creative journey...</div>
+                <div class="book-categories"><span class="category-tag">Schaffensprozess</span><span class="category-tag">Self Help</span><span class="category-tag">Créativité</span><span class="category-tag">Success in business</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/9978588-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The 10x rule</div>
+                        <div class="book-author">by Grant Cardone</div>
+                        <div class="book-meta">📅 2011 • 🏢 Wiley </div>
+                    </div>
+                </div>
+                <div class="book-description">Achieve "Massive Action" results and accomplish your business dreams! While most people operate with only three degrees of action-no action, retreat, or normal action-if you're after big goals, you don't want to settle for the ordinary. To reach the next level, you must understand the coveted 4th de...</div>
+                <div class="book-categories"><span class="category-tag">Success in business</span><span class="category-tag">Business and Economics</span><span class="category-tag">Self-actualization (Psychology)</span><span class="category-tag">Success</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/481352-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The SPEED of Trust</div>
+                        <div class="book-author">by Rebecca R. Merrill & Stephen M. R. Covey & Shidifen Kewei</div>
+                        <div class="book-meta">📅 2006 • 🏢 Alʹpina Pablisherz </div>
+                    </div>
+                </div>
+                <div class="book-description">Part of NWTC's Talent Development collection.</div>
+                <div class="book-categories"><span class="category-tag">Business ethics</span><span class="category-tag">Organizational change</span><span class="category-tag">Trust</span><span class="category-tag">Leadership</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=MC_fgWrQXBgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Success Equation</div>
+                        <div class="book-author">by Michael J. Mauboussin</div>
+                        <div class="book-meta">📅 2012 • 🏢 Harvard Business • 📄 312 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">In this provocative book, Michael Mauboussin offers the structure needed to analyze the relative importance of skill and luck, offering concrete suggestions for making these insights work to your advantage by making better decisions.</div>
+                <div class="book-categories"><span class="category-tag">Fortune</span><span class="category-tag">Success</span><span class="category-tag">Decision making</span><span class="category-tag">Success in business</span></div>
+            </div>
+            
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 14:44:58 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>

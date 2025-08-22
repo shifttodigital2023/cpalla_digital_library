@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychology - My Digital Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .back-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .books-info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .books-count {
+            font-size: 1.2em;
+            color: #333;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .book-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .book-cover {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .book-cover-placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .book-details {
+            flex: 1;
+        }
+        
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .book-author {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .book-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .book-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .category-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .rating {
+            background: #ffd700;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .books-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Psychology</h1>
+                <p>Digital Library Collection</p>
+            </div>
+            <div class="back-nav">
+                <a href="library_navigator.html" class="btn">🏠 Home</a>
+                <a href="library_all_books.html" class="btn">📚 All Books</a>
+            </div>
+        </div>
+        
+        <div class="books-info">
+            <div class="books-count">
+                📖 Showing 16 books
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Filter books..." id="filterInput">
+                <button class="btn" onclick="filterBooks()">Filter</button>
+            </div>
+        </div>
+        
+        <div class="books-grid" id="booksGrid">
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Hi_QDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Good Morning, Monster</div>
+                        <div class="book-author">by Catherine Gildiner</div>
+                        <div class="book-meta">📅 2020 • 🏢 St. Martin's • 📄 305 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">As seen on Good Morning America's SEPTEMBER 2020 READING LIST and FAVORITE BOOKS OF 2020! "We need to read stories about folks who have been through hell and kept going... Fascinating." —Glennon Doyle, A Favorite Book of 2020 on Good Morning America "Gildiner is nothing short of masterful—as both a ...</div>
+                <div class="book-categories"><span class="category-tag">Popular works</span><span class="category-tag">Clinical psychology</span><span class="category-tag">Psychotherapy</span><span class="category-tag">Psychology</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=EivUaonC2TcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">In the Realm of Hungry Ghosts</div>
+                        <div class="book-author">by Gabor Maté, MD</div>
+                        <div class="book-meta">📅 2009 • 🏢 Knopf Canada • 📄 482 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">#1 NATIONAL BESTSELLER • From the author of When the Body Says No and The Myth of Normal—The definitive book for understanding the roots and behaviours of addiction. Dr. Gabor Maté is one of the world’s most revered thinkers on the psychology of addiction. His radical findings—based on decades of wo...</div>
+                <div class="book-categories"><span class="category-tag">Psychology</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=u9ARS3k1uvEC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Influencer: The New Science of Leading Change, Second Edition</div>
+                        <div class="book-author">by Joseph Grenny & Kerry Patterson & David Maxfield & Ron McMillan & Al Switzler</div>
+                        <div class="book-meta">📅 2013 • 🏢 McGraw Hill Professional • 📄 355 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">CHANGE YOUR COMPANY. CHANGE THE LIVES OF OTHERS. CHANGE THE WORLD. An INFLUENCER leads change. An INFLUENCER replaces bad behaviorswith powerful new skills. An INFLUENCER makes things happen. This is what it takes to be an INFLUENCER. Whether you're a CEO, a parent, or merely a person who wants to m...</div>
+                <div class="book-categories"><span class="category-tag">Popular Works</span><span class="category-tag">Leadership</span><span class="category-tag">Psychology</span><span class="category-tag">Social Behavior</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=jt_6jvj3xnkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Killing Me Softly</div>
+                        <div class="book-author">by Nicci French</div>
+                        <div class="book-meta">📅 2008 • 🏢 Penguin UK • 📄 355 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Killing Me Softly, by the acclaimed and Sunday Times bestselling author Nicci French, is a terrifying journey into the heart of obsession . . . 'Nicci French's sophisticated, compassionate and gripping crime novels stand head and shoulders above the competition' Sophie Hannah *** You have everything...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">Love in fiction</span><span class="category-tag">Psychology</span><span class="category-tag">Married women</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=bFTl2b80zyQC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Moonwalking with Einstein</div>
+                        <div class="book-author">by Joshua Foer</div>
+                        <div class="book-meta">📅 2011 • 🏢 Penguin UK • 📄 302 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">'Be prepared to be amazed' Guardian Can anyone get a perfect memory? Joshua Foer used to be like most of us, forgetting phone numbers and mislaying keys. Then he learnt the art of memory training, and a year later found himself in the finals of the US Memory Championship. He also discovered a truth ...</div>
+                <div class="book-categories"><span class="category-tag">New York Times bestseller</span><span class="category-tag">Memory</span><span class="category-tag">Psychology</span><span class="category-tag">mnemonics</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/896254-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">On Becoming a Person</div>
+                        <div class="book-author">by Rogers, Carl R.</div>
+                        <div class="book-meta">📅 1961 • 🏢 Peter Smith Publisher </div>
+                    </div>
+                </div>
+                <div class="book-description">Collection of essays by American psychotherapist Carl Rogers written between 1951 and 1961, in which he put forth his ideas about self-esteem, flexibility, respect for self, and acceptance of others.</div>
+                <div class="book-categories"><span class="category-tag">Psychotherapy</span><span class="category-tag">Therapist and patient</span><span class="category-tag">Philosophy</span><span class="category-tag">Client-centered psychotherapy</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=ao1cDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Spark</div>
+                        <div class="book-author">by John J. Ratey</div>
+                        <div class="book-meta">📅 2008 • 🏢 Hachette UK • 📄 199 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">A groundbreaking and fascinating investigation into the transformative effects of exercise on the brain, from the bestselling author and renowned psychiatrist John J. Ratey, MD. Did you know you can beat stress, lift your mood, fight memory loss, sharpen your intellect, and function better than ever...</div>
+                <div class="book-categories"><span class="category-tag">Health and Fitness</span><span class="category-tag">Psychology</span><span class="category-tag">Brain</span><span class="category-tag">Nonfiction</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=y2MhEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Stop Overthinking</div>
+                        <div class="book-author">by Nick Trenton</div>
+                        <div class="book-meta">📅 2021 • 🏢 PKCS Media • 📄 122 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Overcome negative thought patterns, reduce stress, and live a worry-free life. Overthinking is the biggest cause of unhappiness. Don't get stuck in a never-ending thought loop. Stay present and keep your mind off things that don't matter, and never will. Break free of your self-imposed mental prison...</div>
+                <div class="book-categories"><span class="category-tag">Self Help</span><span class="category-tag">Self-help techniques</span><span class="category-tag">Psychology</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=GmTa_Pu9b6oC&printsec=frontcover&img=1&zoom=1&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Stumbling on Happiness</div>
+                        <div class="book-author">by Daniel Gilbert & Daniel Todd Gilbert</div>
+                        <div class="book-meta">📅 2007 • 🏢 HarperCollins UK • 📄 71 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Why are lovers quicker to forgive their partners for infidelity than for leaving dirty dishes in the sink? Why do patients remember long medical procedures as less painful than short ones? Why do home sellers demand prices they wouldn't dream of paying if they were home buyers? Why does the line at ...</div>
+                <div class="book-categories"><span class="category-tag">Happiness</span><span class="category-tag">Psychology</span><span class="category-tag">Nonfiction</span><span class="category-tag">Self-Improvement</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=Qw7qj5nXSPUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Brain That Changes Itself</div>
+                        <div class="book-author">by Norman Doidge, M.D.</div>
+                        <div class="book-meta">📅 2007 • 🏢 Penguin • 📄 447 pages <span class="rating">⭐⭐⭐⭐ 4.5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">“Fascinating. Doidge’s book is a remarkable and hopeful portrait of the endless adaptability of the human brain.”—Oliver Sacks, MD, author of The Man Who Mistook His Wife for a Hat What is neuroplasticity? Is it possible to change your brain? Norman Doidge’s inspiring guide to the new brain science ...</div>
+                <div class="book-categories"><span class="category-tag">Science</span><span class="category-tag">Medical</span><span class="category-tag">Psychology</span><span class="category-tag">Brain damage</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://covers.openlibrary.org/b/id/20382-M.jpg" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Paradox of Choice</div>
+                        <div class="book-author">by Barry Schwartz</div>
+                        <div class="book-meta">📅 2003 • 🏢 Ecco • 📄 288 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Whether we're buying a pair of jeans, ordering a cup of coffee, selecting a long-distance carrier, applying to college, choosing a doctor, or setting up a 401(k), everyday decisions -- both big and small -- have become increasingly complex due to the overwhelming abundance of choice with which we ar...</div>
+                <div class="book-categories"><span class="category-tag">Sociology</span><span class="category-tag">Choice (psychology)</span><span class="category-tag">Psychology</span><span class="category-tag">Nonfiction</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=XswUKz4IRmgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Psychopath Test</div>
+                        <div class="book-author">by Jon Ronson</div>
+                        <div class="book-meta">📅 2011 • 🏢 Pan Macmillan • 📄 247 pages <span class="rating">⭐⭐⭐⭐ 4</span></div>
+                    </div>
+                </div>
+                <div class="book-description">What if society wasn't fundamentally rational, but was motivated by insanity? This thought sets Jon Ronson on an utterly compelling adventure into the world of madness. Along the way, Jon meets psychopaths, those whose lives have been touched by madness and those whose job it is to diagnose it, incl...</div>
+                <div class="book-categories"><span class="category-tag">Mentally ill</span><span class="category-tag">Psychology</span><span class="category-tag">SOCIAL SCIENCE</span><span class="category-tag">History</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=3dAMEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">The Science of Love and Attraction</div>
+                        <div class="book-author">by M. Oktar Guloglu</div>
+                        <div class="book-meta">📅 2020 • 🏢 Mehmet Oktar Guloglu • 📄 189 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">Internationally respected neuroscientist Dr. Guloglu takes us on a scientific journey through who, how, and why we love, and provides illuminating explanations to all love-related questions in an easy and relatable style. Based on hundreds of exclusive scientific studies, this well-researched book o...</div>
+                <div class="book-categories"><span class="category-tag">Psychology</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=GH1_EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Their Eyes Were Watching God</div>
+                        <div class="book-author">by Zora Neale Hurston</div>
+                        <div class="book-meta">📅 2022 • 🏢 DigiCat • 📄 175 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">In Zora Neale Hurston's seminal work, "Their Eyes Were Watching God," the narrative unfolds through the life of Janie Crawford, a woman of mixed heritage navigating the complexities of love, identity, and autonomy in the early 20th-century Southern United States. The novel employs a rich, lyrical st...</div>
+                <div class="book-categories"><span class="category-tag">Fiction</span><span class="category-tag">Self-realization</span><span class="category-tag">African American women</span><span class="category-tag">Psychology</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=MjFNEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">What My Bones Know</div>
+                        <div class="book-author">by Stephanie Foo</div>
+                        <div class="book-meta">📅 2022 • 🏢 Atlantic • 📄 338 pages <span class="rating">⭐⭐⭐⭐⭐ 5</span></div>
+                    </div>
+                </div>
+                <div class="book-description">Every cell in my body is filled with the code of generations of trauma, of death, of birth, of migration, of history that I cannot understand. . . . I want to have words for what my bones know. By the age of thirty, Stephanie Foo was successful on paper: she had her dream job as an award-winning rad...</div>
+                <div class="book-categories"><span class="category-tag">Post-traumatic stress disorder</span><span class="category-tag">Mental health</span><span class="category-tag">Psychology</span><span class="category-tag">Biography</span></div>
+            </div>
+            
+            <div class="book-card">
+                <div class="book-header">
+                    <img src="https://books.google.com/books/content?id=pBWYDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" alt="Cover" class="book-cover">
+                    <div class="book-details">
+                        <div class="book-title">Wintering</div>
+                        <div class="book-author">by Katherine May</div>
+                        <div class="book-meta">📅 2020 • 🏢 Random House • 📄 171 pages </div>
+                    </div>
+                </div>
+                <div class="book-description">THE NO. 1 BESTSELLING, LIFE-CHANGING PHENOMENON – SUNDAY TIMES and NEW YORK TIMES BESTSELLER 'A beautiful, gentle exploration of the dark season of life and the light of spring that eventually follows' RAYNOR WINN 'My favourite book of the last five years' CAITLIN MORAN Wintering is a poignant and c...</div>
+                <div class="book-categories"><span class="category-tag">Biography</span><span class="category-tag">Self-realization</span><span class="category-tag">Outdoor life</span><span class="category-tag">Self-actualization (psychology)</span></div>
+            </div>
+            
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-22 15:32:30 | Digital Library</p>
+        </div>
+    </div>
+    
+    <script>
+        function filterBooks() {
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            bookCards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(filterTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Real-time filtering
+        document.getElementById('filterInput').addEventListener('input', filterBooks);
+        
+        // Enter key support
+        document.getElementById('filterInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                filterBooks();
+            }
+        });
+    </script>
+</body>
+</html>
